@@ -1,0 +1,86 @@
+--- exim-4.50/src/configure.default.orig	2005-02-22 19:49:15.000000000 +0000
++++ exim-4.50/src/configure.default	2005-02-22 19:46:55.000000000 +0000
+@@ -108,6 +108,26 @@
+ 
+ # You should not change that setting until you understand how ACLs work.
+ 
++# The following ACL entries are used if you want to do content scanning with
++# the exiscan-acl patch. When you uncomment one of these lines, you must also
++# review the respective entries in the ACL section further below.
++
++# acl_smtp_mime = acl_check_mime
++# acl_smtp_data = acl_check_content
++
++# This configuration variable defines the virus scanner that is used with
++# the 'malware' ACL condition of the exiscan acl-patch. If you do not use
++# virus scanning, leave it commented. Please read doc/exiscan-acl-readme.txt
++# for a list of supported scanners.
++
++# av_scanner = sophie:/var/run/sophie
++
++# The following setting is only needed if you use the 'spam' ACL condition
++# of the exiscan-acl patch. It specifies on which host and port the SpamAssassin
++# "spamd" daemon is listening. If you do not use this condition, or you use
++# the default of "127.0.0.1 783", you can omit this option.
++
++# spamd_address = 127.0.0.1 783
+ 
+ # Specify the domain you want to be added to all unqualified addresses
+ # here. An unqualified address is one that does not contain an "@" character
+@@ -376,6 +396,56 @@
+   deny    message       = relay not permitted
+ 
+ 
++# These access control lists are used for content scanning with the exiscan-acl
++# patch. You must also uncomment the entries for acl_smtp_data and acl_smtp_mime
++# (scroll up), otherwise the ACLs will not be used. IMPORTANT: the default entries here
++# should be treated as EXAMPLES. You MUST read the file doc/exiscan-acl-spec.txt
++# to fully understand what you are doing ...
++
++acl_check_mime:
++
++  # Decode MIME parts to disk. This will support virus scanners later.
++  warn decode = default
++
++  # File extension filtering.
++  deny message = Blacklisted file extension detected
++       condition = ${if match \
++                        {${lc:$mime_filename}} \
++                        {\N(\.exe|\.pif|\.bat|\.scr|\.lnk|\.com)$\N} \
++                     {1}{0}}
++  
++#  # Reject messages that carry chinese character sets.
++#  # WARNING: This is an EXAMPLE.
++#  deny message = Sorry, noone speaks chinese here
++#       condition = ${if eq{$mime_charset}{gb2312}{1}{0}}
++
++  accept
++
++acl_check_content:
++
++  # Reject virus infested messages.
++  deny  message = This message contains malware ($malware_name)
++        malware = *
++
++  # Always add X-Spam-Score and X-Spam-Report headers, using SA system-wide settings
++  # (user "nobody"), no matter if over threshold or not.
++  warn  message = X-Spam-Score: $spam_score ($spam_bar)
++        spam = nobody:true
++  warn  message = X-Spam-Report: $spam_report
++        spam = nobody:true
++
++  # Add X-Spam-Flag if spam is over system-wide threshold
++  warn message = X-Spam-Flag: YES
++       spam = nobody
++
++  # Reject spam messages with score over 10, using an extra condition.
++  deny  message = This message scored $spam_score points. Congratulations!
++        spam = nobody:true
++        condition = ${if >{$spam_score_int}{100}{1}{0}}
++
++  # finally accept all the rest
++  accept
++  
+ 
+ ######################################################################
+ #                      ROUTERS CONFIGURATION                         #

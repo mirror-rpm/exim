@@ -1,0 +1,18 @@
+--- exim-4.33/src/configure.default.cyrus	2004-07-02 15:00:27.941635455 +0200
++++ exim-4.33/src/configure.default	2004-07-02 15:41:39.505133889 +0200
+@@ -595,6 +595,15 @@
+   driver = autoreply
+ 
+ 
++# This transport is used to deliver local mail to cyrus IMAP server via UNIX 
++# socket.
++#
++#local_delivery:
++#  driver = lmtp
++#  command = "/usr/lib/cyrus-imapd/deliver -l"
++#  batch_max = 20
++#  user = cyrus
++
+ 
+ ######################################################################
+ #                      RETRY CONFIGURATION                           #

@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# exim    This shell script takes care of starting and stopping exim
+#
+# chkconfig: 2345 80 30
+# description: Exim is a Mail Transport Agent, which is the program \
+#              that moves mail from one machine to another.
+# processname: exim
+# config: /etc/exim/exim.conf
+# pidfile: /var/run/exim.pid
+
+# Source function library.
+. /etc/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Source exim configureation.
+if [ -f /etc/sysconfig/exim ] ; then
+	. /etc/sysconfig/exim
+else
+	DAEMON=yes
+	QUEUE=1h
+fi
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+[ -f /usr/sbin/exim ] || exit 0
+
+start() {
+	# check ownerships
+	# do this by seeing if /var/log/exim/main.log exists and is
+	# owned by exim - if owned by someone else we fix it up
+	if [ -f /var/log/exim/main.log ]
+	then
+	    if [ "exim" != "`ls -l /var/log/exim/main.log | awk '{print $4}'`" ]
+	    then
+		chown -R exim:exim /var/log/exim /var/spool/exim
+	    fi
+	fi
+        # Start daemons.
+        echo -n $"Starting exim: "
+        daemon /usr/sbin/exim $([ "$DAEMON" = yes ] && echo -bd) \
+                              $([ -n "$QUEUE" ] && echo -q$QUEUE)
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && touch /var/lock/subsys/exim
+}
+
+stop() {
+        # Stop daemons.
+        echo -n $"Shutting down exim: "
+        killproc exim
+	RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && rm -f /var/lock/subsys/exim
+}
+
+restart() {
+	stop
+	start
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	restart
+	;;
+  condrestart)
+ 	[ -f /var/lock/subsys/exim ] && restart || :
+	;;
+  status)
+	status exim
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|status|condrestart}"
+	exit 1
+esac
+
+exit $RETVAL
+

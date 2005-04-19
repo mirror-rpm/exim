@@ -1,0 +1,13 @@
+--- exim-4.24/OS/Makefile-Linux.libdir	2003-09-22 10:29:52.000000000 +0200
++++ exim-4.24/OS/Makefile-Linux	2003-11-13 12:05:15.000000000 +0100
+@@ -17,8 +17,8 @@
+ 
+ X11=/usr/X11R6
+ XINCLUDE=-I$(X11)/include
+-XLFLAGS=-L$(X11)/lib
+-X11_LD_LIB=$(X11)/lib
++XLFLAGS=-L$(X11)/$(_lib)
++X11_LD_LIB=$(X11)/$(_lib)
+ 
+ EXIWHAT_PS_ARG=ax
+ EXIWHAT_EGREP_ARG='/exim( |$$)'

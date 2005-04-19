@@ -1,0 +1,63 @@
+--- exim-4.43/src/configure.default.pam	2004-12-16 13:27:55.000000000 +0000
++++ exim-4.43/src/configure.default	2004-12-16 15:41:34.000000000 +0000
+@@ -238,6 +238,40 @@
+ 
+ timeout_frozen_after = 7d
+ 
++# This option, if uncommented, allows Exim to listen on ports other than
++# just the default port 25. For example, you may wish Exim to sldo listen
++# on the 'message submission' port 587 for roaming clients which cannot
++# use port 25 directly from their current location. (cf. RFC 2476).
++#
++# daemon_smtp_ports = smtp : msa
++
++# This option instructs Exim to advertise the availability of encrypted
++# connections to all hosts, and uses the certificate which is automatically
++# generated when the RPM is installed. You can disable TLS, should you need
++# to do so, by commenting out the three lines below.
++
++tls_advertise_hosts = *
++tls_certificate = /usr/share/ssl/certs/exim.pem
++tls_privatekey = /usr/share/ssl/private/exim.pem
++
++# This setting, if uncommented, allows users to authenticate using
++# their system passwords against saslauthd if they connect over a
++# secure connection. If you have network logins such as NIS or
++# Kerberos rather than only local users, then you possibly also want
++# to configure /etc/sysconfig/saslauthd to use the 'pam' mechanism
++# too. Once a user is authenticated, the acl_check_rcpt ACL then
++# allows them to relay through the system. 
++#
++# auth_advertise_hosts = ${if eq {$tls_cipher}{}{}{*}}
++#
++# By default, we set this option to allow SMTP AUTH from nowhere
++# (Exim's default would be to allow it from anywhere, even on an
++# unencrypted connection).
++#
++# Comment this one out if you uncomment the above. Did you make sure
++# saslauthd is actually running first?
++#
++auth_advertise_hosts =
+ 
+ 
+ ######################################################################
+@@ -657,6 +691,19 @@
+ 
+ begin authenticators
+ 
++plain:
++   driver = plaintext
++   public_name = PLAIN
++   server_prompts = :
++   server_condition = "${if saslauthd{{$2}{$3}{smtp}} {1}}"
++   server_set_id = $2
++
++login:
++   driver = plaintext
++   public_name = LOGIN
++   server_prompts = "Username:: : Password::"
++   server_condition = "${if saslauthd{{$1}{$2}{smtp}} {1}}"
++   server_set_id = $1
+ 
+ 
+ ######################################################################
