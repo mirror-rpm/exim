@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.50
-Release: 2
+Version: 4.51
+Release: 1
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -12,7 +12,7 @@ PreReq: /sbin/chkconfig
 PreReq: /sbin/service
 PreReq: %{_sbindir}/alternatives
 PreReq: %{_sbindir}/groupadd, %{_sbindir}/useradd
-Source: ftp://ftp.exim.org/pub/exim/exim-%{version}.tar.bz2
+Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.bz2
 Source2: exim.init
 Source3: exim.sysconfig
 Source4: exim.logrotate
@@ -25,6 +25,7 @@ Patch8: exim-4.24-libdir.patch
 Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
+Patch15: exim-4.51-csa.2c.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel XFree86-devel pam-devel
@@ -77,6 +78,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch12 -p1 -b .cyrus
 %patch13 -p1 -b .pam
 %patch14 -p1 -b .spamd
+%patch15 -p0 -b .csa.2c
 
 %build
 %ifnarch s390 s390x
@@ -285,6 +287,10 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Wed May  4 2005 David Woodhouse <dwmw2@redhat.com> 4.51-1
+- Update to Exim 4.51
+- Include Tony's CSA support patch
+
 * Tue Feb 22 2005 David Woodhouse <dwmw2@redhat.com> 4.50-2
 - Move exim-doc into a separate package
 
