@@ -1,21 +1,32 @@
 --- doc/ChangeLog	4 May 2005 10:17:28 -0000	1.133
-+++ doc/ChangeLog	4 May 2005 10:42:03 -0000
-@@ -287,6 +287,8 @@
-       from the Makefile to this script so that it can call the same version of
-       "make".
++++ doc/ChangeLog	10 May 2005 10:19:11 -0000	1.134
+@@ -1,7 +1,13 @@
+-$Cambridge: exim/exim-doc/doc-txt/ChangeLog,v 1.133 2005/05/04 10:17:28 ph10 Exp $
++$Cambridge: exim/exim-doc/doc-txt/ChangeLog,v 1.134 2005/05/10 10:19:11 ph10 Exp $
  
-+TF/02 Added support for Client SMTP Authorization. See NewStuff for details.
+ Change log file for Exim from version 4.21
+ -------------------------------------------
 +
++
++Exim version 4.52
++-----------------
++
++TF/01 Added support for Client SMTP Authorization. See NewStuff for details.
  
- A note about Exim versions 4.44 and 4.50
- ----------------------------------------
+ 
+ Exim version 4.51
 --- doc/NewStuff	3 May 2005 14:20:00 -0000	1.39
-+++ doc/NewStuff	4 May 2005 10:42:03 -0000
-@@ -181,6 +181,61 @@
-       both kinds of timeout. A transport filter timeout is now identified in
-       the log output.
- 
-+TF/02 Support for checking Client SMTP Authorization has been added. CSA is a
++++ doc/NewStuff	10 May 2005 10:19:11 -0000	1.40
+@@ -7,6 +7,66 @@
+ but have not yet made it into the main manual (which is most conveniently
+ updated when there is a relatively large batch of changes). The doc/ChangeLog
+ file contains a listing of all changes, including bug fixes.
++
++
++Exim version 4.52
++-----------------
++
++TF/01 Support for checking Client SMTP Authorization has been added. CSA is a
 +      system which allows a site to advertise which machines are and are not
 +      permitted to send email. This is done by placing special SRV records in
 +      the DNS, which are looked up using the client's HELO domain. At this
@@ -71,10 +82,10 @@
 +      The authorization code can be "Y" for yes, "N" for no, "X" for explicit
 +      authorization required but absent, or "?" for unknown.
  
- Version 4.50
- ------------
+ 
+ Version 4.51
 --- src/acl.c	6 Apr 2005 14:03:53 -0000	1.28
-+++ src/acl.c	4 May 2005 10:42:26 -0000
++++ src/acl.c	10 May 2005 10:19:11 -0000	1.29
 @@ -505,6 +505,45 @@
    { US"submission",             CONTROL_SUBMISSION, TRUE}
    };
@@ -103,25 +114,25 @@
 +};
 +
 +static uschar *csa_status_string[] = {
-+  "unknown", "ok", "defer", "defer",
-+  "fail", "fail", "fail", "fail"
++  US"unknown", US"ok", US"defer", US"defer",
++  US"fail", US"fail", US"fail", US"fail"
 +};
 +
 +static uschar *csa_reason_string[] = {
-+  "unknown",
-+  "ok",
-+  "deferred (SRV lookup failed)",
-+  "deferred (target address lookup failed)",
-+  "failed (explicit authorization required)",
-+  "failed (host name not authorized)",
-+  "failed (no authorized addresses)",
-+  "failed (client address mismatch)"
++  US"unknown",
++  US"ok",
++  US"deferred (SRV lookup failed)",
++  US"deferred (target address lookup failed)",
++  US"failed (explicit authorization required)",
++  US"failed (host name not authorized)",
++  US"failed (no authorized addresses)",
++  US"failed (client address mismatch)"
 +};
 +
  /* Enable recursion between acl_check_internal() and acl_check_condition() */
  
  static int acl_check_internal(int, address_item *, uschar *, int, uschar **,
-@@ -938,6 +977,299 @@
+@@ -938,6 +977,304 @@
  
  
  /*************************************************
@@ -179,7 +190,7 @@
 +  /* Turn the target address RR into a list of textual IP addresses and scan
 +  the list. There may be more than one if it is an A6 RR. */
 +
-+  for (da = dns_address_from_rr(&dnsa, rr); da != NULL; da = da->next)
++  for (da = dns_address_from_rr(dnsa, rr); da != NULL; da = da->next)
 +    {
 +    /* If the client IP address matches the target IP address, it's good! */
 +
@@ -279,6 +290,7 @@
 +
 +/* Now we are ready to do the actual DNS lookup(s). */
 +
++found = domain;
 +switch (dns_special_lookup(&dnsa, domain, T_CSA, &found))
 +  {
 +  /* If something bad happened (most commonly DNS_AGAIN), defer. */
@@ -385,7 +397,11 @@
 +#endif /* HAVE_IPV6 */
 +  type = T_A;
 +
++
++#if HAVE_IPV6 && defined(SUPPORT_A6)
 +DNS_LOOKUP_AGAIN:
++#endif
++
 +switch (dns_lookup(&dnsa, target, type, NULL))
 +  {
 +  /* If something bad happened (most commonly DNS_AGAIN), defer. */
@@ -421,7 +437,7 @@
  *     Handle verification (address & other)      *
  *************************************************/
  
-@@ -1017,6 +1349,19 @@
+@@ -1017,6 +1353,19 @@
    {
    if (slash != NULL) goto NO_OPTIONS;
    return helo_verified? OK : FAIL;
@@ -442,7 +458,7 @@
  
  /* Check that all relevant header lines have the correct syntax. If there is
 --- src/dns.c	17 Feb 2005 11:58:26 -0000	1.5
-+++ src/dns.c	4 May 2005 10:42:26 -0000
++++ src/dns.c	10 May 2005 10:19:11 -0000	1.6
 @@ -153,9 +153,9 @@
  *************************************************/
  
@@ -535,15 +551,15 @@
 +
 +  /* Use more appropriate search parameters if we are in the reverse DNS. */
 +
-+  if (strcmpic(namesuff, ".arpa") == 0)
++  if (strcmpic(namesuff, US".arpa") == 0)
 +    {
-+    if (namesuff - 8 > name && strcmpic(namesuff - 8, ".in-addr.arpa") == 0)
++    if (namesuff - 8 > name && strcmpic(namesuff - 8, US".in-addr.arpa") == 0)
 +      {
 +      namesuff -= 8;
 +      tld = namesuff + 1;
 +      limit = 3;
 +      }
-+    else if (namesuff - 4 > name && strcmpic(namesuff - 4, ".ip6.arpa") == 0)
++    else if (namesuff - 4 > name && strcmpic(namesuff - 4, US".ip6.arpa") == 0)
 +      {
 +      namesuff -= 4;
 +      tld = namesuff + 1;
@@ -586,7 +602,7 @@
 +         rr != NULL;
 +         rr = dns_next_rr(dnsa, &dnss, RESET_NEXT))
 +      if (rr->type != T_SOA) continue;
-+      else if (strcmpic(rr->name, "") == 0 ||
++      else if (strcmpic(rr->name, US"") == 0 ||
 +               strcmpic(rr->name, tld) == 0) return DNS_NOMATCH;
 +      else break;
 +    }
@@ -643,7 +659,7 @@
    return DNS_NOMATCH;
    }
 --- src/exim.h	27 Apr 2005 10:00:18 -0000	1.11
-+++ src/exim.h	4 May 2005 10:42:26 -0000
++++ src/exim.h	10 May 2005 10:19:11 -0000	1.12
 @@ -280,12 +280,19 @@
  #define T_SRV 33
  #endif
@@ -668,7 +684,7 @@
  /* The resolv.h header defines __P(x) on some Solaris 2.5.1 systems (without
  checking that it is already defined, in fact). This conflicts with other
 --- src/expand.c	28 Apr 2005 13:29:27 -0000	1.20
-+++ src/expand.c	4 May 2005 10:42:27 -0000
++++ src/expand.c	10 May 2005 10:19:11 -0000	1.21
 @@ -333,6 +333,7 @@
    { "caller_uid",          vtype_uid,         &real_uid },
    { "compile_date",        vtype_stringptr,   &version_date },
@@ -678,7 +694,7 @@
    { "demime_errorlevel",   vtype_int,         &demime_errorlevel },
    { "demime_reason",       vtype_stringptr,   &demime_reason },
 --- src/globals.c	3 May 2005 14:20:01 -0000	1.23
-+++ src/globals.c	4 May 2005 10:42:27 -0000
++++ src/globals.c	10 May 2005 10:19:11 -0000	1.24
 @@ -385,6 +385,8 @@
  int     continue_sequence      = 1;
  uschar *continue_transport     = NULL;
@@ -698,7 +714,7 @@
  int     dns_retrans            = 0;
  int     dns_retry              = 0;
 --- src/globals.h	3 May 2005 14:20:01 -0000	1.15
-+++ src/globals.h	4 May 2005 10:42:27 -0000
++++ src/globals.h	10 May 2005 10:19:11 -0000	1.16
 @@ -214,6 +214,8 @@
  extern int     continue_sequence;      /* Sequence num for continued delivery */
  extern uschar *continue_transport;     /* Transport for continued delivery */
@@ -718,7 +734,7 @@
  extern int     dns_retrans;            /* Retransmission time setting */
  extern int     dns_retry;              /* Number of retries */
 --- src/macros.h	7 Apr 2005 10:54:54 -0000	1.12
-+++ src/macros.h	4 May 2005 10:42:27 -0000
++++ src/macros.h	10 May 2005 10:19:11 -0000	1.13
 @@ -178,7 +178,7 @@
  
  /* Options for dns_next_rr */
@@ -729,7 +745,7 @@
  /* Argument values for the time-of-day function */
  
 --- src/readconf.c	5 Apr 2005 13:58:35 -0000	1.7
-+++ src/readconf.c	4 May 2005 10:42:27 -0000
++++ src/readconf.c	10 May 2005 10:19:11 -0000	1.8
 @@ -193,6 +193,8 @@
    { "delivery_date_remove",     opt_bool,        &delivery_date_remove },
    { "dns_again_means_nonexist", opt_stringptr,   &dns_again_means_nonexist },
@@ -740,7 +756,7 @@
    { "dns_retrans",              opt_time,        &dns_retrans },
    { "dns_retry",                opt_int,         &dns_retry },
 --- src/lookups/dnsdb.c	17 Feb 2005 11:58:27 -0000	1.10
-+++ src/lookups/dnsdb.c	4 May 2005 10:42:27 -0000
++++ src/lookups/dnsdb.c	10 May 2005 10:19:11 -0000	1.11
 @@ -31,6 +31,7 @@
    #endif
  #endif
@@ -793,16 +809,32 @@
      {
      dns_build_reverse(domain, rbuffer);
      domain = rbuffer;
-@@ -252,7 +257,7 @@
-   continue with the next domain. In the case of DEFER, adjust the final
-   "nothing found" result, but carry on to the next domain. */
+@@ -244,15 +249,16 @@
+ 
+   DEBUG(D_lookup) debug_printf("dnsdb key: %s\n", domain);
+ 
+-  /* Do the lookup and sort out the result. There are two special types that
+-  are handled specially: T_ZNS and T_MXH. The former is handled in a special
+-  lookup function so that the facility could be used from other parts of the
+-  Exim code. The latter affects only what happens later on in this function,
+-  but for tidiness it is handled in a similar way. If the lookup fails,
+-  continue with the next domain. In the case of DEFER, adjust the final
+-  "nothing found" result, but carry on to the next domain. */
++  /* Do the lookup and sort out the result. There are three special types that
++  are handled specially: T_CSA, T_ZNS and T_MXH. The former two are handled in
++  a special lookup function so that the facility could be used from other
++  parts of the Exim code. The latter affects only what happens later on in
++  this function, but for tidiness it is handled in a similar way. If the
++  lookup fails, continue with the next domain. In the case of DEFER, adjust
++  the final "nothing found" result, but carry on to the next domain. */
  
 -  rc = dns_special_lookup(&dnsa, domain, type, NULL);
++  found = domain;
 +  rc = dns_special_lookup(&dnsa, domain, type, &found);
  
    if (rc == DNS_NOMATCH || rc == DNS_NODATA) continue;
    if (rc != DNS_SUCCEED)
-@@ -300,32 +305,63 @@
+@@ -300,32 +311,63 @@
        yield = string_cat(yield, &size, &ptr, (uschar *)(rr->data+1),
          (rr->data)[0]);
        }
@@ -866,7 +898,7 @@
 +          else continue;                  /* invalid */
 +          }
 +
-+	s[1] = ' ';
++        s[1] = ' ';
 +        yield = string_cat(yield, &size, &ptr, s, 2);
 +        }
 +
@@ -874,3 +906,23 @@
  
        rc = dn_expand(dnsa.answer, dnsa.answer + dnsa.answerlen, p,
          (DN_EXPAND_ARG4_TYPE)(s), sizeof(s));
+--- src/configure.default	29 Mar 2005 09:49:49 -0000	1.2
++++ src/configure.default	10 May 2005 14:48:07 -0000	1.3
+@@ -322,6 +322,17 @@
+   # warn    message       = X-Warning: $sender_host_address is in a black list at $dnslist_domain
+   #         log_message   = found in $dnslist_domain
+   #         dnslists      = black.list.example
++  #############################################################################
++
++  #############################################################################
++  # This check is commented out because it is recognized that not every
++  # sysadmin will want to do it. If you enable it, the check performs
++  # Client SMTP Authorization (csa) checks on the sending host. These checks
++  # do DNS lookups for SRV records. The CSA proposal is currently (May 2005)
++  # an Internet draft. You can, of course, add additional conditions to this
++  # ACL statement to restrict the CSA checks to certain hosts only.
++  #
++  # require verify = csa
+   #############################################################################
+ 
+   # Accept if the address is in a local domain, but only if the recipient can

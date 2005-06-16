@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.51
-Release: 1
+Release: 2
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -25,7 +25,7 @@ Patch8: exim-4.24-libdir.patch
 Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
-Patch15: exim-4.51-csa.2c.patch
+Patch15: http://www.cus.cam.ac.uk/~fanf2/hermes/doc/antiforgery/exim-csa.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel XFree86-devel pam-devel
@@ -78,7 +78,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch12 -p1 -b .cyrus
 %patch13 -p1 -b .pam
 %patch14 -p1 -b .spamd
-%patch15 -p0 -b .csa.2c
+%patch15 -p0 -b .csa
 
 %build
 %ifnarch s390 s390x
@@ -287,6 +287,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Wed May  4 2005 David Woodhouse <dwmw2@redhat.com> 4.51-2
+- Update CSA patch
+
 * Wed May  4 2005 David Woodhouse <dwmw2@redhat.com> 4.51-1
 - Update to Exim 4.51
 - Include Tony's CSA support patch
