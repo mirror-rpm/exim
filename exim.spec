@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.51
-Release: 3
+Version: 4.52
+Release: 1%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -20,12 +20,10 @@ Source11: exim.pam
 Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
 Patch4: exim-rhl.patch
 Patch6: exim-4.50-config.patch
-Patch7: exim-4.24-no_libc5.patch
 Patch8: exim-4.24-libdir.patch
 Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
-Patch15: http://www.cus.cam.ac.uk/~fanf2/hermes/doc/antiforgery/exim-csa.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel XFree86-devel pam-devel
@@ -73,12 +71,10 @@ cp exim_monitor/EDITME Local/eximon.conf
 
 %patch4 -p1 -b .rhl
 %patch6 -p1 -b .config
-%patch7 -p1 -b .no_libc5
 %patch8 -p1 -b .libdir
 %patch12 -p1 -b .cyrus
 %patch13 -p1 -b .pam
 %patch14 -p1 -b .spamd
-%patch15 -p0 -b .csa
 
 %build
 %ifnarch s390 s390x
@@ -287,6 +283,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Fri Jul  1 2005 David Woodhouse <dwmw2@redhat.com> 4.52-1
+- Update to Exim 4.52
+
 * Thu Jun 16 2005 David Woodhouse <dwmw2@redhat.com> 4.51-3
 - Rebuild for -devel
 
