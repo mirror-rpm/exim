@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.52
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -24,10 +24,11 @@ Patch8: exim-4.24-libdir.patch
 Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
+Patch15: exim-4.52-dynamic-pcre.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel XFree86-devel pam-devel
-BuildRequires: lynx
+BuildRequires: lynx pcre-devel
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel
 PreReq: cyrus-sasl openldap openssl
 
@@ -75,6 +76,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch12 -p1 -b .cyrus
 %patch13 -p1 -b .pam
 %patch14 -p1 -b .spamd
+%patch15 -p1 -b .pcre
 
 %build
 %ifnarch s390 s390x
@@ -283,6 +285,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Thu Aug 25 2005 David Woodhouse <dwmw2@redhat.com> 4.52-2
+- Use system PCRE
+
 * Fri Jul  1 2005 David Woodhouse <dwmw2@redhat.com> 4.52-1
 - Update to Exim 4.52
 
