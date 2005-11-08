@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.54
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -29,7 +29,7 @@ Patch15: exim-4.52-dynamic-pcre.patch
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel XFree86-devel pam-devel
 BuildRequires: lynx pcre-devel sqlite-devel
-BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel
+BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
 PreReq: cyrus-sasl openldap openssl
 
 %description
@@ -285,6 +285,10 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Wed Oct  5 2005 David Woodhouse <dwmw2@redhat.com> 4.54-2
+- Rebuild for new OpenSSL
+- Add MySQL and Postgres support to keep jgarzik happy
+
 * Wed Oct  5 2005 David Woodhouse <dwmw2@redhat.com> 4.54-1
 - Update to Exim 4.54
 - Enable sqlite support

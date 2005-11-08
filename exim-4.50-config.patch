@@ -58,7 +58,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -255,17 +255,19 @@
+@@ -255,17 +255,20 @@
  LOOKUP_DBM=yes
  LOOKUP_LSEARCH=yes
  
@@ -72,8 +72,10 @@
 -# LOOKUP_LDAP=yes
 +LOOKUP_LDAP=yes
 +LDAP_LIB_TYPE=OPENLDAP2
-+LOOKUP_LIBS=-lldap -llber -lsqlite3
- # LOOKUP_MYSQL=yes
++LOOKUP_INCLUDE=-I/usr/include/mysql
++LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/lib/mysql -lmysqlclient -lpq
+-# LOOKUP_MYSQL=yes
++LOOKUP_MYSQL=yes
 -# LOOKUP_NIS=yes
 -# LOOKUP_NISPLUS=yes
 +LOOKUP_NIS=yes
@@ -81,7 +83,8 @@
  # LOOKUP_ORACLE=yes
 -# LOOKUP_PASSWD=yes
 +LOOKUP_PASSWD=yes
- # LOOKUP_PGSQL=yes
+-# LOOKUP_PGSQL=yes
++# LOOKUP_PGSQL=yes
 -# LOOKUP_SQLITE=yes
 +LOOKUP_SQLITE=yes
  # LOOKUP_WHOSON=yes
