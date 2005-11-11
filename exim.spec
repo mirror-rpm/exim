@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.54
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -27,9 +27,10 @@ Patch14: exim-4.50-spamdconf.patch
 Patch15: exim-4.52-dynamic-pcre.patch
 
 Requires: /etc/aliases
-BuildRequires: db4-devel openssl-devel openldap-devel XFree86-devel pam-devel
+BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
 BuildRequires: lynx pcre-devel sqlite-devel
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
+BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel libICE-devel libXpm-devel
 PreReq: cyrus-sasl openldap openssl
 
 %description
@@ -285,6 +286,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Fri Nov 11 2005 David Woodhouse <dwmw2@redhat.com> 4.54-3
+- Update X11 BuildRequires
+
 * Wed Oct  5 2005 David Woodhouse <dwmw2@redhat.com> 4.54-2
 - Rebuild for new OpenSSL
 - Add MySQL and Postgres support to keep jgarzik happy
