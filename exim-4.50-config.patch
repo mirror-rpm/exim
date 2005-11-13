@@ -73,7 +73,7 @@
 +LOOKUP_LDAP=yes
 +LDAP_LIB_TYPE=OPENLDAP2
 +LOOKUP_INCLUDE=-I/usr/include/mysql
-+LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/lib/mysql -lmysqlclient -lpq
++LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/$(_lib)/mysql -lmysqlclient -lpq
 -# LOOKUP_MYSQL=yes
 +LOOKUP_MYSQL=yes
 -# LOOKUP_NIS=yes

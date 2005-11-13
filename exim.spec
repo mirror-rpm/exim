@@ -286,6 +286,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Sun Nov 13 2005 David Woodhouse <dwmw2@redhat.com> 4.54-4
+- Fix 64-bit build
+
 * Fri Nov 11 2005 David Woodhouse <dwmw2@redhat.com> 4.54-3
 - Update X11 BuildRequires
 
