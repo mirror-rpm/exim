@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.54
-Release: 4%{?dist}
+Version: 4.60
+Release: 1%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -286,6 +286,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Tue Nov 29 2005 David Woodhouse <dwmw2@redhat.com> 4.60-1
+- Update to 4.60
+
 * Sun Nov 13 2005 David Woodhouse <dwmw2@redhat.com> 4.54-4
 - Fix 64-bit build
 
