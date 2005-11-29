@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.60
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -30,7 +30,8 @@ Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
 BuildRequires: lynx pcre-devel sqlite-devel
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
-BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel libICE-devel libXpm-devel
+BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
+BuildRequires: libICE-devel libXpm-devel libXt-devel
 PreReq: cyrus-sasl openldap openssl
 
 %description
@@ -286,6 +287,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Tue Nov 29 2005 David Woodhouse <dwmw2@redhat.com> 4.60-2
+- Require libXt-devel
+
 * Tue Nov 29 2005 David Woodhouse <dwmw2@redhat.com> 4.60-1
 - Update to 4.60
 
