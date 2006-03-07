@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.60
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -287,6 +287,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Tue Mar  7 2006 David Woodhouse <dwmw2@redhat.com> 4.60-3
+- Rebuild
+
 * Tue Nov 29 2005 David Woodhouse <dwmw2@redhat.com> 4.60-2
 - Require libXt-devel
 
