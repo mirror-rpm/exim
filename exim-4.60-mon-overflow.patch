@@ -1,0 +1,11 @@
+--- exim-4.60/exim_monitor/em_queue.c~	2005-11-28 10:57:32.000000000 +0000
++++ exim-4.60/exim_monitor/em_queue.c	2006-03-23 12:23:20.000000000 +0000
+@@ -500,7 +500,7 @@ for (i = 0; i < subdir_max; i++)
+       uschar basename[SPOOL_NAME_LENGTH];
+       stripchart_total[0]++;
+       if (!eximon_initialized) { printf("."); fflush(stdout); }
+-      Ustrcpy(basename, name);
++      Ustrncpy(basename, name, SPOOL_NAME_LENGTH - 2);
+       basename[SPOOL_NAME_LENGTH - 2] = 0;
+       if (full) find_queue(basename, queue_add, subdirchar);
+       }
