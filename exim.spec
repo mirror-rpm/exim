@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.61
-Release: 2%{?dist}
+Version: 4.62
+Release: 1%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -25,7 +25,6 @@ Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
 Patch15: exim-4.52-dynamic-pcre.patch
-Patch16: exim-4.61-c-before-d.patch
 Patch17: exim-4.61-ldap-deprecated.patch
 
 Requires: /etc/aliases
@@ -81,7 +80,6 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch13 -p1 -b .pam
 %patch14 -p1 -b .spamd
 %patch15 -p1 -b .pcre
-%patch16 -p0
 %patch17 -p1 -b .ldap
 
 %build
@@ -291,6 +289,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Tue May  2 2006 David Woodhouse <dwmw2@redhat.com> 4.62-1
+- Update to 4.62
+
 * Fri Apr  7 2006 David Woodhouse <dwmw2@redhat.com> 4.61-2
 - Define LDAP_DEPRECATED to ensure ldap functions are all declared.
 
