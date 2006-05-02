@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.62
-Release: 1%{?dist}
+Release: 1.1%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -289,6 +289,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Tue May  2 2006 David Woodhouse <dwmw2@redhat.com> 4.62-2
+- Bump release to work around 'make tag' error
+
 * Tue May  2 2006 David Woodhouse <dwmw2@redhat.com> 4.62-1
 - Update to 4.62
 
