@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.62
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -29,7 +29,7 @@ Patch17: exim-4.61-ldap-deprecated.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
-BuildRequires: lynx pcre-devel sqlite-devel
+BuildRequires: lynx pcre-devel sqlite-devel tcp_wrappers
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: libICE-devel libXpm-devel libXt-devel
@@ -289,6 +289,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Wed Jun 28 2006 David Woodhouse <dwmw2@redhat.com> 4.62-3
+- BR tcp_wrappers
+
 * Tue May  2 2006 David Woodhouse <dwmw2@redhat.com> 4.62-2
 - Bump release to work around 'make tag' error
 
