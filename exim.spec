@@ -1,17 +1,16 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.62
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
-Buildroot: %{_tmppath}/%{name}-build.root
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon /usr/bin/newaliases
 Provides: /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail
-PreReq: /sbin/chkconfig
-PreReq: /sbin/service
-PreReq: %{_sbindir}/alternatives
-PreReq: %{_sbindir}/groupadd, %{_sbindir}/useradd
+Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
+Requires(preun): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
+Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.bz2
 Source2: exim.init
 Source3: exim.sysconfig
@@ -33,22 +32,21 @@ BuildRequires: lynx pcre-devel sqlite-devel tcp_wrappers
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: libICE-devel libXpm-devel libXt-devel
-PreReq: cyrus-sasl openldap openssl
 
-%description
-Exim is a mail transport agent (MTA) developed at the University of
-Cambridge for use on Unix systems connected to the Internet. In style
-it is similar to Smail 3, but its facilities are more extensive, and
-in particular it has options for verifying incoming sender and
-recipient addresses, for refusing mail from specified hosts, networks,
-or senders, and for controlling mail relaying. Exim is in production
-use at quite a few sites, some of which move hundreds of thousands of
-messages per day.
+%description 
+Exim is a message transfer agent (MTA) developed at the University of
+Cambridge for use on Unix systems connected to the Internet. It is
+freely available under the terms of the GNU General Public Licence. In
+style it is similar to Smail 3, but its facilities are more
+general. There is a great deal of flexibility in the way mail can be
+routed, and there are extensive facilities for checking incoming
+mail. Exim can be installed in place of sendmail, although the
+configuration of exim is quite different to that of sendmail.
 
 %package mon
 Summary: X11 monitor application for exim
 Group: Applications/System
-License: Free
+License: GPL
 
 %description mon
 The Exim Monitor is an optional supplement to the Exim package. It
@@ -59,7 +57,7 @@ interface.
 %package sa
 Summary: Exim SpamAssassin at SMTP time - d/l plugin
 Group: System Environment/Daemons
-Requires: exim
+Requires: exim = %{version}-%{release}
 
 %description sa
 Allows running of SA on incoming mail and rejection at SMTP time as
@@ -84,9 +82,9 @@ cp exim_monitor/EDITME Local/eximon.conf
 
 %build
 %ifnarch s390 s390x
-    make CFLAGS="$RPM_OPT_FLAGS -fpie" LFLAGS=-pie _lib=%{_lib}
+	make CFLAGS="$RPM_OPT_FLAGS -fpie" LFLAGS=-pie _lib=%{_lib}
 %else
-    make CFLAGS="$RPM_OPT_FLAGS -fPIE" LFLAGS=-pie _lib=%{_lib}
+	make CFLAGS="$RPM_OPT_FLAGS -fPIE" LFLAGS=-pie _lib=%{_lib}
 %endif
 
 # build sa-exim
@@ -112,13 +110,13 @@ for i in eximon eximon.bin exim_dumpdb exim_fixdb exim_tidydb \
 	exigrep eximstats exipick exiqgrep exiqsumm \
 	exim_checkaccess convert4r4
 do
-    install -m 0775 $i $RPM_BUILD_ROOT%{_sbindir}
+	install -m 0775 $i $RPM_BUILD_ROOT%{_sbindir}
 done
 
 cd ..
 
 install -m 0644 src/configure.default $RPM_BUILD_ROOT%{_sysconfdir}/exim/exim.conf
-install -m 0644 $RPM_SOURCE_DIR/exim.pam $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/exim
+install -m 0644 %SOURCE11 $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/exim
 
 mkdir -p $RPM_BUILD_ROOT/usr/lib
 pushd $RPM_BUILD_ROOT/usr/lib
@@ -146,17 +144,17 @@ install -d -m 0750 $RPM_BUILD_ROOT%{_var}/log/exim
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
 install -m644 doc/exim.8 $RPM_BUILD_ROOT%{_mandir}/man8/exim.8
 pod2man --center=EXIM --section=8 \
-       $RPM_BUILD_ROOT/usr/sbin/eximstats \
-       $RPM_BUILD_ROOT%{_mandir}/man8/eximstats.8
+	$RPM_BUILD_ROOT/usr/sbin/eximstats \
+	$RPM_BUILD_ROOT%{_mandir}/man8/eximstats.8
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
-install -m 644 $RPM_SOURCE_DIR/exim.sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/exim
+install -m 644 %SOURCE3 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/exim
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d
-install $RPM_SOURCE_DIR/exim.init $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/exim
+install %SOURCE2 $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/exim
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
-install -m 0644 $RPM_SOURCE_DIR/exim.logrotate $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
+install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
 
 # install sa
 cd sa-exim*
@@ -193,12 +191,14 @@ exit 0
 	--initscript exim
 
 if [ ! -f %{_datadir}/ssl/certs/exim.pem ] ; then
-  umask 077
-  FQDN=`hostname`
-  if [ "x${FQDN}" = "x" ]; then
-    FQDN=localhost.localdomain
-  fi
-  cat << EOF | openssl req -new -x509 -days 365 -nodes -out %{_datadir}/ssl/certs/exim.pem -keyout %{_datadir}/ssl/private/exim.pem &>/dev/null
+	umask 077
+	FQDN=`hostname`
+	if [ "x${FQDN}" = "x" ]; then
+		FQDN=localhost.localdomain
+	fi
+	cat << EOF | openssl req -new -x509 -days 365 -nodes \
+		-out %{_datadir}/ssl/certs/exim.pem \
+		-keyout %{_datadir}/ssl/private/exim.pem &>/dev/null
 --
 SomeState
 SomeCity
@@ -207,8 +207,8 @@ SomeOrganizationalUnit
 ${FQDN}
 root@${FQDN}
 EOF
-chown exim.exim %{_datadir}/ssl/{private,certs}/exim.pem
-chmod 600 %{_datadir}/ssl/{private,certs}/exim.pem
+	chown exim.exim %{_datadir}/ssl/{private,certs}/exim.pem
+	chmod 600 %{_datadir}/ssl/{private,certs}/exim.pem
 fi
 
 %preun
@@ -221,10 +221,10 @@ fi
 %postun
 if [ "$1" -ge "1" ]; then
 	/sbin/service exim  condrestart > /dev/null 2>&1
-        mta=`readlink /etc/alternatives/mta`
-        if [ "$mta" == "%{_sbindir}/sendmail.exim" ]; then
-                /usr/sbin/alternatives --set mta %{_sbindir}/sendmail.exim
-        fi
+	mta=`readlink /etc/alternatives/mta`
+	if [ "$mta" == "%{_sbindir}/sendmail.exim" ]; then
+		/usr/sbin/alternatives --set mta %{_sbindir}/sendmail.exim
+	fi
 fi
 
 %files
@@ -266,7 +266,7 @@ fi
 
 %defattr(-,root,root)
 %config %{_sysconfdir}/sysconfig/exim
-%config %{_sysconfdir}/rc.d/init.d/exim
+%{_sysconfdir}/rc.d/init.d/exim
 %config %{_sysconfdir}/logrotate.d/exim
 %config %{_sysconfdir}/pam.d/exim
 
@@ -289,6 +289,9 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Fri Jul  4 2006 David Woodhouse <dwmw2@redhat.com> 4.62-4
+- Package review
+
 * Wed Jun 28 2006 David Woodhouse <dwmw2@redhat.com> 4.62-3
 - BR tcp_wrappers
 
@@ -652,7 +655,7 @@ fi
 - Fixed wrong filenames in logrotate entry. 
 
 * Sun Jul 11 1999 Mark Bergsma <mark@mbergsma.demon.nl>
-- Now using the '%changelog' tag.
+- Now using the '%%changelog' tag.
 - Removed the SysV init links - let chkconfig handle them. 
 - Replaced install -d with mkdir -p
 
