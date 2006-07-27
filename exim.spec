@@ -1,7 +1,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.62
-Release: 4%{?dist}
+Release: 6%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -110,7 +110,7 @@ for i in eximon eximon.bin exim_dumpdb exim_fixdb exim_tidydb \
 	exigrep eximstats exipick exiqgrep exiqsumm \
 	exim_checkaccess convert4r4
 do
-	install -m 0775 $i $RPM_BUILD_ROOT%{_sbindir}
+	install -m 0755 $i $RPM_BUILD_ROOT%{_sbindir}
 done
 
 cd ..
@@ -164,9 +164,9 @@ install -m 644 *.conf $RPM_BUILD_ROOT%{_sysconfdir}/exim
 ln -s sa-exim*.so $RPM_BUILD_ROOT%{_libexecdir}/exim/sa-exim.so
 
 # generate ghost .pem file
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/ssl/{certs,private}
-touch $RPM_BUILD_ROOT/%{_datadir}/ssl/{certs,private}/exim.pem
-chmod 600 $RPM_BUILD_ROOT/%{_datadir}/ssl/{certs,private}/exim.pem
+mkdir -p $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}
+touch $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}/exim.pem
+chmod 600 $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}/exim.pem
 
 
 %clean
@@ -190,15 +190,15 @@ exit 0
 	--slave %{_mandir}/man1/mailq.1.gz mta-mailqman %{_mandir}/man8/exim.8.gz \
 	--initscript exim
 
-if [ ! -f %{_datadir}/ssl/certs/exim.pem ] ; then
+if [ ! -f /etc/pki/tls/certs/exim.pem ] ; then
 	umask 077
 	FQDN=`hostname`
 	if [ "x${FQDN}" = "x" ]; then
 		FQDN=localhost.localdomain
 	fi
 	cat << EOF | openssl req -new -x509 -days 365 -nodes \
-		-out %{_datadir}/ssl/certs/exim.pem \
-		-keyout %{_datadir}/ssl/private/exim.pem &>/dev/null
+		-out /etc/pki/tls/certs/exim.pem \
+		-keyout /etc/pki/tls/private/exim.pem &>/dev/null
 --
 SomeState
 SomeCity
@@ -207,8 +207,8 @@ SomeOrganizationalUnit
 ${FQDN}
 root@${FQDN}
 EOF
-	chown exim.exim %{_datadir}/ssl/{private,certs}/exim.pem
-	chmod 600 %{_datadir}/ssl/{private,certs}/exim.pem
+	chown exim.exim /etc/pki/tls/{private,certs}/exim.pem
+	chmod 600 /etc/pki/tls/{private,certs}/exim.pem
 fi
 
 %preun
@@ -265,16 +265,16 @@ fi
 %config(noreplace) %{_sysconfdir}/exim/exim.conf
 
 %defattr(-,root,root)
-%config %{_sysconfdir}/sysconfig/exim
+%config(noreplace) %{_sysconfdir}/sysconfig/exim
 %{_sysconfdir}/rc.d/init.d/exim
-%config %{_sysconfdir}/logrotate.d/exim
-%config %{_sysconfdir}/pam.d/exim
+%config(noreplace) %{_sysconfdir}/logrotate.d/exim
+%config(noreplace) %{_sysconfdir}/pam.d/exim
 
 %doc ACKNOWLEDGMENTS LICENCE NOTICE README.UPDATING README 
 %doc doc util/unknownuser.sh
 
-%attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) %{_datadir}/ssl/certs/exim.pem
-%attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) %{_datadir}/ssl/private/exim.pem
+%attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/certs/exim.pem
+%attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/private/exim.pem
 
 %files mon
 %defattr(-,root,root)
@@ -289,6 +289,17 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 
 %changelog
+* Wed Jul 19 2006 Thomas Woerner <twoerner@redhat.com> - 4.62-6
+- final version
+- changed permissions of /etc/pki/tls/*/exim.pem to 0600
+- config(noreplace) for /etc/logrotate.d/exim, /etc/pam.d/exim and
+  /etc/sysconfig/exim
+
+* Mon Jul 17 2006 Thomas Woerner <twoerner@redhat.com> - 4.62-5
+- fixed certs path
+- fixed permissions for some binaries
+- fixed pam file to use include instead of pam_stack
+
 * Fri Jul  4 2006 David Woodhouse <dwmw2@redhat.com> 4.62-4
 - Package review
 

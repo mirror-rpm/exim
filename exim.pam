@@ -1,2 +1,3 @@
-auth		required	pam_stack.so service=system-auth
-account		required	pam_stack.so service=system-auth
+#%PAM-1.0
+auth		include	system-auth
+account		include	system-auth
