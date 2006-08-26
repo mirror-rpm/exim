@@ -1,7 +1,11 @@
+# SA-Exim has long since been obsoleted by the proper built-in ACL support
+# from exiscan. Disable it for FC6 unless people scream.
+# %define buildsa 1
+
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.62
-Release: 6%{?dist}
+Version: 4.63
+Release: 1%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -16,7 +20,9 @@ Source2: exim.init
 Source3: exim.sysconfig
 Source4: exim.logrotate
 Source11: exim.pam
+%if 0%{?buildsa}
 Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
+%endif
 Patch4: exim-rhl.patch
 Patch6: exim-4.50-config.patch
 Patch8: exim-4.24-libdir.patch
@@ -25,6 +31,7 @@ Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
 Patch15: exim-4.52-dynamic-pcre.patch
 Patch17: exim-4.61-ldap-deprecated.patch
+Patch18: exim-4.62-dlopen-localscan.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
@@ -65,9 +72,9 @@ well as other nasty things like teergrubing.
 
 %prep
 %setup -q
+%if 0%{?buildsa}
 %setup -q -T -D -a 13
-# patch sa
-cat sa-exim*/localscan_dlopen_exim_4.20_or_better.patch | patch -p1 
+%endif
 cp src/EDITME Local/Makefile
 cp exim_monitor/EDITME Local/eximon.conf
 
@@ -79,6 +86,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch14 -p1 -b .spamd
 %patch15 -p1 -b .pcre
 %patch17 -p1 -b .ldap
+%patch18 -p1 -b .dl
 
 %build
 %ifnarch s390 s390x
@@ -87,11 +95,12 @@ cp exim_monitor/EDITME Local/eximon.conf
 	make CFLAGS="$RPM_OPT_FLAGS -fPIE" LFLAGS=-pie _lib=%{_lib}
 %endif
 
+%if 0%{?buildsa}
 # build sa-exim
 cd sa-exim*
 perl -pi -e 's|\@lynx|HOME=/ /usr/bin/lynx|g;' Makefile
 make SACONF=%{_sysconfdir}/exim/sa-exim.conf CFLAGS="$RPM_OPT_FLAGS -fPIC"
-
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -156,12 +165,14 @@ install %SOURCE2 $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/exim
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
 
+%if 0%{?buildsa}
 # install sa
 cd sa-exim*
 mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/exim
 install *.so  $RPM_BUILD_ROOT%{_libexecdir}/exim
 install -m 644 *.conf $RPM_BUILD_ROOT%{_sysconfdir}/exim
 ln -s sa-exim*.so $RPM_BUILD_ROOT%{_libexecdir}/exim/sa-exim.so
+%endif
 
 # generate ghost .pem file
 mkdir -p $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}
@@ -281,14 +292,20 @@ fi
 %{_sbindir}/eximon
 %{_sbindir}/eximon.bin
 
+%if 0%{?buildsa}
 %files sa
 %defattr(-,root,root)
 %{_libexecdir}/exim
 %config(noreplace) %{_sysconfdir}/exim/sa-*.conf
 %doc sa-exim*/*.html
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
+%endif
 
 %changelog
+* Sat Aug 26 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-1
+- Update to 4.63
+- Disable sa-exim, but leave the dlopen patch in
+
 * Wed Jul 19 2006 Thomas Woerner <twoerner@redhat.com> - 4.62-6
 - final version
 - changed permissions of /etc/pki/tls/*/exim.pem to 0600
