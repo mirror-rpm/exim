@@ -403,6 +403,7 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 - Fix mispatched authenticators (#204591)
 - Other cleanups of config file and extra examples
 - Add exim-clamav subpackage
+- Use existing TLS cert on upgrade, even though it moved
 
 * Sat Aug 26 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-1
 - Update to 4.63
