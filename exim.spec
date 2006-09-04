@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.63
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
