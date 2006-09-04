@@ -80,8 +80,9 @@ Group: System Environment/Daemons
 Requires: exim = %{version}-%{release}
 
 %description sa
-Allows running of SA on incoming mail and rejection at SMTP time as
-well as other nasty things like teergrubing.
+The exim-sa package is an old method for allowing SpamAssassin to be run on
+incoming mail at SMTP time. It is deprecated in favour of the built-in ACL
+support for content scanning.
 
 %package clamav
 Summary: Clam Antivirus scanner dæmon configuration for use with Exim
