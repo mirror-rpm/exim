@@ -86,7 +86,7 @@ well as other nasty things like teergrubing.
 %package clamav
 Summary: Clam Antivirus scanner dæmon configuration for use with Exim
 Group: System Environment/Daemons
-Requires: clamav-server
+Requires: clamav-server exim
 Obsoletes: clamav-exim <= 0.86.2
 Requires(post): /sbin/chkconfig /sbin/service
 Requires(preun): /sbin/chkconfig /sbin/service
@@ -383,9 +383,9 @@ test "$1" != 0 || /sbin/chkconfig --del clamd.exim
 test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 
 %files clamav
-%defattr(0644,root,root,-)
-%attr(0755,root,root)%{_sbindir}/clamd.exim
-%config %{_initrddir}/clamd.exim
+%defattr(-,root,root,-)
+%{_sbindir}/clamd.exim
+%attr(0755,root,root) %config %{_initrddir}/clamd.exim
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/clamd.d/exim.conf
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/sysconfig/clamd.exim
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/logrotate.d/clamd.exim
@@ -393,6 +393,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %endif
 
 %changelog
+* Sun Sep 3 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-3
+- chmod +x /etc/init.d/clamd.exim
+- Make exim-clamav package require exim (since it uses the same uid)
+
 * Sun Sep 3 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-2
 - Add procmail router and transport (#146848)
 - Add localhost and localhost.localdomain as local domains (#198511)
