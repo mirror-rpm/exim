@@ -1,11 +1,18 @@
 # SA-Exim has long since been obsoleted by the proper built-in ACL support
 # from exiscan. Disable it for FC6 unless people scream.
-# %define buildsa 1
+%if 0%{?fedora} < 6
+%define buildsa 1
+%endif
+
+# Build clamav subpackage for FC5 and above.
+%if 0%{?fedora} >= 5
+%define buildclam 1
+%endif
 
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.63
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -15,6 +22,9 @@ Provides: /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail
 Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(preun): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
+%if 0%{?buildclam}
+BuildRequires: clamav-devel
+%endif
 Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.bz2
 Source2: exim.init
 Source3: exim.sysconfig
@@ -32,6 +42,9 @@ Patch14: exim-4.50-spamdconf.patch
 Patch15: exim-4.52-dynamic-pcre.patch
 Patch17: exim-4.61-ldap-deprecated.patch
 Patch18: exim-4.62-dlopen-localscan.patch
+Patch19: exim-4.63-procmail.patch
+Patch20: exim-4.63-allow-filter.patch
+Patch21: exim-4.63-localhost-is-local.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
@@ -70,6 +83,31 @@ Requires: exim = %{version}-%{release}
 Allows running of SA on incoming mail and rejection at SMTP time as
 well as other nasty things like teergrubing.
 
+%package clamav
+Summary: Clam Antivirus scanner dæmon configuration for use with Exim
+Group: System Environment/Daemons
+Requires: clamav-server
+Obsoletes: clamav-exim <= 0.86.2
+Requires(post): /sbin/chkconfig /sbin/service
+Requires(preun): /sbin/chkconfig /sbin/service
+
+%description clamav
+This package contains configuration files which invoke a copy of the
+clamav dæmon for use with Exim. It can be activated by adding (or
+uncommenting)
+
+   av_scanner = clamd:%{_var}/run/clamd.exim/clamd.sock
+
+in your exim.conf, and using the 'malware' condition in the DATA ACL,
+as follows:
+
+   deny message = This message contains malware ($malware_name)
+      malware = *
+
+For further details of Exim content scanning, see chapter 40 of the Exim
+specification:
+http://www.exim.org/exim-html-4.62/doc/html/spec_html/ch40.html#SECTscanvirus
+
 %prep
 %setup -q
 %if 0%{?buildsa}
@@ -87,6 +125,9 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch15 -p1 -b .pcre
 %patch17 -p1 -b .ldap
 %patch18 -p1 -b .dl
+%patch19 -p1 -b .procmail
+%patch20 -p1 -b .filter
+%patch21 -p1 -b .localhost
 
 %build
 %ifnarch s390 s390x
@@ -159,8 +200,8 @@ pod2man --center=EXIM --section=8 \
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
 install -m 644 %SOURCE3 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/exim
 
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d
-install %SOURCE2 $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/exim
+mkdir -p $RPM_BUILD_ROOT%{_initrddir}
+install %SOURCE2 $RPM_BUILD_ROOT%{_initrddir}/exim
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
@@ -179,12 +220,41 @@ mkdir -p $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}
 touch $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}/exim.pem
 chmod 600 $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}/exim.pem
 
+%if 0%{?buildclam}
+# Munge the clamav init and config files from clamav-devel. This really ought
+# to be a subpackage of clamav, but this hack will have to do for now.
+function clamsubst() {
+	 sed -e "s!<SERVICE>!$3!g;s!<USER>!$4!g;""$5" %{_datadir}/clamav/template/"$1" >"$RPM_BUILD_ROOT$2"
+}
+
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/clamd.d
+clamsubst clamd.conf %{_sysconfdir}/clamd.d/exim.conf exim exim \
+       's!^##*\(\(LogFile\|LocalSocket\|PidFile\|User\)\s\|\(StreamSaveToDisk\|ScanMail\|LogTime\|ScanArchive\)$\)!\1!;s!^Example!#Example!;'
+
+clamsubst clamd.init %{_initrddir}/clamd.exim exim exim ''
+clamsubst clamd.logrotate %{_sysconfdir}/logrotate.d/clamd.exim exim exim ''
+cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/clamd.exim
+CLAMD_CONFIG='%_sysconfdir/clamd.d/exim.conf'
+CLAMD_SOCKET=%{_var}/run/clamd.exim/clamd.sock
+EOF
+ln -sf clamd $RPM_BUILD_ROOT/usr/sbin/clamd.exim
+
+mkdir -p $RPM_BUILD_ROOT%{_var}/run/clamd.exim
+%endif
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
 %{_sbindir}/useradd -d %{_var}/spool/exim -s /sbin/nologin -G mail -M -r -u 93 exim 2>/dev/null
+# Copy TLS certs from old location to new -- don't move them, because the
+# config file may be modified and may be pointing to the old location.
+if [ ! -f /etc/pki/tls/certs/exim.pem -a -f %{_datadir}/ssl/certs/exim.pem ] ; then
+   cp %{_datadir}/ssl/certs/exim.pem /etc/pki/tls/certs/exim.pem
+   cp %{_datadir}/ssl/private/exim.pem /etc/pki/tls/private/exim.pem
+fi
+
 exit 0
 
 %post
@@ -301,7 +371,35 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 %endif
 
+%if 0%{?buildclam}
+%post clamav
+/sbin/chkconfig --add clamd.exim
+
+%preun clamav
+test "$1" != 0 || %{_initrddir}/clamd.exim stop &>/dev/null || :
+test "$1" != 0 || /sbin/chkconfig --del clamd.exim
+
+%postun clamav
+test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
+
+%files clamav
+%defattr(0644,root,root,-)
+%attr(0755,root,root)%{_sbindir}/clamd.exim
+%config %{_initrddir}/clamd.exim
+%config(noreplace) %verify(not mtime) %{_sysconfdir}/clamd.d/exim.conf
+%config(noreplace) %verify(not mtime) %{_sysconfdir}/sysconfig/clamd.exim
+%config(noreplace) %verify(not mtime) %{_sysconfdir}/logrotate.d/clamd.exim
+%attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
+%endif
+
 %changelog
+* Sun Sep 3 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-2
+- Add procmail router and transport (#146848)
+- Add localhost and localhost.localdomain as local domains (#198511)
+- Fix mispatched authenticators (#204591)
+- Other cleanups of config file and extra examples
+- Add exim-clamav subpackage
+
 * Sat Aug 26 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-1
 - Update to 4.63
 - Disable sa-exim, but leave the dlopen patch in

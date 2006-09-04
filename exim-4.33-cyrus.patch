@@ -5,9 +5,9 @@
  
  
 +# This transport is used to deliver local mail to cyrus IMAP server via UNIX 
-+# socket.
++# socket. You'll need to configure the 'localuser' router above to use it.
 +#
-+#local_delivery:
++#lmtp_delivery:
 +#  driver = lmtp
 +#  command = "/usr/lib/cyrus-imapd/deliver -l"
 +#  batch_max = 20

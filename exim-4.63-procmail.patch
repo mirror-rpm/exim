@@ -1,0 +1,32 @@
+--- exim-4.63/src/configure.default~	2006-09-03 15:02:28.000000000 -0700
++++ exim-4.63/src/configure.default	2006-09-03 15:46:53.000000000 -0700
+@@ -680,6 +680,12 @@ userforward:
+   pipe_transport = address_pipe
+   reply_transport = address_reply
+ 
++procmail:
++  driver = accept
++  check_local_user
++  require_files = ${local_part}:+${home}/.procmailrc:/usr/bin/procmail
++  transport = procmail
++  no_verify
+ 
+ # This router matches local user mailboxes. If the router fails, the error
+ # message is "Unknown user".
+@@ -717,6 +723,16 @@ begin transports
+ remote_smtp:
+   driver = smtp
+ 
++# This transport invokes procmail to deliver mail
++procmail:
++  driver = pipe
++  command = "/usr/bin/procmail -d $local_part"
++  return_path_add
++  delivery_date_add
++  envelope_to_add
++  user = $local_part
++  initgroups
++  return_output
+ 
+ # This transport is used for local delivery to user mailboxes in traditional
+ # BSD mailbox format. By default it will be run under the uid and gid of the

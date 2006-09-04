@@ -1,0 +1,11 @@
+--- exim-4.63/src/configure.default~	2006-09-03 15:02:28.000000000 -0700
++++ exim-4.63/src/configure.default	2006-09-03 15:46:53.000000000 -0700
+@@ -672,7 +672,7 @@ userforward:
+ # local_part_suffix = +* : -*
+ # local_part_suffix_optional
+   file = $home/.forward
+-# allow_filter
++  allow_filter
+   no_verify
+   no_expn
+   check_ancestor

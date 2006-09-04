@@ -1,25 +1,40 @@
 --- exim-4.43/src/configure.default.pam	2004-12-16 13:27:55.000000000 +0000
 +++ exim-4.43/src/configure.default	2004-12-16 15:41:34.000000000 +0000
-@@ -238,6 +238,40 @@
+@@ -160,7 +160,7 @@ acl_smtp_data = acl_check_data
+ 
+ # Allow any client to use TLS.
+ 
+-# tls_advertise_hosts = *
++tls_advertise_hosts = *
+ 
+ # Specify the location of the Exim server's TLS certificate and private key.
+ # The private key must not be encrypted (password protected). You can put
+@@ -168,8 +168,8 @@ acl_smtp_data = acl_check_data
+ # need the first setting, or in separate files, in which case you need both
+ # options.
+ 
+-# tls_certificate = /etc/ssl/exim.crt
+-# tls_privatekey = /etc/ssl/exim.pem
++tls_certificate = /etc/pki/tls/certs/exim.pem
++tls_privatekey = /etc/pki/tls/private/exim.pem
+ 
+ # In order to support roaming users who wish to send email from anywhere,
+ # you may want to make Exim listen on other ports as well as port 25, in
+@@ -180,8 +180,8 @@ acl_smtp_data = acl_check_data
+ # them you should also allow TLS-on-connect on the traditional but
+ # non-standard port 465.
+ 
+-# daemon_smtp_ports = 25 : 465 : 587
+-# tls_on_connect_ports = 465
++daemon_smtp_ports = 25 : 465 : 587
++tls_on_connect_ports = 465
+ 
+ 
+ # Specify the domain you want to be added to all unqualified addresses
+@@ -238,6 +238,24 @@
  
  timeout_frozen_after = 7d
  
-+# This option, if uncommented, allows Exim to listen on ports other than
-+# just the default port 25. For example, you may wish Exim to sldo listen
-+# on the 'message submission' port 587 for roaming clients which cannot
-+# use port 25 directly from their current location. (cf. RFC 2476).
-+#
-+# daemon_smtp_ports = smtp : msa
-+
-+# This option instructs Exim to advertise the availability of encrypted
-+# connections to all hosts, and uses the certificate which is automatically
-+# generated when the RPM is installed. You can disable TLS, should you need
-+# to do so, by commenting out the three lines below.
-+
-+tls_advertise_hosts = *
-+tls_certificate = /etc/pki/tls/certs/exim.pem
-+tls_privatekey = /etc/pki/tls/private/exim.pem
-+
 +# This setting, if uncommented, allows users to authenticate using
 +# their system passwords against saslauthd if they connect over a
 +# secure connection. If you have network logins such as NIS or
@@ -41,23 +56,21 @@
  
  
  ######################################################################
-@@ -657,6 +691,19 @@
+@@ -850,7 +837,7 @@ begin authenticators
+ #  driver                     = plaintext
+ #  server_set_id              = $auth2
+ #  server_prompts             = :
+-#  server_condition           = Authentication is not yet configured
++#  server_condition           = ${if saslauthd{{$2}{$3}{smtp}} {1}}
+ #  server_advertise_condition = ${if def:tls_cipher }
  
- begin authenticators
- 
-+plain:
-+   driver = plaintext
-+   public_name = PLAIN
-+   server_prompts = :
-+   server_condition = "${if saslauthd{{$2}{$3}{smtp}} {1}}"
-+   server_set_id = $2
-+
-+login:
-+   driver = plaintext
-+   public_name = LOGIN
-+   server_prompts = "Username:: : Password::"
-+   server_condition = "${if saslauthd{{$1}{$2}{smtp}} {1}}"
-+   server_set_id = $1
+ # LOGIN authentication has traditional prompts and responses. There is no
+@@ -862,7 +849,7 @@ begin authenticators
+ #  driver                     = plaintext
+ #  server_set_id              = $auth1
+ #  server_prompts             = <| Username: | Password:
+-#  server_condition           = Authentication is not yet configured
++#  server_condition           = ${if saslauthd{{$1}{$2}{smtp}} {1}}
+ #  server_advertise_condition = ${if def:tls_cipher }
  
  
- ######################################################################

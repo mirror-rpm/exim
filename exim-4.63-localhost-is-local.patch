@@ -1,0 +1,11 @@
+--- exim-4.63/src/configure.default~	2006-09-03 19:31:28.000000000 -0700
++++ exim-4.63/src/configure.default	2006-09-03 19:37:42.000000000 -0700
+@@ -56,7 +56,7 @@
+ # +local_domains, +relay_to_domains, and +relay_from_hosts, respectively. They
+ # are all colon-separated lists:
+ 
+-domainlist local_domains = @
++domainlist local_domains = @ : localhost : localhost.localdomain
+ domainlist relay_to_domains =
+ hostlist   relay_from_hosts = 127.0.0.1
+ 
