@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.63
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -394,6 +394,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %endif
 
 %changelog
+* Mon Sep 25 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-4
+- Set home_directory on lmtp_transport by default
+
 * Sun Sep 3 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-3
 - chmod +x /etc/init.d/clamd.exim
 - Make exim-clamav package require exim (since it uses the same uid)

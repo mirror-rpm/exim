@@ -1,6 +1,6 @@
 --- exim-4.33/src/configure.default.cyrus	2004-07-02 15:00:27.941635455 +0200
 +++ exim-4.33/src/configure.default	2004-07-02 15:41:39.505133889 +0200
-@@ -595,6 +595,15 @@
+@@ -595,6 +595,16 @@
    driver = autoreply
  
  
@@ -8,6 +8,7 @@
 +# socket. You'll need to configure the 'localuser' router above to use it.
 +#
 +#lmtp_delivery:
++#  home_directory = /var/spool/imap
 +#  driver = lmtp
 +#  command = "/usr/lib/cyrus-imapd/deliver -l"
 +#  batch_max = 20
