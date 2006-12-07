@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.63
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -344,6 +344,7 @@ fi
 %dir %{_var}/log/exim
 
 %defattr(-,root,mail)
+%dir %{_sysconfdir}/exim
 %config(noreplace) %{_sysconfdir}/exim/exim.conf
 
 %defattr(-,root,root)
@@ -394,8 +395,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %endif
 
 %changelog
+* Tue Oct 17 2006 Christian Iseli <Christian.Iseli@licr.org> 4.63-6
+- Own /etc/exim directory
+
 * Thu Oct 05 2006 Christian Iseli <Christian.Iseli@licr.org> 4.63-5
- - rebuilt for unwind info generation, broken in gcc-4.1.1-21
+- rebuilt for unwind info generation, broken in gcc-4.1.1-21
 
 * Mon Sep 25 2006 David Woodhouse <dwmw2@infradead.org> - 4.63-4
 - Set home_directory on lmtp_transport by default
