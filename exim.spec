@@ -48,7 +48,7 @@ Patch21: exim-4.63-localhost-is-local.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
-BuildRequires: lynx pcre-devel sqlite-devel tcp_wrappers
+BuildRequires: lynx pcre-devel sqlite-devel tcp_wrappers-devel
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: libICE-devel libXpm-devel libXt-devel
