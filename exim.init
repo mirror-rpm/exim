@@ -73,14 +73,21 @@ case "$1" in
   restart)
 	restart
 	;;
+  reload)
+	if [ -f /var/lock/subsys/exim ]; then
+	    echo -n $"Reloading exim:"
+	    killproc exim -HUP
+	    echo
+	fi
+	;;
   condrestart)
- 	[ -f /var/lock/subsys/exim ] && restart || :
+	[ -f /var/lock/subsys/exim ] && restart || :
 	;;
   status)
 	status exim
 	;;
   *)
-	echo $"Usage: $0 {start|stop|restart|status|condrestart}"
+	echo $"Usage: $0 {start|stop|restart|reload|status|condrestart}"
 	exit 1
 esac
 

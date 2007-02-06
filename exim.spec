@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.63
-Release: 6%{?dist}
+Version: 4.66
+Release: 1%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -395,6 +395,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %endif
 
 %changelog
+* Tue Feb  6 2007 David Woodhouse <dwmw2@infradead.org> 4.66-1
+- Update to 4.66
+- Add dovecot authenticator
+- Add 'reload' in init script (#219174)
+
 * Tue Oct 17 2006 Christian Iseli <Christian.Iseli@licr.org> 4.63-6
 - Own /etc/exim directory
 
