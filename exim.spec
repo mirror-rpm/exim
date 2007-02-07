@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.66
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -33,6 +33,10 @@ Source11: exim.pam
 %if 0%{?buildsa}
 Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
 %endif
+Source20: exim-greylist.conf.inc
+Source21: mk-greylist-db.sql
+Source22: greylist-tidy.sh
+
 Patch4: exim-rhl.patch
 Patch6: exim-4.50-config.patch
 Patch8: exim-4.24-libdir.patch
@@ -45,6 +49,7 @@ Patch18: exim-4.62-dlopen-localscan.patch
 Patch19: exim-4.63-procmail.patch
 Patch20: exim-4.63-allow-filter.patch
 Patch21: exim-4.63-localhost-is-local.patch
+Patch22: exim-4.66-greylist-conf.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
@@ -105,9 +110,34 @@ as follows:
    deny message = This message contains malware ($malware_name)
       malware = *
 
-For further details of Exim content scanning, see chapter 40 of the Exim
+For further details of Exim content scanning, see chapter 41 of the Exim
 specification:
-http://www.exim.org/exim-html-4.62/doc/html/spec_html/ch40.html#SECTscanvirus
+http://www.exim.org/exim-html-%{version}/doc/html/spec_html/ch41.html
+
+%package greylist
+Summary: Example configuration for greylisting using Exim
+Group: System Environment/Daemons
+Requires: sqlite exim %{_sysconfdir}/cron.daily
+
+%description greylist
+This package contains a simple example of how to do greylisting in Exim's
+ACL configuration. It contains a cron job to remove old entries from the
+greylisting database, and an ACL subroutine which needs to be included
+from the main exim.conf file.
+
+To enable greylisting, install this package and then uncomment the lines
+in Exim's configuration /etc/exim.conf which enable it. You need to
+uncomment at least two lines -- the '.include' directive which includes
+the new ACL subroutine, and the line which invokes the new subroutine.
+
+By default, this implementation only greylists mails which appears
+'suspicious' in some way. During normal processing of the ACLs we collect
+a list of 'offended' which it's committed, which may include having
+SpamAssassin points, lacking a Message-ID: header, coming from a blacklisted
+host, etc. There are examples of these in the default configuration file,
+mostly commented out. These should be sufficient for you to you trigger
+greylisting for whatever 'offences' you can dream of, or even to make 
+greylisting unconditional.
 
 %prep
 %setup -q
@@ -129,6 +159,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch19 -p1 -b .procmail
 %patch20 -p1 -b .filter
 %patch21 -p1 -b .localhost
+%patch22 -p1 -b .grey
 
 %build
 %ifnarch s390 s390x
@@ -243,6 +274,12 @@ ln -sf clamd $RPM_BUILD_ROOT/usr/sbin/clamd.exim
 mkdir -p $RPM_BUILD_ROOT%{_var}/run/clamd.exim
 %endif
 
+# Set up the greylist subpackage
+install -m644 %{SOURCE20} $RPM_BUILD_ROOT/%_sysconfdir/exim/exim-greylist.conf.inc
+install -m644 %{SOURCE21} $RPM_BUILD_ROOT/%_sysconfdir/exim/mk-greylist-db.sql
+mkdir -p $RPM_BUILD_ROOT/%_sysconfdir/cron.daily
+install -m755 %{SOURCE22} $RPM_BUILD_ROOT/%_sysconfdir/cron.daily/greylist-tidy.sh
+touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -307,6 +344,13 @@ if [ "$1" -ge "1" ]; then
 	if [ "$mta" == "%{_sbindir}/sendmail.exim" ]; then
 		/usr/sbin/alternatives --set mta %{_sbindir}/sendmail.exim
 	fi
+fi
+
+%post greylist
+if [ ! -r %{_var}/spool/exim/db/greylist.db ]; then
+   sqlite3 %{_var}/spool/exim/db/greylist.db < %{_sysconfdir}/exim/mk-greylist-db.sql
+   chown exim.exim %{_var}/spool/exim/db/greylist.db
+   chmod 0660 %{_var}/spool/exim/db/greylist.db
 fi
 
 %files
@@ -394,7 +438,16 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
 %endif
 
+%files greylist
+%config %{_sysconfdir}/exim/exim-greylist.conf.inc
+%ghost %{_var}/spool/exim/db/greylist.db
+%{_sysconfdir}/exim/mk-greylist-db.sql
+%{_sysconfdir}/cron.daily/greylist-tidy.sh
+
 %changelog
+* Wed Feb  7 2007 David Woodhouse <dwmw2@infradead.org> 4.66-2
+- Add example of greylisting implementation in Exim ACLs
+
 * Tue Feb  6 2007 David Woodhouse <dwmw2@infradead.org> 4.66-1
 - Update to 4.66
 - Add dovecot authenticator
