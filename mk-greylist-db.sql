@@ -1,7 +1,8 @@
 CREATE TABLE resenders (
-	host		TEXT PRIMARY KEY,
+	host		TEXT,
 	helo		TEXT,
 	time		INTEGER
+    PRIMARY KEY (host, helo)
 );
 
 CREATE TABLE greylist (

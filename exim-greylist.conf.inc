@@ -19,10 +19,10 @@ GREYDB=/var/spool/exim/db/greylist.db
 # database table for these 'known resenders' looks like this:
 #
 # CREATE TABLE resenders (
-#        host            TEXT PRIMARY KEY,
+#        host            TEXT,
 #        helo            TEXT,
-#        time            INTEGER
-# );
+#        time            INTEGER,
+#    PRIMARY KEY (host, helo) );
 #
 # To remember mail we've rejected, we create an 'identity' from its sender
 # and recipient addresses and its Message-ID: header. We don't include the
@@ -37,11 +37,10 @@ GREYDB=/var/spool/exim/db/greylist.db
 # looks like this:
 #
 # CREATE TABLE greylist (
-#        id              TEXT PRIMARY KEY,
+#        id              TEXT,
 #        expire          INTEGER,
 #        host            TEXT,
-#        helo            TEXT
-# );
+#        helo            TEXT);
 #
 
 greylist_mail:
