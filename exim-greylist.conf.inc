@@ -67,18 +67,15 @@ greylist_mail:
 
   # If the mail isn't already the database, defer it with an appropriate 
   # message, and add it. Do the addition to the greylist database as a 
-  # hackish side-effect of the log-message, appending 'success' or 'failure'
-  # to the log-message depending on whether the SQL worked (which it always
-  # should). This is where the 5 minute timeout is set ($tod_epoch + 300)
-  # should you wish to change it.
+  # hackish side-effect of the log-message. This is where the 5 minute
+  # timeout is set ($tod_epoch + 300), should you wish to change it.
   defer condition = ${if eq {$acl_m_greyexpiry}{} {1}}
-	log_message = Greylisted $h_message-id: for offences: ${sg {$acl_m_greylistreasons}{\n}{,}}:\
+	log_message = Greylisted $h_message-id: for offences: ${sg {$acl_m_greylistreasons}{\n}{,}}\
 		${lookup sqlite {GREYDB INSERT INTO greylist \
 					VALUES ( '$acl_m_greyident', \
 						 '${eval10:$tod_epoch+300}', \
 						 '$sender_host_address', \
-						 '${quote_sqlite:$sender_helo_name}' );}\
-			{success}{failure}}
+						 '${quote_sqlite:$sender_helo_name}' );}}
         message = Your mail was considered suspicious for the following reason(s):\n$acl_m_greylistreasons \
 		  The mail has been greylisted for 5 minutes, after which it should be accepted. \
 		  We apologise for the inconvenience. Your mail system should keep the mail on \

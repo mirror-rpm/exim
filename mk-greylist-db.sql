@@ -1,7 +1,7 @@
 CREATE TABLE resenders (
 	host		TEXT,
 	helo		TEXT,
-	time		INTEGER
+	time		INTEGER,
     PRIMARY KEY (host, helo)
 );
 
