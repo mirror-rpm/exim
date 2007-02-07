@@ -99,6 +99,6 @@ greylist_mail:
   # evaluating a condition which comes out as '1' whether the database bit succeeds or not.
   accept condition = ${lookup sqlite {GREYDB INSERT INTO resenders \
 			VALUES ( '$sender_host_address', \
-				 '${quote_sqlite:$sender_helo_name}',
+				 '${quote_sqlite:$sender_helo_name}', \
 				 '$tod_epoch' ); }{1}{1}}
 
