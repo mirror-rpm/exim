@@ -1,0 +1,78 @@
+--- exim-4.66/src/configure.default.grey	2007-02-07 12:01:16.000000000 +0000
++++ exim-4.66/src/configure.default	2007-02-07 12:09:06.000000000 +0000
+@@ -435,7 +435,8 @@ acl_check_rcpt:
+   # There are no default checks on DNS black lists because the domains that
+   # contain these lists are changing all the time. However, here are two
+   # examples of how you can get Exim to perform a DNS black list lookup at this
+-  # point. The first one denies, whereas the second just warns.
++  # point. The first one denies, whereas the second just warns. The third
++  # triggers greylisting for any host in the blacklist.
+   #
+   # deny    message       = rejected because $sender_host_address is in a black list at $dnslist_domain\n$dnslist_text
+   #         dnslists      = black.list.example
+@@ -443,6 +444,10 @@ acl_check_rcpt:
+   # warn    dnslists      = black.list.example
+   #         add_header    = X-Warning: $sender_host_address is in a black list at $dnslist_domain
+   #         log_message   = found in $dnslist_domain
++  #
++  # warn    dnslists      = black.list.example
++  #         set acl_m_greylistreasons = Host found in $dnslist_domain\n$acl_m_greylistreasons
++  #
+   #############################################################################
+ 
+   #############################################################################
+@@ -456,6 +461,10 @@ acl_check_rcpt:
+   # require verify = csa
+   #############################################################################
+ 
++  # Alternatively, greylist for it:
++  # warn !verify = csa
++  #      set acl_m_greylistreasons = Host failed CSA check\n$acl_m_greylistreasons
++
+   # At this point, the address has passed all the checks that have been
+   # configured, so we accept it unconditionally.
+ 
+@@ -481,6 +490,12 @@ acl_check_data:
+   # deny    condition  = ${if !def:h_Message-ID: {1}}
+   #         message    = RFC2822 says that all mail SHOULD have a Message-ID header.\n\
+   #                      Most messages without it are spam, so your mail has been rejected.
++  #
++  # Alternatively if we're feeling more lenient we could just use it to 
++  # trigger greylisting instead:
++
++  warn    condition  = ${if !def:h_Message-ID: {1}}
++          set acl_m_greylistreasons = Message lacks Message-Id: header. Consult RFC2822.\n$acl_m_greylistreasons
+ 
+   # Deny if the message contains a virus. Before enabling this check, you
+   # must install a virus scanner and set the av_scanner option above.
+@@ -515,8 +530,30 @@ acl_check_data:
+   #         message   = Your message scored $spam_score SpamAssassin point. Report follows:\n\
+   #  	    	        $spam_report
+ 
++  # Trigger greylisting (if enabled) if the SpamAssassin score is greater than 0.5
++  #
++  # warn    condition = ${if >{$spam_score_int}{5} {1}}
++  #         set acl_m_greylistreasons = Message has $spam_score SpamAssassin points\n$acl_m_greylistreasons
++
++
++  # If you want to greylist _all_ mail rather than only mail which looks like there
++  # might be something wrong with it, then you can do this...
++  #
++  # warn set acl_m_greylistreasons = We greylist all mail\n$acl_m_greylistreasons
++
++  # Now, invoke the greylisting. For this you need to have installed the exim-greylist
++  # package which contains this subroutine, and you need to uncomment the bit below
++  # which includes it too. Whenever the $acl_m_greylistreasons variable is non-empty,
++  # greylisting will kick in and will defer the mail to check if the sender is a
++  # proper mail which which retries, or whether it's a zombie. For more details, see
++  # the exim-greylist.conf.inc file itself.
++  #
++  # require acl = greylist_mail
++
+   accept
+ 
++# To enable the greylisting, also uncomment this line: 
++# .include /etc/exim/exim-greylist.conf.inc
+ 
+ acl_check_mime:
+ 
