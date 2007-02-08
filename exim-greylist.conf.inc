@@ -1,4 +1,4 @@
-# $Id: acl-greylist-sqlite,v 1.1 2006/06/13 13:56:54 dwmw2 Exp $
+# $Id: exim-greylist.conf.inc,v 1.5 2007/02/08 09:32:02 dwmw2 Exp $
 
 GREYDB=/var/spool/exim/db/greylist.db
 
@@ -72,7 +72,7 @@ greylist_mail:
   warn  condition = ${if eq {$acl_m_greyexpiry}{} {1}}
 	set acl_m_dontcare = ${lookup sqlite {GREYDB INSERT INTO greylist \
 					VALUES ( '$acl_m_greyident', \
-						 '${eval10:$tod_epoch+30}', \
+						 '${eval10:$tod_epoch+300}', \
 						 '$sender_host_address', \
 						 '${quote_sqlite:$sender_helo_name}' );}}
 
