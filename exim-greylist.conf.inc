@@ -56,7 +56,7 @@ greylist_mail:
 			       WHERE helo='${quote_sqlite:$sender_helo_name}' \
 			       AND host='$sender_host_address';
 
-  # Generate the mail identity (as described above)
+  # Generate a hashed 'identity' for the mail, as described above.
   warn set acl_m_greyident = ${hash{20}{62}{$sender_address$recipients$h_message-id:}}
 
   # Attempt to look up this mail in the greylist database. If it's there,
@@ -65,23 +65,39 @@ greylist_mail:
   warn set acl_m_greyexpiry = ${lookup sqlite {GREYDB SELECT expire FROM greylist \
 				WHERE id='${quote_sqlite:$acl_m_greyident}';}{$value}}
 
-  # If the mail isn't already the database, defer it with an appropriate 
-  # message, and add it. Do the addition to the greylist database as a 
-  # hackish side-effect of the log-message. This is where the 5 minute
-  # timeout is set ($tod_epoch + 300), should you wish to change it.
-  defer condition = ${if eq {$acl_m_greyexpiry}{} {1}}
-	log_message = Greylisted $h_message-id: for offences: ${sg {$acl_m_greylistreasons}{\n}{,}}\
-		${lookup sqlite {GREYDB INSERT INTO greylist \
+  # If the mail isn't already the database -- i.e. if the $acl_m_greyexpiry
+  # variable we just looked up is empty -- then try to add it now. This is 
+  # where the 5 minute timeout is set ($tod_epoch + 300), should you wish
+  # to change it.
+  warn  condition = ${if eq {$acl_m_greyexpiry}{} {1}}
+	set acl_m_dontcare = ${lookup sqlite {GREYDB INSERT INTO greylist \
 					VALUES ( '$acl_m_greyident', \
-						 '${eval10:$tod_epoch+300}', \
+						 '${eval10:$tod_epoch+30}', \
 						 '$sender_host_address', \
 						 '${quote_sqlite:$sender_helo_name}' );}}
+
+  # Be paranoid, and check if the insertion succeeded (by doing another lookup).
+  # Otherwise, if there's a database error we might end up deferring for ever.
+  defer condition = ${if eq {$acl_m_greyexpiry}{} {1}}
+        condition = ${lookup sqlite {GREYDB SELECT expire FROM greylist \
+				WHERE id='${quote_sqlite:$acl_m_greyident}';} {1}}
         message = Your mail was considered suspicious for the following reason(s):\n$acl_m_greylistreasons \
 		  The mail has been greylisted for 5 minutes, after which it should be accepted. \
 		  We apologise for the inconvenience. Your mail system should keep the mail on \
 		  its queue and retry. When that happens, your system will be added to the list \
 		  genuine mail systems, and mail from it should not be greylisted any more. \
 		  In the event of problems, please contact postmaster@$qualify_domain
+	log_message = Greylisted <$h_message-id:> from <$sender_address> for offences: ${sg {$acl_m_greylistreasons}{\n}{,}}
+
+  # Handle the error case (which should never happen, but would be bad if it did).
+  # First by whining about it in the logs, so the admin can deal with it...
+  warn   condition = ${if eq {$acl_m_greyexpiry}{} {1}}
+         log_message = Greylist insertion failed. Bypassing greylist.
+  # ... and then by just accepting the message.
+  accept condition = ${if eq {$acl_m_greyexpiry}{} {1}}
+
+  # OK, we've dealt with the "new" messages. Now we deal with messages which
+  # _were_ already in the database...
 
   # If the message was already listed but its time hasn't yet expired, keep rejecting it
   defer condition = ${if > {$acl_m_greyexpiry}{$tod_epoch}}
@@ -90,11 +106,15 @@ greylist_mail:
 		  Reason(s) for greylisting: \n$acl_m_greylistreasons
 
   # The message was listed but it's been more than five minutes. Accept it now and whitelist
-  # the sending host by its { IP, HELO } so that we don't delay its mail again. The addition
-  # to the database is again done as a hackish side-effect; this time a side-effect of
-  # evaluating a condition which comes out as '1' whether the database bit succeeds or not.
-  accept condition = ${lookup sqlite {GREYDB INSERT INTO resenders \
-			VALUES ( '$sender_host_address', \
-				 '${quote_sqlite:$sender_helo_name}', \
-				 '$tod_epoch' ); }{1}{1}}
+  # the _original_ sending host by its { IP, HELO } so that we don't delay its mail again.
+  warn set acl_m_orighost = ${lookup sqlite {GREYDB SELECT host FROM greylist \
+				WHERE id='${quote_sqlite:$acl_m_greyident}';}{$value}}
+       set acl_m_orighelo = ${lookup sqlite {GREYDB SELECT helo FROM greylist \
+				WHERE id='${quote_sqlite:$acl_m_greyident}';}{$value}}
+       set acl_m_dontcare = ${lookup sqlite {GREYDB INSERT INTO resenders \
+				VALUES ( '$acl_m_orighost', \
+					 '${quote_sqlite:$acl_m_orighelo}', \
+					 '$tod_epoch' ); }}
+       logwrite = Added host $acl_m_orighost with HELO '$acl_m_orighelo' to known resenders
 
+  accept
