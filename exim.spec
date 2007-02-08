@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.66
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -445,6 +445,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Feb  8 2007 David Woodhouse <dwmw2@infradead.org> 4.66-3
+- Improve documentation and error handling in greylist ACL.
+- Require HELO before mail
+
 * Wed Feb  7 2007 David Woodhouse <dwmw2@infradead.org> 4.66-2
 - Add example of greylisting implementation in Exim ACLs
 
