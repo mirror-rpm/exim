@@ -5,7 +5,6 @@ CREATE TABLE resenders (
     PRIMARY KEY (host, helo)
 );
 
-
 CREATE TABLE greylist (
 	id		TEXT PRIMARY KEY,
 	expire		INTEGER,
