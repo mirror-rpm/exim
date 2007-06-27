@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.66
-Release: 3%{?dist}
+Version: 4.67
+Release: 1%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -50,13 +50,14 @@ Patch19: exim-4.63-procmail.patch
 Patch20: exim-4.63-allow-filter.patch
 Patch21: exim-4.63-localhost-is-local.patch
 Patch22: exim-4.66-greylist-conf.patch
+Patch23: exim-4.67-smarthost-config.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
 BuildRequires: lynx pcre-devel sqlite-devel tcp_wrappers-devel
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
-BuildRequires: libICE-devel libXpm-devel libXt-devel
+BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
 
 %description 
 Exim is a message transfer agent (MTA) developed at the University of
@@ -160,6 +161,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch20 -p1 -b .filter
 %patch21 -p1 -b .localhost
 %patch22 -p1 -b .grey
+%patch23 -p1 -b .smarthost
 
 %build
 %ifnarch s390 s390x
@@ -445,6 +447,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jun 27 2007 David Woodhouse <dwmw2@infradead.org> 4.67-1
+- Update to 4.67
+- Add config example for using a smarthost, with SMTP AUTH.
+
 * Thu Feb  8 2007 David Woodhouse <dwmw2@infradead.org> 4.66-3
 - Improve documentation and error handling in greylist ACL.
 - Require HELO before mail

@@ -1,0 +1,70 @@
+--- exim-4.67/src/configure.default~	2007-06-27 09:28:31.000000000 +0100
++++ exim-4.67/src/configure.default	2007-06-27 09:57:09.000000000 +0100
+@@ -636,6 +636,20 @@ dnslookup:
+   ignore_target_hosts = 0.0.0.0 : 127.0.0.0/8
+   no_more
+ 
++# Alternatively, comment out the above router and uncomment this one to
++# route all mail to a smarthost instead of sending it directly to the
++# intended recipients. If your smarthost requires authentication, change
++# 'remote_smtp' to 'remote_msa' and set up the 'client_auth' authenticator
++# later in this file. You might need to change the port number in the
++# remote_msa transport.
++#
++#smarthost:
++#  driver = manualroute
++#  domains = ! +local_domains
++#  transport = remote_smtp
++#  route_data = smarthost.myisp.net
++#  no_more
++
+ 
+ # The remaining routers handle addresses in the local domain(s), that is those
+ # domains that are defined by "domainlist local_domains" above.
+@@ -752,6 +766,15 @@ begin transports
+ remote_smtp:
+   driver = smtp
+ 
++# This transport is used for delivering messages over SMTP using the
++# "message submission" port (RFC4409).
++
++remote_msa:
++  driver = smtp
++  port 587
++  hosts_require_auth = *
++
++
+ # This transport invokes procmail to deliver mail
+ procmail:
+   driver = pipe
+@@ -854,6 +877,21 @@ begin rewrite
+ #                   AUTHENTICATION CONFIGURATION                     #
+ ######################################################################
+ 
++begin authenticators
++
++# This authenticator supports CRAM-MD5 username/password authentication
++# with Exim acting as a _client_, as it might when sending its outgoing
++# mail to a smarthost rather than directly to the final recipient.
++# Replace SMTPAUTH_USERNAME and SMTPAUTH_PASSWORD as appropriate.
++
++#client_auth:
++#  driver = cram_md5
++#  public_name = CRAM-MD5
++#  client_name = SMTPAUTH_USERNAME
++#  client_secret = SMTPAUTH_PASSWORD
++
++#
++
+ # The following authenticators support plaintext username/password
+ # authentication using the standard PLAIN mechanism and the traditional
+ # but non-standard LOGIN mechanism, with Exim acting as the server.
+@@ -869,7 +907,7 @@ begin rewrite
+ # The default RCPT ACL checks for successful authentication, and will accept
+ # messages from authenticated users from anywhere on the Internet.
+ 
+-begin authenticators
++# 
+ 
+ # PLAIN authentication has no server prompts. The client sends its
+ # credentials in one lump, containing an authorization ID (which we do not
