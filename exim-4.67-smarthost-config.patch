@@ -30,7 +30,7 @@
 +
 +remote_msa:
 +  driver = smtp
-+  port 587
++  port = 587
 +  hosts_require_auth = *
 +
 +
