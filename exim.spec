@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.67
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -447,6 +447,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 22 2007 David Woodhouse <dwmw2@infradead.org> 4.67-3
+- Rebuild
+
 * Wed Jun 27 2007 David Woodhouse <dwmw2@infradead.org> 4.67-2
 - Fix typo in config (#246799)
 
