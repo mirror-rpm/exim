@@ -1,0 +1,20 @@
+--- exim-4.67/src/dbstuff.h~	2007-04-17 14:06:39.000000000 +0100
++++ exim-4.67/src/dbstuff.h	2007-08-22 18:10:52.000000000 +0100
+@@ -135,7 +135,7 @@ API changed for DB 4.1. */
+ #define EXIM_DBOPEN(name, flags, mode, dbpp) \
+        if (db_create(dbpp, NULL, 0) != 0 || \
+          ((*dbpp)->set_errcall(*dbpp, dbfn_bdb_error_callback), \
+-         (*dbpp)->open(*dbpp, NULL, CS name, NULL, \
++	  ((*dbpp)->open)(*dbpp, NULL, CS name, NULL,		\
+          ((flags) == O_RDONLY)? DB_UNKNOWN : DB_HASH, \
+          ((flags) == O_RDONLY)? DB_RDONLY : DB_CREATE, \
+          mode)) != 0) *(dbpp) = NULL
+@@ -143,7 +143,7 @@ API changed for DB 4.1. */
+ #define EXIM_DBOPEN(name, flags, mode, dbpp) \
+        if (db_create(dbpp, NULL, 0) != 0 || \
+          ((*dbpp)->set_errcall(*dbpp, dbfn_bdb_error_callback), \
+-         (*dbpp)->open(*dbpp, CS name, NULL, \
++	  ((*dbpp)->open)(*dbpp, CS name, NULL,			\
+          ((flags) == O_RDONLY)? DB_UNKNOWN : DB_HASH, \
+          ((flags) == O_RDONLY)? DB_RDONLY : DB_CREATE, \
+          mode)) != 0) *(dbpp) = NULL

@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.67
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -51,6 +51,7 @@ Patch20: exim-4.63-allow-filter.patch
 Patch21: exim-4.63-localhost-is-local.patch
 Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
+Patch24: exim-4.67-open-macro.patch
 
 Requires: /etc/aliases
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
@@ -162,6 +163,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch21 -p1 -b .localhost
 %patch22 -p1 -b .grey
 %patch23 -p1 -b .smarthost
+%patch24 -p1 -b .open
 
 %build
 %ifnarch s390 s390x
@@ -447,6 +449,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 22 2007 David Woodhouse <dwmw2@infradead.org> 4.67-5
+- Handle open() being a macro
+
 * Wed Aug 22 2007 David Woodhouse <dwmw2@infradead.org> 4.67-4
 - Update licence
 
