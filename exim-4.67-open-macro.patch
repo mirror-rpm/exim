@@ -18,3 +18,14 @@
           ((flags) == O_RDONLY)? DB_UNKNOWN : DB_HASH, \
           ((flags) == O_RDONLY)? DB_RDONLY : DB_CREATE, \
           mode)) != 0) *(dbpp) = NULL
+--- exim-4.67/src/search.c~	2007-04-17 14:06:40.000000000 +0100
++++ exim-4.67/src/search.c	2007-08-22 18:57:33.000000000 +0100
+@@ -397,7 +397,7 @@ if (lk->type == lookup_absfile && open_f
+ /* If opening is successful, call the file-checking function if there is one,
+ and if all is still well, enter the open database into the tree. */
+ 
+-handle = lk->open(filename, &search_error_message);
++handle = (lk->open)(filename, &search_error_message);
+ if (handle == NULL)
+   {
+   store_pool = old_pool;
