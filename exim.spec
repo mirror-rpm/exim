@@ -12,8 +12,8 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.67
-Release: 3%{?dist}
-License: GPL
+Release: 4%{?dist}
+License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -447,6 +447,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 22 2007 David Woodhouse <dwmw2@infradead.org> 4.67-4
+- Update licence
+
 * Wed Aug 22 2007 David Woodhouse <dwmw2@infradead.org> 4.67-3
 - Rebuild
 
