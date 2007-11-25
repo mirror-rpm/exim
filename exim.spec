@@ -448,7 +448,8 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 
 %changelog
 * Sun Nov 25 2007 David Woodhouse <dwmw2@infradead.org> 4.68-2
-- Fix handling of IPv6 addresses as "known resenders" in greylist
+- Fix handling of IPv6 addresses as "known resenders" in example greylist
+  configuration
 
 * Fri Aug 31 2007 David Woodhouse <dwmw2@infradead.org> 4.68-1
 - Update to 4.68
