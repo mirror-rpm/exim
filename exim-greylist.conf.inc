@@ -1,4 +1,4 @@
-# $Id: exim-greylist.conf.inc,v 1.5 2007/02/08 09:32:02 dwmw2 Exp $
+# $Id: acl-greylist-sqlite,v 1.3 2007/11/25 19:17:28 dwmw2 Exp $
 
 GREYDB=/var/spool/exim/db/greylist.db
 
@@ -52,9 +52,9 @@ greylist_mail:
 
   # Secondly, there's _absolutely_ no point in greylisting mail from
   # hosts which are known to resend their mail. Just accept it.
-  accept hosts = sqlite;GREYDB SELECT host from resenders \
+  accept condition = ${lookup sqlite {GREYDB SELECT host from resenders \
 			       WHERE helo='${quote_sqlite:$sender_helo_name}' \
-			       AND host='$sender_host_address';
+			       AND host='$sender_host_address';} {1}}
 
   # Generate a hashed 'identity' for the mail, as described above.
   warn set acl_m_greyident = ${hash{20}{62}{$sender_address$recipients$h_message-id:}}
