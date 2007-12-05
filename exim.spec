@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.68
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -447,6 +447,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Dec 05 2007 David Woodhouse <dwmw2@infradead.org> 4.68-3
+- Rebuild for OpenSSL/OpenLDAP
+
 * Sun Nov 25 2007 David Woodhouse <dwmw2@infradead.org> 4.68-2
 - Fix handling of IPv6 addresses as "known resenders" in example greylist
   configuration
