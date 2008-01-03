@@ -11,13 +11,13 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.68
-Release: 3%{?dist}
+Version: 4.69
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Provides: MTA smtpd smtpdaemon /usr/bin/newaliases
+Provides: MTA smtpd smtpdaemon server(smtp) /usr/bin/newaliases
 Provides: /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail
 Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(preun): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
@@ -447,6 +447,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Jan 03 2008 David Woodhouse <dwmw2@infradead.org> 4.69-1
+- Update to 4.69
+- Provide server(smtp) (#380611)
+
 * Wed Dec 05 2007 David Woodhouse <dwmw2@infradead.org> 4.68-3
 - Rebuild for OpenSSL/OpenLDAP
 
