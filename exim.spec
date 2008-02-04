@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -164,7 +164,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch23 -p1 -b .smarthost
 
 %build
-%ifnarch s390 s390x
+%ifnarch s390 s390x sparc sparcv9 sparcv9v sparc64 sparc64v
 	make CFLAGS="$RPM_OPT_FLAGS -fpie" LFLAGS=-pie _lib=%{_lib}
 %else
 	make CFLAGS="$RPM_OPT_FLAGS -fPIE" LFLAGS=-pie _lib=%{_lib}
@@ -447,6 +447,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Feb 04 2008 Dennis Gilmore <dennis@ausil.us> 4.69-2
+- sparc needs -fPIE not -fpie
+
 * Thu Jan 03 2008 David Woodhouse <dwmw2@infradead.org> 4.69-1
 - Update to 4.69
 - Provide server(smtp) (#380611)
