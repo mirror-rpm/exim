@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -447,6 +447,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Mar 17 2008 David Woodhouse <dwmw2@infradead.org> 4.59-3
+- Rebuild for new perl
+
 * Mon Feb 04 2008 Dennis Gilmore <dennis@ausil.us> 4.69-2
 - sparc needs -fPIE not -fpie
 
