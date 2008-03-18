@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -53,6 +53,7 @@ Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
 
 Requires: /etc/aliases
+Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
 BuildRequires: lynx pcre-devel sqlite-devel tcp_wrappers-devel
 BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
@@ -447,6 +448,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4.59-4
+- add Requires for versioned perl (libperl.so)
+
 * Mon Mar 17 2008 David Woodhouse <dwmw2@infradead.org> 4.59-3
 - Rebuild for new perl
 
