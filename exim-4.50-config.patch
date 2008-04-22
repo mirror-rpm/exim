@@ -1,5 +1,5 @@
---- exim-4.50/Local/Makefile.conf	2005-02-22 19:12:14.000000000 +0000
-+++ exim-4.50/Local/Makefile	2005-02-22 19:15:10.000000000 +0000
+--- exim-4.50/src/EDITME	2005-02-22 19:12:14.000000000 +0000
++++ exim-4.50/src/EDITME	2005-02-22 19:15:10.000000000 +0000
 @@ -100,7 +100,7 @@
  # /usr/local/sbin. The installation script will try to create this directory,
  # and any superior directories, if they do not exist.

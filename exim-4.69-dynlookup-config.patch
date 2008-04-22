@@ -1,0 +1,25 @@
+diff -u exim-4.69/src/EDITME exim-4.69/src/EDITME
+--- exim-4.69/src/EDITME	2008-04-19 23:48:03.000000000 +0100
++++ exim-4.69/src/EDITME	2008-04-19 23:54:46.000000000 +0100
+@@ -282,15 +282,17 @@
+ # LOOKUP_IBASE=yes
+ LOOKUP_LDAP=yes
+ LDAP_LIB_TYPE=OPENLDAP2
+-LOOKUP_INCLUDE=-I/usr/include/mysql
+-LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/$(_lib)/mysql -lmysqlclient -lpq
+-LOOKUP_MYSQL=yes
++LOOKUP_LIBS=-lldap -llber -lsqlite3
++LOOKUP_MYSQL_INCLUDE=-I/usr/include/mysql
++LOOKUP_MYSQL_LIBS=-L/usr/${_lib}/mysql -lmysqlclient
++LOOKUP_PGSQL_LIBS=-lpq
++LOOKUP_MYSQL=2
+ LOOKUP_NIS=yes
+ LOOKUP_NISPLUS=yes
+ # LOOKUP_ORACLE=yes
+ LOOKUP_PASSWD=yes
+-LOOKUP_PGSQL=yes
++LOOKUP_PGSQL=2
+ LOOKUP_SQLITE=yes
+ # LOOKUP_WHOSON=yes
+ 
+ # These two settings are obsolete; all three lookups are compiled when

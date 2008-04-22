@@ -10,8 +10,8 @@ of exim until Philip has to break the API and increase the major number)
 Marc MERLIN <marc_soft@merlins.org>
 
 diff -urN exim-4.14-0/src/EDITME exim-4.14-1/src/EDITME
---- exim-4.14-0/Local/Makefile	Tue Mar 11 04:20:18 2003
-+++ exim-4.14-1/Local/Makefile	Sun Mar 23 15:34:15 2003
+--- exim-4.14-0/src/EDITME	Tue Mar 11 04:20:18 2003
++++ exim-4.14-1/src/EDITME	Sun Mar 23 15:34:15 2003
 @@ -388,6 +388,20 @@
  
  

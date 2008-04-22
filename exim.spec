@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -51,6 +51,8 @@ Patch20: exim-4.63-allow-filter.patch
 Patch21: exim-4.63-localhost-is-local.patch
 Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
+Patch24: exim-4.69-dynlookup.patch
+Patch25: exim-4.69-dynlookup-config.patch
 
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
@@ -70,10 +72,23 @@ routed, and there are extensive facilities for checking incoming
 mail. Exim can be installed in place of sendmail, although the
 configuration of exim is quite different to that of sendmail.
 
+%package mysql
+Summary: MySQL lookup support for Exim
+Group: System Environment/Daemons
+
+%description mysql
+This package contains the MySQL lookup module for Exim
+
+%package pgsql
+Summary: PostgreSQL lookup support for Exim
+Group: System Environment/Daemons
+
+%description pgsql
+This package contains the PostgreSQL lookup module for Exim
+
 %package mon
-Summary: X11 monitor application for exim
+Summary: X11 monitor application for Exim
 Group: Applications/System
-License: GPL
 
 %description mon
 The Exim Monitor is an optional supplement to the Exim package. It
@@ -146,8 +161,6 @@ greylisting unconditional.
 %if 0%{?buildsa}
 %setup -q -T -D -a 13
 %endif
-cp src/EDITME Local/Makefile
-cp exim_monitor/EDITME Local/eximon.conf
 
 %patch4 -p1 -b .rhl
 %patch6 -p1 -b .config
@@ -163,13 +176,21 @@ cp exim_monitor/EDITME Local/eximon.conf
 %patch21 -p1 -b .localhost
 %patch22 -p1 -b .grey
 %patch23 -p1 -b .smarthost
+%patch24 -p1 -b .dynlookup
+%patch25 -p1 -b .dynconfig
+
+cp src/EDITME Local/Makefile
+sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
+cp exim_monitor/EDITME Local/eximon.conf
+
 
 %build
 %ifnarch s390 s390x sparc sparcv9 sparcv9v sparc64 sparc64v
-	make CFLAGS="$RPM_OPT_FLAGS -fpie" LFLAGS=-pie _lib=%{_lib}
+	PIE=-fpie
 %else
-	make CFLAGS="$RPM_OPT_FLAGS -fPIE" LFLAGS=-pie _lib=%{_lib}
+	PIE=-fPIE
 %endif
+make CFLAGS="$RPM_OPT_FLAGS $PIE" LFLAGS=-pie _lib=%{_lib} FULLECHO=
 
 %if 0%{?buildsa}
 # build sa-exim
@@ -196,6 +217,13 @@ for i in eximon eximon.bin exim_dumpdb exim_fixdb exim_tidydb \
 	exim_checkaccess convert4r4
 do
 	install -m 0755 $i $RPM_BUILD_ROOT%{_sbindir}
+done
+
+mkdir -p $RPM_BUILD_ROOT%{_libdir}/exim/%{version}-%{release}/lookups
+for i in mysql.so pgsql.so
+do 
+	install -m755 lookups/$i \
+	 $RPM_BUILD_ROOT%{_libdir}/exim/%{version}-%{release}/lookups
 done
 
 cd ..
@@ -382,6 +410,7 @@ fi
 %{_bindir}/newaliases.exim
 /usr/lib/sendmail.exim
 %{_mandir}/*/*
+%dir %{_libdir}/exim/%{version}-%{release}/lookups
 
 %defattr(-,exim,exim)
 %dir %{_var}/spool/exim
@@ -405,6 +434,12 @@ fi
 
 %attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/certs/exim.pem
 %attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/private/exim.pem
+
+%files mysql
+%{_libdir}/exim/%{version}-%{release}/lookups/mysql.so
+
+%files pgsql
+%{_libdir}/exim/%{version}-%{release}/lookups/pgsql.so
 
 %files mon
 %defattr(-,root,root)
@@ -448,10 +483,13 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
-* Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4.59-4
+* Sat Apr 19 2008 David Woodhouse <dwmw2@infradead.org> 4.69-5
+- Add dynamic lookup patch, split into subpackages (#199256)
+
+* Tue Mar 18 2008 Tom "spot" Callaway <tcallawa@redhat.com> 4.69-4
 - add Requires for versioned perl (libperl.so)
 
-* Mon Mar 17 2008 David Woodhouse <dwmw2@infradead.org> 4.59-3
+* Mon Mar 17 2008 David Woodhouse <dwmw2@infradead.org> 4.69-3
 - Rebuild for new perl
 
 * Mon Feb 04 2008 Dennis Gilmore <dennis@ausil.us> 4.69-2
