@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -44,7 +44,6 @@ Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
 Patch15: exim-4.52-dynamic-pcre.patch
-Patch17: exim-4.61-ldap-deprecated.patch
 Patch18: exim-4.62-dlopen-localscan.patch
 Patch19: exim-4.63-procmail.patch
 Patch20: exim-4.63-allow-filter.patch
@@ -169,7 +168,6 @@ greylisting unconditional.
 %patch13 -p1 -b .pam
 %patch14 -p1 -b .spamd
 %patch15 -p1 -b .pcre
-%patch17 -p1 -b .ldap
 %patch18 -p1 -b .dl
 %patch19 -p1 -b .procmail
 %patch20 -p1 -b .filter
@@ -483,6 +481,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 13 2008 David Woodhouse <David.Woodhouse@intel.com> 4.69-7
+- Rediff all patches to cope with new zero-fuzz policy
+
 * Wed Aug 13 2008 David Woodhouse <David.Woodhouse@intel.com> 4.69-6
 - Add $RPM_OPT_FLAGS in config instead of overriding on make command line.
   (to fix the setting of largefile options which we were killing)

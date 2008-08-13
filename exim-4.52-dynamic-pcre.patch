@@ -1,6 +1,19 @@
---- exim-4.52/OS/Makefile-Base.pcre	2005-07-01 12:09:15.000000000 +0100
-+++ exim-4.52/OS/Makefile-Base	2005-08-25 14:28:19.000000000 +0100
-@@ -96,14 +96,14 @@ config.h: Makefile buildconfig ../src/co
+diff -uNr exim-4.69-old/exim_monitor/em_hdr.h exim-4.69/exim_monitor/em_hdr.h
+--- exim-4.69-old/exim_monitor/em_hdr.h	2007-01-08 10:50:17.000000000 +0000
++++ exim-4.69/exim_monitor/em_hdr.h	2008-08-13 15:22:37.000000000 +0100
+@@ -87,7 +87,7 @@
+ 
+ /* Regular expression include */
+ 
+-#include "pcre/pcre.h"
++#include <pcre.h>
+ 
+ /* Includes from the main source of Exim. We need to have MAXPACKET defined for
+ the benefit of structs.h. One of these days I should tidy up this interface so
+diff -uNr exim-4.69-old/OS/Makefile-Base exim-4.69/OS/Makefile-Base
+--- exim-4.69-old/OS/Makefile-Base	2007-11-12 13:02:19.000000000 +0000
++++ exim-4.69/OS/Makefile-Base	2008-08-13 15:22:37.000000000 +0100
+@@ -96,14 +96,14 @@
  # therefore always be run, even if the files exist. This shouldn't in fact be a
  # problem, but it does no harm. Other make programs will just ignore this.
  
@@ -17,7 +30,7 @@
          exigrep eximstats exipick exiqgrep exiqsumm \
          transport-filter.pl convert4r3 convert4r4 \
          exim_checkaccess \
-@@ -314,7 +314,7 @@ OBJ_EXIM = acl.o child.o crypt16.o daemo
+@@ -314,7 +314,7 @@
          local_scan.o $(EXIM_PERL) $(OBJ_WITH_CONTENT_SCAN) \
          $(OBJ_WITH_OLD_DEMIME) $(OBJ_EXPERIMENTAL)
  
@@ -26,7 +39,7 @@
          routers/routers.a transports/transports.a \
          $(OBJ_EXIM) version.c
  	@echo " "
-@@ -325,7 +325,7 @@ exim:   pcre/libpcre.a lookups/lookups.a
+@@ -325,7 +325,7 @@
  	rm -f exim
  	@echo "$(LNCC) -o exim"
  	$(FE)$(PURIFY) $(LNCC) -o exim $(LFLAGS) $(OBJ_EXIM) version.o \
@@ -35,7 +48,7 @@
  	  routers/routers.a transports/transports.a lookups/lookups.a \
  	  auths/auths.a \
  	  $(LIBRESOLV) $(LIBS) $(LIBS_EXIM) $(IPV6_LIBS) $(EXTRALIBS) \
-@@ -429,14 +429,14 @@ MONBIN = em_StripChart.o $(EXIMON_TEXTPO
+@@ -429,14 +429,14 @@
  
  OBJ_MONBIN = util-spool_in.o util-store.o util-string.o tod.o tree.o $(MONBIN)
  
@@ -52,9 +65,10 @@
  	  $(LIBS) $(LIBS_EXIMON) $(EXTRALIBS) $(EXTRALIBS_EXIMON) -lc
  	@if [ x"$(STRIP_COMMAND)" != x"" ]; then \
  	  echo $(STRIP_COMMAND) eximon.bin; \
---- exim-4.52/src/exim.h.pcre	2005-07-01 12:09:15.000000000 +0100
-+++ exim-4.52/src/exim.h	2005-08-25 14:26:40.000000000 +0100
-@@ -414,7 +414,7 @@ extern int ferror(FILE *);
+diff -uNr exim-4.69-old/src/exim.h exim-4.69/src/exim.h
+--- exim-4.69-old/src/exim.h	2007-09-28 13:21:57.000000000 +0100
++++ exim-4.69/src/exim.h	2008-08-13 15:22:37.000000000 +0100
+@@ -422,7 +422,7 @@
  
  /* The header from the PCRE regex package */
  
@@ -62,15 +76,4 @@
 +#include <pcre.h>
  
  /* Exim includes are in several files. Note that local_scan.h #includes
- mytypes.h and store.h, so we don't need to mention them explicitly. */
---- exim-4.52/exim_monitor/em_hdr.h.pcre	2005-07-01 12:09:15.000000000 +0100
-+++ exim-4.52/exim_monitor/em_hdr.h	2005-08-25 14:26:40.000000000 +0100
-@@ -87,7 +87,7 @@ anything. */
- 
- /* Regular expression include */
- 
--#include "pcre/pcre.h"
-+#include <pcre.h>
- 
- /* Includes from the main source of Exim. We need to have MAXPACKET defined for
- the benefit of structs.h. One of these days I should tidy up this interface so
+ config.h, mytypes.h, and store.h, so we don't need to mention them explicitly.

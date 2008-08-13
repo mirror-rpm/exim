@@ -1,18 +1,19 @@
-The initial version of this patch was originally posted David Woodhouse, and
-dman gets the credit for first integrating it with SA-Exim.
-
-I have since then maintained it by first making a few minor changes, and
-later switching it to a major/minor number scheme to support upgrades in
-the exim API that don't affect backward compatibility (you can rely on
-a feature denoted by the minor number and be compatible with future versions
-of exim until Philip has to break the API and increase the major number)
-
-Marc MERLIN <marc_soft@merlins.org>
-
-diff -urN exim-4.14-0/src/EDITME exim-4.14-1/src/EDITME
---- exim-4.14-0/src/EDITME	Tue Mar 11 04:20:18 2003
-+++ exim-4.14-1/src/EDITME	Sun Mar 23 15:34:15 2003
-@@ -388,6 +388,20 @@
+diff -uNr exim-4.69-old/src/config.h.defaults exim-4.69/src/config.h.defaults
+--- exim-4.69-old/src/config.h.defaults	2007-09-28 13:21:57.000000000 +0100
++++ exim-4.69/src/config.h.defaults	2008-08-13 15:25:31.000000000 +0100
+@@ -27,6 +27,8 @@
+ 
+ #define AUTH_VARS                     3
+ 
++#define DLOPEN_LOCAL_SCAN
++
+ #define BIN_DIRECTORY
+ 
+ #define CONFIGURE_FILE
+diff -uNr exim-4.69-old/src/EDITME exim-4.69/src/EDITME
+--- exim-4.69-old/src/EDITME	2008-08-13 15:25:05.000000000 +0100
++++ exim-4.69/src/EDITME	2008-08-13 15:25:31.000000000 +0100
+@@ -619,6 +619,20 @@
  
  
  #------------------------------------------------------------------------------
@@ -33,22 +34,10 @@ diff -urN exim-4.14-0/src/EDITME exim-4.14-1/src/EDITME
  # The default distribution of Exim contains only the plain text form of the
  # documentation. Other forms are available separately. If you want to install
  # the documentation in "info" format, first fetch the Texinfo documentation
-diff -urNad 50_localscan_dlopen.tmp/src/config.h.defaults 50_localscan_dlopen/src/config.h.defaults
---- 50_localscan_dlopen.tmp/src/config.h.defaults      Sun Dec 29 11:55:42 2002
-+++ 50_localscan_dlopen/src/config.h.defaults  Sun Dec 29 11:56:44 2002
-@@ -17,6 +17,8 @@
- #define AUTH_PLAINTEXT
- #define AUTH_SPA
- 
-+#define DLOPEN_LOCAL_SCAN
-+
- #define BIN_DIRECTORY
- 
- #define CONFIGURE_FILE
-diff -urN exim-4.14-0/src/globals.c exim-4.14-1/src/globals.c
---- exim-4.14-0/src/globals.c	Tue Mar 11 04:20:20 2003
-+++ exim-4.14-1/src/globals.c	Sun Mar 23 15:34:15 2003
-@@ -103,6 +103,9 @@
+diff -uNr exim-4.69-old/src/globals.c exim-4.69/src/globals.c
+--- exim-4.69-old/src/globals.c	2007-09-28 13:21:57.000000000 +0100
++++ exim-4.69/src/globals.c	2008-08-13 15:25:31.000000000 +0100
+@@ -128,6 +128,9 @@
  uschar *tls_verify_hosts       = NULL;
  #endif
  
@@ -58,10 +47,10 @@ diff -urN exim-4.14-0/src/globals.c exim-4.14-1/src/globals.c
  
  /* Input-reading functions for messages, so we can use special ones for
  incoming TCP/IP. The defaults use stdin. We never need these for any
-diff -urN exim-4.14-0/src/globals.h exim-4.14-1/src/globals.h
---- exim-4.14-0/src/globals.h	Tue Mar 11 04:20:20 2003
-+++ exim-4.14-1/src/globals.h	Sun Mar 23 15:34:15 2003
-@@ -67,6 +67,9 @@
+diff -uNr exim-4.69-old/src/globals.h exim-4.69/src/globals.h
+--- exim-4.69-old/src/globals.h	2007-09-28 13:21:57.000000000 +0100
++++ exim-4.69/src/globals.h	2008-08-13 15:25:31.000000000 +0100
+@@ -88,6 +88,9 @@
  extern uschar *tls_verify_hosts;       /* Mandatory client verification */
  #endif
  
@@ -71,11 +60,11 @@ diff -urN exim-4.14-0/src/globals.h exim-4.14-1/src/globals.h
  
  /* Input-reading functions for messages, so we can use special ones for
  incoming TCP/IP. */
-diff -urN exim-4.14-0/src/local_scan.c exim-4.14-1/src/local_scan.c
---- exim-4.14-0/src/local_scan.c	Tue Mar 11 04:20:20 2003
-+++ exim-4.14-1/src/local_scan.c	Sun Mar 23 15:34:15 2003
-@@ -5,60 +5,131 @@
- /* Copyright (c) University of Cambridge 1995 - 2003 */
+diff -uNr exim-4.69-old/src/local_scan.c exim-4.69/src/local_scan.c
+--- exim-4.69-old/src/local_scan.c	2007-01-08 10:50:18.000000000 +0000
++++ exim-4.69/src/local_scan.c	2008-08-13 15:25:31.000000000 +0100
+@@ -7,60 +7,131 @@
+ /* Copyright (c) University of Cambridge 1995 - 2007 */
  /* See the file NOTICE for conditions of use and distribution. */
  
 +#include "exim.h"
@@ -249,14 +238,14 @@ diff -urN exim-4.14-0/src/local_scan.c exim-4.14-1/src/local_scan.c
 +
 +return TRUE;
  }
-+
-+#endif /* DLOPEN_LOCAL_SCAN */
  
++#endif /* DLOPEN_LOCAL_SCAN */
++
  /* End of local_scan.c */
-diff -urN exim-4.14-0/src/readconf.c exim-4.14-1/src/readconf.c
---- exim-4.14-0/src/readconf.c	Tue Mar 11 04:20:22 2003
-+++ exim-4.14-1/src/readconf.c	Sun Mar 23 15:34:15 2003
-@@ -182,6 +182,9 @@
+diff -uNr exim-4.69-old/src/readconf.c exim-4.69/src/readconf.c
+--- exim-4.69-old/src/readconf.c	2007-08-23 12:01:49.000000000 +0100
++++ exim-4.69/src/readconf.c	2008-08-13 15:25:31.000000000 +0100
+@@ -257,6 +257,9 @@
    { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
    { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
    { "local_interfaces",         opt_stringptr,   &local_interfaces },

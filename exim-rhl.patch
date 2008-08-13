@@ -1,6 +1,7 @@
---- exim-4.32/src/configure.default.rhl	2004-04-15 04:27:01.000000000 -0400
-+++ exim-4.32/src/configure.default	2004-04-15 12:30:03.367749456 -0400
-@@ -411,7 +411,7 @@
+diff -uNr exim-4.69.orig/src/configure.default exim-4.69/src/configure.default
+--- exim-4.69.orig/src/configure.default	2007-06-26 12:21:36.000000000 +0100
++++ exim-4.69/src/configure.default	2008-08-13 14:41:14.000000000 +0100
+@@ -548,7 +548,7 @@
    driver = redirect
    allow_fail
    allow_defer
@@ -9,7 +10,7 @@
  # user = exim
    file_transport = address_file
    pipe_transport = address_pipe
-@@ -491,8 +491,8 @@
+@@ -643,8 +643,8 @@
    delivery_date_add
    envelope_to_add
    return_path_add

@@ -1,5 +1,18 @@
---- exim-4.50/src/EDITME	2005-02-22 19:12:14.000000000 +0000
-+++ exim-4.50/src/EDITME	2005-02-22 19:15:10.000000000 +0000
+diff -uNr exim-4.69.orig/scripts/Configure-Makefile exim-4.69/scripts/Configure-Makefile
+--- exim-4.69.orig/scripts/Configure-Makefile	2005-09-19 15:42:31.000000000 +0100
++++ exim-4.69/scripts/Configure-Makefile	2008-08-13 14:44:59.000000000 +0100
+@@ -131,7 +131,7 @@
+ 
+   mv $mft $mftt
+   echo "PERL_CC=`$PERL_COMMAND -MConfig -e 'print $Config{cc}'`" >>$mft
+-  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts`" >>$mft
++  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts` \$(CFLAGS)" >>$mft
+   echo "PERL_LIBS=`$PERL_COMMAND -MExtUtils::Embed -e ldopts`" >>$mft
+   echo "" >>$mft
+   cat $mftt >> $mft
+diff -uNr exim-4.69.orig/src/EDITME exim-4.69/src/EDITME
+--- exim-4.69.orig/src/EDITME	2007-01-22 16:29:54.000000000 +0000
++++ exim-4.69/src/EDITME	2008-08-13 14:44:59.000000000 +0100
 @@ -100,7 +100,7 @@
  # /usr/local/sbin. The installation script will try to create this directory,
  # and any superior directories, if they do not exist.
@@ -36,7 +49,7 @@
  
  # Many sites define a user called "exim", with an appropriate default group,
  # and use
-@@ -229,7 +229,7 @@
+@@ -235,7 +235,7 @@
  # This one is special-purpose, and commonly not required, so it is not
  # included by default.
  
@@ -45,7 +58,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -238,9 +238,9 @@
+@@ -244,9 +244,9 @@
  # MBX, is included only when requested. If you do not know what this is about,
  # leave these settings commented out.
  
@@ -58,7 +71,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -255,17 +255,20 @@
+@@ -261,25 +261,28 @@
  LOOKUP_DBM=yes
  LOOKUP_LSEARCH=yes
  
@@ -70,26 +83,26 @@
 +LOOKUP_DSEARCH=yes
  # LOOKUP_IBASE=yes
 -# LOOKUP_LDAP=yes
+-# LOOKUP_MYSQL=yes
+-# LOOKUP_NIS=yes
+-# LOOKUP_NISPLUS=yes
 +LOOKUP_LDAP=yes
 +LDAP_LIB_TYPE=OPENLDAP2
 +LOOKUP_INCLUDE=-I/usr/include/mysql
 +LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/$(_lib)/mysql -lmysqlclient -lpq
--# LOOKUP_MYSQL=yes
 +LOOKUP_MYSQL=yes
--# LOOKUP_NIS=yes
--# LOOKUP_NISPLUS=yes
 +LOOKUP_NIS=yes
 +LOOKUP_NISPLUS=yes
  # LOOKUP_ORACLE=yes
 -# LOOKUP_PASSWD=yes
-+LOOKUP_PASSWD=yes
 -# LOOKUP_PGSQL=yes
-+LOOKUP_PGSQL=yes
 -# LOOKUP_SQLITE=yes
++LOOKUP_PASSWD=yes
++LOOKUP_PGSQL=yes
 +LOOKUP_SQLITE=yes
  # LOOKUP_WHOSON=yes
  
-@@ -272,7 +274,7 @@
+ # These two settings are obsolete; all three lookups are compiled when
  # LOOKUP_LSEARCH is enabled. However, we retain these for backward
  # compatibility. Setting one forces LOOKUP_LSEARCH if it is not set.
  
@@ -98,7 +111,7 @@
  # LOOKUP_NWILDLSEARCH=yes
  
  
-@@ -321,14 +323,14 @@
+@@ -330,14 +333,14 @@
  # and the MIME ACL. Please read the documentation to learn more about these
  # features.
  
@@ -115,7 +128,7 @@
  
  #------------------------------------------------------------------------------
  # Compiling Exim with experimental features. These are documented in
-@@ -464,11 +466,11 @@
+@@ -473,11 +476,11 @@
  # included in the Exim binary. You will then need to set up the run time
  # configuration to make use of the mechanism(s) selected.
  
@@ -132,7 +145,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -484,7 +486,7 @@
+@@ -494,7 +497,7 @@
  # one that is set in the headers_charset option. The default setting is
  # defined by this setting:
  
@@ -141,7 +154,7 @@
  
  # If you are going to make use of $header_xxx expansions in your configuration
  # file, or if your users are going to use them in filter files, and the normal
-@@ -504,7 +506,7 @@
+@@ -514,7 +517,7 @@
  # the Sieve filter support. For those OS where iconv() is known to be installed
  # as standard, the file in OS/Makefile-xxxx contains
  #
@@ -150,7 +163,7 @@
  #
  # If you are not using one of those systems, but have installed iconv(), you
  # need to uncomment that line above. In some cases, you may find that iconv()
-@@ -553,10 +555,11 @@
+@@ -576,10 +579,11 @@
  # leave these settings commented out.
  
  # This setting is required for any TLS support (either OpenSSL or GnuTLS)
@@ -164,7 +177,7 @@
  
  # Uncomment these settings if you are using GnuTLS
  # USE_GNUTLS=yes
-@@ -607,7 +610,7 @@
+@@ -630,7 +634,7 @@
  # Once you have done this, "make install" will build the info files and
  # install them in the directory you have defined.
  
@@ -173,7 +186,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -620,7 +623,7 @@
+@@ -643,7 +647,7 @@
  # %s. This will be replaced by one of the strings "main", "panic", or "reject"
  # to form the final file names. Some installations may want something like this:
  
@@ -182,7 +195,7 @@
  
  # which results in files with names /var/log/exim_mainlog, etc. The directory
  # in which the log files are placed must exist; Exim does not try to create
-@@ -669,7 +672,7 @@
+@@ -692,7 +696,7 @@
  # files. Both the name of the command and the suffix that it adds to files
  # need to be defined here. See also the EXICYCLOG_MAX configuration.
  
@@ -191,7 +204,7 @@
  COMPRESS_SUFFIX=gz
  
  
-@@ -677,7 +680,7 @@
+@@ -700,7 +704,7 @@
  # If the exigrep utility is fed compressed log files, it tries to uncompress
  # them using this command.
  
@@ -200,7 +213,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -686,7 +689,7 @@
+@@ -709,7 +713,7 @@
  # (version 5.004 or later) installed, set EXIM_PERL to perl.o. Using embedded
  # Perl costs quite a lot of resources. Only do this if you really need it.
  
@@ -209,7 +222,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -691,7 +696,7 @@ EXIM_PERL=perl.o
+@@ -719,7 +723,7 @@
  # that the local_scan API is made available by the linker. You may also need
  # to add -ldl to EXTRALIBS so that dlopen() is available to Exim.
  
@@ -218,7 +231,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -696,7 +699,7 @@
+@@ -729,7 +733,7 @@
  # support, which is intended for use in conjunction with the SMTP AUTH
  # facilities, is included only when requested by the following setting:
  
@@ -227,7 +240,7 @@
  
  # You probably need to add -lpam to EXTRALIBS, and in some releases of
  # GNU/Linux -ldl is also needed.
-@@ -757,7 +760,7 @@
+@@ -797,7 +801,7 @@
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
  
@@ -236,7 +249,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -770,9 +773,9 @@
+@@ -810,9 +814,9 @@
  # You may well also have to specify a local "include" file and an additional
  # library for TCP wrappers, so you probably need something like this:
  #
@@ -244,12 +257,12 @@
 -# CFLAGS=-O -I/usr/local/include
 -# EXTRALIBS_EXIM=-L/usr/local/lib -lwrap
 +USE_TCP_WRAPPERS=yes
-+CFLAGS += $(RPM_OPT_FLAGS) $(PIE)
++CFLAGS+=$(RPM_OPT_FLAGS) $(PIE)
 +EXTRALIBS_EXIM=-lwrap -lpam -ldl
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM
  # as well.
-@@ -817,13 +820,13 @@
+@@ -857,13 +861,13 @@
  # is "yes", as well as supporting line editing, a history of input lines in the
  # current run is maintained.
  
@@ -265,7 +278,7 @@
  
  ###############################################################################
  #              THINGS YOU ALMOST NEVER NEED TO MENTION                        #
-@@ -844,11 +847,12 @@
+@@ -884,11 +888,12 @@
  # haven't got Perl, Exim will still build and run; you just won't be able to
  # use those utilities.
  
@@ -283,7 +296,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -1042,7 +1046,7 @@
+@@ -1082,7 +1087,7 @@
  # (process id) to a file so that it can easily be identified. The path of the
  # file can be specified here. Some installations may want something like this:
  
@@ -292,14 +305,3 @@
  
  # If PID_FILE_PATH is not defined, Exim writes a file in its spool directory
  # using the name "exim-daemon.pid".
---- exim-4.50/scripts/Configure-Makefile.conf	2005-02-17 14:49:11.000000000 +0000
-+++ exim-4.50/scripts/Configure-Makefile	2005-02-22 19:12:21.000000000 +0000
-@@ -131,7 +131,7 @@
- 
-   mv $mft $mftt
-   echo "PERL_CC=`$PERL_COMMAND -MConfig -e 'print $Config{cc}'`" >>$mft
--  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts`" >>$mft
-+  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts` \$(CFLAGS)" >>$mft
-   echo "PERL_LIBS=`$PERL_COMMAND -MExtUtils::Embed -e ldopts`" >>$mft
-   echo "" >>$mft
-   cat $mftt >> $mft

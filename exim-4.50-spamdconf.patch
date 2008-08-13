@@ -1,14 +1,15 @@
---- exim-4.50/src/configure.default.orig	2005-02-22 19:49:15.000000000 +0000
-+++ exim-4.50/src/configure.default	2005-02-22 19:46:55.000000000 +0000
-@@ -108,6 +108,7 @@
+diff -uNr exim-4.69-old/src/configure.default exim-4.69/src/configure.default
+--- exim-4.69-old/src/configure.default	2008-08-13 15:20:18.000000000 +0100
++++ exim-4.69/src/configure.default	2008-08-13 15:20:36.000000000 +0100
+@@ -107,6 +107,7 @@
  
  acl_smtp_rcpt = acl_check_rcpt
  acl_smtp_data = acl_check_data
 +acl_smtp_mime = acl_check_mime
  
- # You should not change that setting until you understand how ACLs work.
+ # You should not change those settings until you understand how ACLs work.
  
-@@ -120,7 +120,7 @@ acl_smtp_mime = acl_check_mime
+@@ -119,7 +120,7 @@
  # of what to set for other virus scanners. The second modification is in the
  # acl_check_data access control list (see below).
  
@@ -17,7 +18,7 @@
  
  
  # For spam scanning, there is a similar option that defines the interface to
-@@ -365,7 +365,8 @@ acl_check_rcpt:
+@@ -380,7 +381,8 @@
    accept  local_parts   = postmaster
            domains       = +local_domains
  
@@ -27,7 +28,7 @@
  
    require verify        = sender
  
-@@ -455,26 +456,62 @@ acl_check_rcpt:
+@@ -470,27 +472,63 @@
  
  acl_check_data:
  
@@ -86,7 +87,7 @@
  
    accept
  
-+
+ 
 +acl_check_mime:
 +
 +  # File extension filtering.
@@ -97,6 +98,7 @@
 +                     {1}{0}}
 +
 +  accept
++
  
  ######################################################################
  #                      ROUTERS CONFIGURATION                         #
