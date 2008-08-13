@@ -244,7 +244,7 @@
 -# CFLAGS=-O -I/usr/local/include
 -# EXTRALIBS_EXIM=-L/usr/local/lib -lwrap
 +USE_TCP_WRAPPERS=yes
-+CFLAGS=-g -O
++CFLAGS += $(RPM_OPT_FLAGS) $(PIE)
 +EXTRALIBS_EXIM=-lwrap -lpam -ldl
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM

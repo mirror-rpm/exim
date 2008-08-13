@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -186,11 +186,11 @@ cp exim_monitor/EDITME Local/eximon.conf
 
 %build
 %ifnarch s390 s390x sparc sparcv9 sparcv9v sparc64 sparc64v
-	PIE=-fpie
+	export PIE=-fpie
 %else
-	PIE=-fPIE
+	export PIE=-fPIE
 %endif
-make CFLAGS="$RPM_OPT_FLAGS $PIE" LFLAGS=-pie _lib=%{_lib} FULLECHO=
+make LFLAGS=-pie _lib=%{_lib} FULLECHO=
 
 %if 0%{?buildsa}
 # build sa-exim
@@ -483,6 +483,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 13 2008 David Woodhouse <David.Woodhouse@intel.com> 4.69-6
+- Add $RPM_OPT_FLAGS in config instead of overriding on make command line.
+  (to fix the setting of largefile options which we were killing)
+
 * Sat Apr 19 2008 David Woodhouse <dwmw2@infradead.org> 4.69-5
 - Add dynamic lookup patch, split into subpackages (#199256)
 
