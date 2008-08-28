@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -408,6 +408,8 @@ fi
 %{_bindir}/newaliases.exim
 /usr/lib/sendmail.exim
 %{_mandir}/*/*
+%dir %{_libdir}/exim
+%dir %{_libdir}/exim/%{version}-%{release}
 %dir %{_libdir}/exim/%{version}-%{release}/lookups
 
 %defattr(-,exim,exim)
@@ -481,6 +483,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Aug 28 2008 Michael Schwendt <mschwendt@fedoraproject.org> 4.69-8
+- Include unowned directories.
+
 * Wed Aug 13 2008 David Woodhouse <David.Woodhouse@intel.com> 4.69-7
 - Rediff all patches to cope with new zero-fuzz policy
 
