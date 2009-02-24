@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -483,6 +483,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.69-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Sat Jan 24 2009 Caolán McNamara <caolanm@redhat.com> 4.69-9
 - rebuild for dependencies
 
