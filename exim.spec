@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -74,6 +74,7 @@ configuration of exim is quite different to that of sendmail.
 %package mysql
 Summary: MySQL lookup support for Exim
 Group: System Environment/Daemons
+Requires: exim = %{version}-%{release}
 
 %description mysql
 This package contains the MySQL lookup module for Exim
@@ -81,6 +82,7 @@ This package contains the MySQL lookup module for Exim
 %package pgsql
 Summary: PostgreSQL lookup support for Exim
 Group: System Environment/Daemons
+Requires: exim = %{version}-%{release}
 
 %description pgsql
 This package contains the PostgreSQL lookup module for Exim
@@ -436,9 +438,11 @@ fi
 %attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/private/exim.pem
 
 %files mysql
+%defattr(-,root,root,-)
 %{_libdir}/exim/%{version}-%{release}/lookups/mysql.so
 
 %files pgsql
+%defattr(-,root,root,-)
 %{_libdir}/exim/%{version}-%{release}/lookups/pgsql.so
 
 %files mon
@@ -477,12 +481,17 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %endif
 
 %files greylist
+%defattr(-,root,root,-)
 %config %{_sysconfdir}/exim/exim-greylist.conf.inc
 %ghost %{_var}/spool/exim/db/greylist.db
 %{_sysconfdir}/exim/mk-greylist-db.sql
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat May 23 2009 Michael Schwendt <mschwendt@fedoraproject.org> - 4.69-11
+- Add subpackage dependencies to fix unowned directories (#474869).
+- Add missing defattr.
+
 * Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.69-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
