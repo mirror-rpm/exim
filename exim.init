@@ -13,7 +13,7 @@
 . /etc/init.d/functions
 
 # Source networking configuration.
-. /etc/sysconfig/network
+[ -r /etc/sysconfig/network ] && . /etc/sysconfig/network
 
 # Source exim configureation.
 if [ -f /etc/sysconfig/exim ] ; then
