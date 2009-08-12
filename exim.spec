@@ -12,14 +12,14 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon server(smtp) /usr/bin/newaliases
 Provides: /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail
-Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
+Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives openssl
 Requires(preun): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if 0%{?buildclam}
@@ -503,6 +503,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 12 2009 David Woodhouse <David.Woodhouse@intel.com>
+- Require openssl for %post
+
 * Wed Aug 12 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-13
 - Cope with lack of /etc/sysconfig/network (#506330)
 - Require /etc/pki/tls/ directories
