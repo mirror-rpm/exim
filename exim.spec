@@ -29,6 +29,7 @@ Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.bz2
 Source2: exim.init
 Source3: exim.sysconfig
 Source4: exim.logrotate
+Source5: exim-tidydb.sh
 Source11: exim.pam
 %if 0%{?buildsa}
 Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
@@ -53,11 +54,15 @@ Patch23: exim-4.67-smarthost-config.patch
 Patch24: exim-4.69-dynlookup.patch
 Patch25: exim-4.69-dynlookup-config.patch
 
+Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
-BuildRequires: lynx pcre-devel sqlite-devel tcp_wrappers-devel
-BuildRequires: cyrus-sasl-devel openldap-devel openssl-devel mysql-devel postgresql-devel
+%if 0%{?buildsa}
+BuildRequires: lynx
+%endif
+BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
+BuildRequires: openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
 
@@ -269,6 +274,9 @@ install %SOURCE2 $RPM_BUILD_ROOT%{_initrddir}/exim
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
 
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
+install -m 0755 %SOURCE5 $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/exim-tidydb
+
 %if 0%{?buildsa}
 # install sa
 cd sa-exim*
@@ -303,6 +311,9 @@ EOF
 ln -sf clamd $RPM_BUILD_ROOT/usr/sbin/clamd.exim
 
 mkdir -p $RPM_BUILD_ROOT%{_var}/run/clamd.exim
+mkdir -p $RPM_BUILD_ROOT%{_var}/log
+touch $RPM_BUILD_ROOT%{_var}/log/clamd.exim
+
 %endif
 
 # Set up the greylist subpackage
@@ -430,6 +441,7 @@ fi
 %{_sysconfdir}/rc.d/init.d/exim
 %config(noreplace) %{_sysconfdir}/logrotate.d/exim
 %config(noreplace) %{_sysconfdir}/pam.d/exim
+%{_sysconfdir}/cron.daily/exim-tidydb
 
 %doc ACKNOWLEDGMENTS LICENCE NOTICE README.UPDATING README 
 %doc doc util/unknownuser.sh
@@ -461,6 +473,8 @@ fi
 
 %if 0%{?buildclam}
 %post clamav
+/bin/touch %{_var}/log/clamd.exim
+/bin/chown exim.exim %{_var}log/clamd.exim
 /sbin/chkconfig --add clamd.exim
 
 %preun clamav
@@ -478,6 +492,7 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/sysconfig/clamd.exim
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/logrotate.d/clamd.exim
 %attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
+%ghost %attr(0644,exim,exim) %{_var}/log/clamd.exim
 %endif
 
 %files greylist
@@ -488,6 +503,12 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 12 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-13
+- Cope with lack of /etc/sysconfig/network (#506330)
+- Require /etc/pki/tls/ directories
+- Provide exim-tidydb cron job (#481426)
+- Provide clamd.exim log file (#452358)
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.69-12
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
