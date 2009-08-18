@@ -28,6 +28,36 @@ fi
 
 [ -f /usr/sbin/exim ] || exit 0
 
+gen_cert() {
+	if [ ! -f /etc/pki/tls/certs/exim.pem ] ; then
+		umask 077
+		FQDN=`hostname`
+		if [ "x${FQDN}" = "x" ]; then
+			FQDN=localhost.localdomain
+		fi
+		echo -n $"Generating exim certificate: "
+		cat << EOF | openssl req -new -x509 -days 365 -nodes \
+			-out /etc/pki/tls/certs/exim.pem \
+			-keyout /etc/pki/tls/private/exim.pem &>/dev/null
+--
+SomeState
+SomeCity
+SomeOrganization
+SomeOrganizationalUnit
+${FQDN}
+root@${FQDN}
+EOF
+		if [ $? -eq 0 ]; then
+			success
+			chown exim.exim /etc/pki/tls/{private,certs}/exim.pem
+			chmod 600 /etc/pki/tls/{private,certs}/exim.pem
+		else
+			failure
+		fi
+		echo
+	fi
+}
+
 start() {
 	# check ownerships
 	# do this by seeing if /var/log/exim/main.log exists and is
@@ -39,6 +69,10 @@ start() {
 		chown -R exim:exim /var/log/exim /var/spool/exim
 	    fi
 	fi
+
+	# generate certificate if doesn't exist
+	gen_cert
+
         # Start daemons.
         echo -n $"Starting exim: "
         daemon /usr/sbin/exim $([ "$DAEMON" = yes ] && echo -bd) \

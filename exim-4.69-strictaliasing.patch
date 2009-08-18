@@ -1,0 +1,11 @@
+diff -up exim-4.69/src/exim.h.strictaliasing exim-4.69/src/exim.h
+--- exim-4.69/src/exim.h.strictaliasing	2009-08-18 15:10:42.000000000 +0200
++++ exim-4.69/src/exim.h	2009-08-18 15:16:01.000000000 +0200
+@@ -484,6 +484,7 @@ union sockaddr_46 {
+   #if HAVE_IPV6
+   struct sockaddr_in6 v6;
+   #endif
++  struct sockaddr g;
+ };
+ 
+ /* If SUPPORT_TLS is not defined, ensure that USE_GNUTLS is also not defined

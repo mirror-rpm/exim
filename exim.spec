@@ -19,7 +19,7 @@ Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon server(smtp) /usr/bin/newaliases
 Provides: /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail
-Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives openssl
+Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(preun): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if 0%{?buildclam}
@@ -53,6 +53,7 @@ Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
 Patch24: exim-4.69-dynlookup.patch
 Patch25: exim-4.69-dynlookup-config.patch
+Patch26: exim-4.69-strictaliasing.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -183,6 +184,7 @@ greylisting unconditional.
 %patch23 -p1 -b .smarthost
 %patch24 -p1 -b .dynlookup
 %patch25 -p1 -b .dynconfig
+%patch26 -p1 -b .strictaliasing
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -351,27 +353,6 @@ exit 0
 	--slave %{_mandir}/man1/mailq.1.gz mta-mailqman %{_mandir}/man8/exim.8.gz \
 	--initscript exim
 
-if [ ! -f /etc/pki/tls/certs/exim.pem ] ; then
-	umask 077
-	FQDN=`hostname`
-	if [ "x${FQDN}" = "x" ]; then
-		FQDN=localhost.localdomain
-	fi
-	cat << EOF | openssl req -new -x509 -days 365 -nodes \
-		-out /etc/pki/tls/certs/exim.pem \
-		-keyout /etc/pki/tls/private/exim.pem &>/dev/null
---
-SomeState
-SomeCity
-SomeOrganization
-SomeOrganizationalUnit
-${FQDN}
-root@${FQDN}
-EOF
-	chown exim.exim /etc/pki/tls/{private,certs}/exim.pem
-	chmod 600 /etc/pki/tls/{private,certs}/exim.pem
-fi
-
 %preun
 if [ $1 = 0 ]; then
 	/sbin/service exim stop > /dev/null 2>&1
@@ -503,8 +484,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
-* Wed Aug 12 2009 David Woodhouse <David.Woodhouse@intel.com>
-- Require openssl for %post
+* Tue Aug 18 2009 Miroslav Lichvar <mlichvar@redhat.com> - 4.69-14
+- Move certificate generation to init script (#517013)
+- Fix strict aliasing warning
 
 * Wed Aug 12 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-13
 - Cope with lack of /etc/sysconfig/network (#506330)
