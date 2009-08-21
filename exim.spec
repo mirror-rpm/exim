@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -484,6 +484,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 4.69-15
+- rebuilt with new openssl
+
 * Tue Aug 18 2009 Miroslav Lichvar <mlichvar@redhat.com> - 4.69-14
 - Move certificate generation to init script (#517013)
 - Fix strict aliasing warning
