@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -54,6 +54,7 @@ Patch23: exim-4.67-smarthost-config.patch
 Patch24: exim-4.69-dynlookup.patch
 Patch25: exim-4.69-dynlookup-config.patch
 Patch26: exim-4.69-strictaliasing.patch
+Patch27: exim-4.69-expand-spamd.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -185,7 +186,7 @@ greylisting unconditional.
 %patch24 -p1 -b .dynlookup
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .strictaliasing
-
+%patch27 -p1 -b .expandspamd
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -488,6 +489,7 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %changelog
 * Mon Aug 31 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-16
 - Create group for exim with correct gid (#518706)
+- Allow expansion of spamd_address
 
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 4.69-15
 - rebuilt with new openssl
