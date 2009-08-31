@@ -186,6 +186,7 @@ greylisting unconditional.
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .strictaliasing
 
+
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
 cp exim_monitor/EDITME Local/eximon.conf
@@ -329,7 +330,8 @@ touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-%{_sbindir}/useradd -d %{_var}/spool/exim -s /sbin/nologin -G mail -M -r -u 93 exim 2>/dev/null
+%{_sbindir}/groupadd -g 93 exim 2>&1
+%{_sbindir}/useradd -d %{_var}/spool/exim -s /sbin/nologin -G mail -M -r -u 93 -g exim exim 2>/dev/null
 # Copy TLS certs from old location to new -- don't move them, because the
 # config file may be modified and may be pointing to the old location.
 if [ ! -f /etc/pki/tls/certs/exim.pem -a -f %{_datadir}/ssl/certs/exim.pem ] ; then
@@ -484,6 +486,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Aug 31 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-16
+- Create group for exim with correct gid (#518706)
+
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 4.69-15
 - rebuilt with new openssl
 
