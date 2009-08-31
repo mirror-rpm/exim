@@ -331,7 +331,7 @@ touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-%{_sbindir}/groupadd -g 93 exim 2>&1
+%{_sbindir}/groupadd -g 93 exim 2>/dev/null
 %{_sbindir}/useradd -d %{_var}/spool/exim -s /sbin/nologin -G mail -M -r -u 93 -g exim exim 2>/dev/null
 # Copy TLS certs from old location to new -- don't move them, because the
 # config file may be modified and may be pointing to the old location.
