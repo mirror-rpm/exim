@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -487,6 +487,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Aug 16 2009 Tomas Mraz <tmraz@redhat.com> - 4.69-17
+- Use password-auth common PAM configuration instead of system-auth
+
 * Mon Aug 31 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-16
 - Create group for exim with correct gid (#518706)
 - Allow expansion of spamd_address
