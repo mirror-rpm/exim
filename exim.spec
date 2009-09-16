@@ -487,7 +487,7 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
-* Wed Aug 16 2009 Tomas Mraz <tmraz@redhat.com> - 4.69-17
+* Wed Sep 16 2009 Tomas Mraz <tmraz@redhat.com> - 4.69-17
 - Use password-auth common PAM configuration instead of system-auth
 
 * Mon Aug 31 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-16
