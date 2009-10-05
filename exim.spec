@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 17%{?dist}
+Release: 18%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -458,7 +458,7 @@ fi
 %if 0%{?buildclam}
 %post clamav
 /bin/touch %{_var}/log/clamd.exim
-/bin/chown exim.exim %{_var}log/clamd.exim
+/bin/chown exim.exim %{_var}/log/clamd.exim
 /sbin/chkconfig --add clamd.exim
 
 %preun clamav
@@ -487,6 +487,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Oct 05 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-18
+- Fix typo in clamd %%post (#527085)
+
 * Wed Sep 16 2009 Tomas Mraz <tmraz@redhat.com> - 4.69-17
 - Use password-auth common PAM configuration instead of system-auth
 
