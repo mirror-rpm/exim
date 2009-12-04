@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.69
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -487,6 +487,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Dec  4 2009 Stepan Kasal <skasal@redhat.com> - 4.69-19
+- rebuild against perl 5.10.1
+
 * Mon Oct 05 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-18
 - Fix typo in clamd %%post (#527085)
 
