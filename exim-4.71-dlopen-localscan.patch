@@ -1,43 +1,6 @@
-diff -uNr exim-4.69-old/src/config.h.defaults exim-4.69/src/config.h.defaults
---- exim-4.69-old/src/config.h.defaults	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/config.h.defaults	2008-08-13 15:25:31.000000000 +0100
-@@ -27,6 +27,8 @@
- 
- #define AUTH_VARS                     3
- 
-+#define DLOPEN_LOCAL_SCAN
-+
- #define BIN_DIRECTORY
- 
- #define CONFIGURE_FILE
-diff -uNr exim-4.69-old/src/EDITME exim-4.69/src/EDITME
---- exim-4.69-old/src/EDITME	2008-08-13 15:25:05.000000000 +0100
-+++ exim-4.69/src/EDITME	2008-08-13 15:25:31.000000000 +0100
-@@ -619,6 +619,20 @@
- 
- 
- #------------------------------------------------------------------------------
-+# On systems which support dynamic loading of shared libraries, Exim can
-+# load a local_scan function specified in its config file instead of having
-+# to be recompiled with the desired local_scan function. For a full 
-+# description of the API to this function, see the Exim specification.
-+
-+DLOPEN_LOCAL_SCAN=yes
-+
-+# If you set DLOPEN_LOCAL_SCAN, then you need to include -rdynamic in the
-+# linker flags.  Without it, the loaded .so won't be able to access any
-+# functions from exim.
-+
-+LFLAGS=-rdynamic -ldl
-+
-+#------------------------------------------------------------------------------
- # The default distribution of Exim contains only the plain text form of the
- # documentation. Other forms are available separately. If you want to install
- # the documentation in "info" format, first fetch the Texinfo documentation
-diff -uNr exim-4.69-old/src/globals.c exim-4.69/src/globals.c
---- exim-4.69-old/src/globals.c	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/globals.c	2008-08-13 15:25:31.000000000 +0100
-@@ -128,6 +128,9 @@
+--- exim-4.71/src/globals.c.dl	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71/src/globals.c	2009-12-24 19:27:17.000000000 +0000
+@@ -129,6 +129,9 @@ uschar *tls_verify_certificates= NULL;
  uschar *tls_verify_hosts       = NULL;
  #endif
  
@@ -47,24 +10,33 @@ diff -uNr exim-4.69-old/src/globals.c exim-4.69/src/globals.c
  
  /* Input-reading functions for messages, so we can use special ones for
  incoming TCP/IP. The defaults use stdin. We never need these for any
-diff -uNr exim-4.69-old/src/globals.h exim-4.69/src/globals.h
---- exim-4.69-old/src/globals.h	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/globals.h	2008-08-13 15:25:31.000000000 +0100
-@@ -88,6 +88,9 @@
- extern uschar *tls_verify_hosts;       /* Mandatory client verification */
- #endif
+--- exim-4.71/src/config.h.defaults.dl	2009-11-16 19:50:36.000000000 +0000
++++ exim-4.71/src/config.h.defaults	2009-12-24 19:27:17.000000000 +0000
+@@ -27,6 +27,8 @@ it's a default value. */
  
+ #define AUTH_VARS                     3
+ 
++#define DLOPEN_LOCAL_SCAN
++
+ #define BIN_DIRECTORY
+ 
+ #define CONFIGURE_FILE
+--- exim-4.71/src/readconf.c.dl	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71/src/readconf.c	2009-12-24 19:27:17.000000000 +0000
+@@ -269,6 +269,9 @@ static optionlist optionlist_config[] = 
+   { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
+   { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
+   { "local_interfaces",         opt_stringptr,   &local_interfaces },
 +#ifdef DLOPEN_LOCAL_SCAN
-+extern uschar *local_scan_path;        /* Path to local_scan() library */
++  { "local_scan_path",          opt_stringptr,   &local_scan_path },
 +#endif
- 
- /* Input-reading functions for messages, so we can use special ones for
- incoming TCP/IP. */
-diff -uNr exim-4.69-old/src/local_scan.c exim-4.69/src/local_scan.c
---- exim-4.69-old/src/local_scan.c	2007-01-08 10:50:18.000000000 +0000
-+++ exim-4.69/src/local_scan.c	2008-08-13 15:25:31.000000000 +0100
+   { "local_scan_timeout",       opt_time,        &local_scan_timeout },
+   { "local_sender_retain",      opt_bool,        &local_sender_retain },
+   { "localhost_number",         opt_stringptr,   &host_number_string },
+--- exim-4.71/src/local_scan.c.dl	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71/src/local_scan.c	2009-12-24 19:27:17.000000000 +0000
 @@ -7,60 +7,131 @@
- /* Copyright (c) University of Cambridge 1995 - 2007 */
+ /* Copyright (c) University of Cambridge 1995 - 2009 */
  /* See the file NOTICE for conditions of use and distribution. */
  
 +#include "exim.h"
@@ -242,16 +214,38 @@ diff -uNr exim-4.69-old/src/local_scan.c exim-4.69/src/local_scan.c
 +#endif /* DLOPEN_LOCAL_SCAN */
 +
  /* End of local_scan.c */
-diff -uNr exim-4.69-old/src/readconf.c exim-4.69/src/readconf.c
---- exim-4.69-old/src/readconf.c	2007-08-23 12:01:49.000000000 +0100
-+++ exim-4.69/src/readconf.c	2008-08-13 15:25:31.000000000 +0100
-@@ -257,6 +257,9 @@
-   { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
-   { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
-   { "local_interfaces",         opt_stringptr,   &local_interfaces },
+--- exim-4.71/src/globals.h.dl	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71/src/globals.h	2009-12-24 19:27:17.000000000 +0000
+@@ -89,6 +89,9 @@ extern uschar *tls_verify_certificates;/
+ extern uschar *tls_verify_hosts;       /* Mandatory client verification */
+ #endif
+ 
 +#ifdef DLOPEN_LOCAL_SCAN
-+  { "local_scan_path",          opt_stringptr,   &local_scan_path },
++extern uschar *local_scan_path;        /* Path to local_scan() library */
 +#endif
-   { "local_scan_timeout",       opt_time,        &local_scan_timeout },
-   { "local_sender_retain",      opt_bool,        &local_sender_retain },
-   { "localhost_number",         opt_stringptr,   &host_number_string },
+ 
+ /* Input-reading functions for messages, so we can use special ones for
+ incoming TCP/IP. */
+--- exim-4.71/src/EDITME.dl	2009-12-24 19:26:59.000000000 +0000
++++ exim-4.71/src/EDITME	2009-12-24 19:27:17.000000000 +0000
+@@ -632,6 +632,20 @@ TLS_LIBS=-lssl -lcrypto
+ 
+ 
+ #------------------------------------------------------------------------------
++# On systems which support dynamic loading of shared libraries, Exim can
++# load a local_scan function specified in its config file instead of having
++# to be recompiled with the desired local_scan function. For a full 
++# description of the API to this function, see the Exim specification.
++
++DLOPEN_LOCAL_SCAN=yes
++
++# If you set DLOPEN_LOCAL_SCAN, then you need to include -rdynamic in the
++# linker flags.  Without it, the loaded .so won't be able to access any
++# functions from exim.
++
++LFLAGS=-rdynamic -ldl
++
++#------------------------------------------------------------------------------
+ # The default distribution of Exim contains only the plain text form of the
+ # documentation. Other forms are available separately. If you want to install
+ # the documentation in "info" format, first fetch the Texinfo documentation

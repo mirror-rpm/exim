@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.69
-Release: 19%{?dist}
+Version: 4.71
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -44,17 +44,15 @@ Patch8: exim-4.24-libdir.patch
 Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
 Patch14: exim-4.50-spamdconf.patch
-Patch15: exim-4.52-dynamic-pcre.patch
-Patch18: exim-4.62-dlopen-localscan.patch
+Patch18: exim-4.71-dlopen-localscan.patch
 Patch19: exim-4.63-procmail.patch
 Patch20: exim-4.63-allow-filter.patch
 Patch21: exim-4.63-localhost-is-local.patch
 Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
-Patch24: exim-4.69-dynlookup.patch
+Patch24: exim-4.71-dynlookup.patch
 Patch25: exim-4.69-dynlookup-config.patch
 Patch26: exim-4.69-strictaliasing.patch
-Patch27: exim-4.69-expand-spamd.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -176,7 +174,6 @@ greylisting unconditional.
 %patch12 -p1 -b .cyrus
 %patch13 -p1 -b .pam
 %patch14 -p1 -b .spamd
-%patch15 -p1 -b .pcre
 %patch18 -p1 -b .dl
 %patch19 -p1 -b .procmail
 %patch20 -p1 -b .filter
@@ -186,7 +183,6 @@ greylisting unconditional.
 %patch24 -p1 -b .dynlookup
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .strictaliasing
-%patch27 -p1 -b .expandspamd
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -487,6 +483,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Dec 24 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-20
+- Update to 4.71
+
 * Fri Dec  4 2009 Stepan Kasal <skasal@redhat.com> - 4.69-19
 - rebuild against perl 5.10.1
 

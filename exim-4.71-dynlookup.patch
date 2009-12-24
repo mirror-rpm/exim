@@ -1,12 +1,7 @@
-diff -uNr exim-4.69-old/Makefile exim-4.69/Makefile
---- exim-4.69-old/Makefile	2005-09-12 14:55:54.000000000 +0100
-+++ exim-4.69/Makefile	2008-08-13 15:30:05.000000000 +0100
-@@ -80,11 +80,11 @@
- 	cd build-$(buildname); \
- 	$(RM_COMMAND) -f *.o lookups/*.o lookups/*.a auths/*.o auths/*.a \
- 	routers/*.o routers/*.a transports/*.o transports/*.a \
--	pcre/*.o pcre/*.a
-+	pcre/*.o pcre/*.a lookups/*.so
+diff -uNr exim-4.71/Makefile exim-4.71-dynlookup/Makefile
+--- exim-4.71/Makefile	2009-11-16 19:50:36.000000000 +0000
++++ exim-4.71-dynlookup/Makefile	2009-12-24 19:54:45.000000000 +0000
+@@ -81,7 +81,7 @@
  
  clean_exim:; cd build-$(buildname); \
  	 $(RM_COMMAND) -f *.o lookups/*.o lookups/*.a auths/*.o auths/*.a \
@@ -15,10 +10,10 @@ diff -uNr exim-4.69-old/Makefile exim-4.69/Makefile
  
  distclean:; $(RM_COMMAND) -rf build-*
  
-diff -uNr exim-4.69-old/OS/Makefile-Base exim-4.69/OS/Makefile-Base
---- exim-4.69-old/OS/Makefile-Base	2008-08-13 15:29:21.000000000 +0100
-+++ exim-4.69/OS/Makefile-Base	2008-08-13 15:30:05.000000000 +0100
-@@ -311,6 +311,7 @@
+diff -uNr exim-4.71/OS/Makefile-Base exim-4.71-dynlookup/OS/Makefile-Base
+--- exim-4.71/OS/Makefile-Base	2009-06-10 08:34:04.000000000 +0100
++++ exim-4.71-dynlookup/OS/Makefile-Base	2009-12-24 19:54:45.000000000 +0000
+@@ -313,6 +313,7 @@
          rda.o readconf.o receive.o retry.o rewrite.o rfc2047.o \
          route.o search.o sieve.o smtp_in.o smtp_out.o spool_in.o spool_out.o \
          store.o string.o tls.o tod.o transport.o tree.o verify.o \
@@ -26,9 +21,9 @@ diff -uNr exim-4.69-old/OS/Makefile-Base exim-4.69/OS/Makefile-Base
          local_scan.o $(EXIM_PERL) $(OBJ_WITH_CONTENT_SCAN) \
          $(OBJ_WITH_OLD_DEMIME) $(OBJ_EXPERIMENTAL)
  
-diff -uNr exim-4.69-old/scripts/Configure-Makefile exim-4.69/scripts/Configure-Makefile
---- exim-4.69-old/scripts/Configure-Makefile	2008-08-13 15:29:21.000000000 +0100
-+++ exim-4.69/scripts/Configure-Makefile	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/scripts/Configure-Makefile exim-4.71-dynlookup/scripts/Configure-Makefile
+--- exim-4.71/scripts/Configure-Makefile	2009-11-20 21:22:20.000000000 +0000
++++ exim-4.71-dynlookup/scripts/Configure-Makefile	2009-12-24 19:54:45.000000000 +0000
 @@ -107,7 +107,7 @@
              echo "# End of $f"
              echo ""
@@ -38,10 +33,10 @@ diff -uNr exim-4.69-old/scripts/Configure-Makefile exim-4.69/scripts/Configure-M
  
  # See if there is a definition of EXIM_PERL in what we have built so far.
  # If so, run Perl to find the default values for PERL_CC, PERL_CCOPTS,
-diff -uNr exim-4.69-old/scripts/MakeLinks exim-4.69/scripts/MakeLinks
---- exim-4.69-old/scripts/MakeLinks	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/scripts/MakeLinks	2008-08-13 15:30:05.000000000 +0100
-@@ -204,6 +204,7 @@
+diff -uNr exim-4.71/scripts/MakeLinks exim-4.71-dynlookup/scripts/MakeLinks
+--- exim-4.71/scripts/MakeLinks	2009-11-13 15:58:17.000000000 +0000
++++ exim-4.71-dynlookup/scripts/MakeLinks	2009-12-24 19:54:45.000000000 +0000
+@@ -197,6 +197,7 @@
  ln -s ../src/osfunctions.h     osfunctions.h
  ln -s ../src/store.h           store.h
  ln -s ../src/structs.h         structs.h
@@ -49,10 +44,10 @@ diff -uNr exim-4.69-old/scripts/MakeLinks exim-4.69/scripts/MakeLinks
  
  ln -s ../src/acl.c             acl.c
  ln -s ../src/buildconfig.c     buildconfig.c
-diff -uNr exim-4.69-old/src/config.h.defaults exim-4.69/src/config.h.defaults
---- exim-4.69-old/src/config.h.defaults	2008-08-13 15:29:21.000000000 +0100
-+++ exim-4.69/src/config.h.defaults	2008-08-13 15:30:05.000000000 +0100
-@@ -92,6 +92,8 @@
+diff -uNr exim-4.71/src/config.h.defaults exim-4.71-dynlookup/src/config.h.defaults
+--- exim-4.71/src/config.h.defaults	2009-11-16 19:50:36.000000000 +0000
++++ exim-4.71-dynlookup/src/config.h.defaults	2009-12-24 19:54:45.000000000 +0000
+@@ -90,6 +90,8 @@
  #define LOOKUP_WILDLSEARCH
  #define LOOKUP_NWILDLSEARCH
  
@@ -61,9 +56,9 @@ diff -uNr exim-4.69-old/src/config.h.defaults exim-4.69/src/config.h.defaults
  #define MAX_FILTER_SIZE           (1024*1024)
  #define MAX_LOCALHOST_NUMBER        256
  #define MAX_INCLUDE_SIZE          (1024*1024)
-diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
---- exim-4.69-old/src/drtables.c	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/drtables.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/drtables.c exim-4.71-dynlookup/src/drtables.c
+--- exim-4.71/src/drtables.c	2009-11-16 19:50:36.000000000 +0000
++++ exim-4.71-dynlookup/src/drtables.c	2009-12-24 19:54:45.000000000 +0000
 @@ -10,6 +10,8 @@
  
  #include "exim.h"
@@ -73,10 +68,24 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
  
  /* This module contains tables that define the lookup methods and drivers
  that are actually included in the binary. Its contents are controlled by
-@@ -31,535 +33,8 @@
+@@ -17,527 +19,8 @@
+ all described in src/EDITME. */
  
- static void dummy(int x) { dummy(x-1); }
  
+-/* The OSF1 (Digital Unix) linker puts out a worrying warning if any sections
+-contain no executable code. It says
+-
+-Warning: Linking some objects which contain exception information sections
+-        and some which do not. This may cause fatal runtime exception handling
+-        problems.
+-
+-As this may cause people to worry needlessly, include a dummy function here
+-to stop the message from appearing. Make it call itself to stop picky compilers
+-compilers complaining that it is unused, and put in a dummy argument to stop
+-even pickier compilers complaining about infinite loops. */
+-
+-static void dummy(int x) { dummy(x-1); }
+-
 -
 -/* Table of information about all possible lookup methods. The entries are
 -always present, but the "open" and "find" functions are set to NULL for those
@@ -151,11 +160,6 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 -#include "lookups/whoson.h"
 -#endif
 -
--#ifdef EXPERIMENTAL_DKIM
--#include "lookups/dkim.h"
--#endif
--
--
 -/* The second field in each item below is a set of bit flags:
 -
 -  lookup_querystyle     => this is a query-style lookup,
@@ -215,23 +219,6 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 -  dbmdb_check,     /* sic */     /* check function */
 -  dbmnz_find,                    /* find function */
 -  dbmdb_close,     /* sic */     /* close function */
--  NULL,                          /* no tidy function */
--  NULL                           /* no quoting function */
--#else
--  NULL, NULL, NULL, NULL, NULL, NULL /* lookup not present */
--#endif
--  },
--
--/* DKIM lookups */
--
--  {
--  US"dkim",                      /* lookup name */
--  lookup_querystyle,             /* query style */
--#ifdef EXPERIMENTAL_DKIM
--  dkim_open,                     /* open function */
--  NULL,                          /* check function */
--  dkim_find,                     /* find function */
--  NULL,                          /* no close function */
 -  NULL,                          /* no tidy function */
 -  NULL                           /* no quoting function */
 -#else
@@ -611,7 +598,7 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
  
  /* Table of information about all possible authentication mechamisms. All
  entries are always present if any mechanism is declared, but the functions are
-@@ -887,4 +362,226 @@
+@@ -865,4 +348,226 @@
  { US"", NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, FALSE }
  };
  
@@ -661,7 +648,7 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 +{
 +  DIR *dd;
 +  struct dirent *ent;
-+  const pcre *regex_islookupmod = regex_must_compile("\\.so$", FALSE, TRUE);
++  const pcre *regex_islookupmod = regex_must_compile(US"\\.so$", FALSE, TRUE);
 +  int countmodules = 0;
 +  int moduleerrors = 0;
 +  struct lookupmodulestr *p;
@@ -674,11 +661,6 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 +#if defined(LOOKUP_DBM) && LOOKUP_DBM!=2
 +extern lookup_module_info dbmdb_lookup_module_info;
 +  addlookupmodule(NULL, &dbmdb_lookup_module_info);
-+#endif
-+
-+#if defined(LOOKUP_DKIM) && LOOKUP_DKIM!=2
-+extern lookup_module_info dkim_lookup_module_info;
-+  addlookupmodule(NULL, &dkim_lookup_module_info);
 +#endif
 +
 +#if defined(LOOKUP_DNSDB) && LOOKUP_DNSDB!=2
@@ -760,6 +742,7 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 +  dd = opendir(LOOKUP_MODULE_DIR);
 +  if (dd == NULL) {
 +    DEBUG(5) debug_printf("Couldn't open %s: not loading lookup modules\n", LOOKUP_MODULE_DIR);
++    log_write(0, LOG_MAIN, "Couldn't open %s: not loading lookup modules\n", LOOKUP_MODULE_DIR);
 +  }
 +  else {
 +    DEBUG(9) debug_printf("Loading lookup modules from %s\n", LOOKUP_MODULE_DIR);
@@ -774,17 +757,19 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 +
 +        /* SRH: am I being paranoid here or what? */
 +        if (pathnamelen > big_buffer_size) {
-+          fprintf(stderr, "%s/%s: name too long\n", LOOKUP_MODULE_DIR, name);
++          fprintf(stderr, "Loading lookup modules: %s/%s: name too long\n", LOOKUP_MODULE_DIR, name);
++          log_write(0, LOG_MAIN|LOG_PANIC, "%s/%s: name too long\n", LOOKUP_MODULE_DIR, name);
 +          continue;
 +        }
 +
 +        /* SRH: snprintf here? */
-+        sprintf(big_buffer, "%s/%s", LOOKUP_MODULE_DIR, name);
++        sprintf(CS big_buffer, "%s/%s", LOOKUP_MODULE_DIR, name);
 +
-+        dl = dlopen(big_buffer, RTLD_NOW);// TJ was LAZY
++        dl = dlopen(CS big_buffer, RTLD_NOW);// TJ was LAZY
 +        if (dl == NULL) {
 +          fprintf(stderr, "Error loading %s: %s\n", name, dlerror());
 +          moduleerrors++;
++          log_write(0, LOG_MAIN|LOG_PANIC, "Error loading lookup module %s: %s\n", name, dlerror());
 +          continue;
 +        }
 +
@@ -793,12 +778,14 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 +          fprintf(stderr, "%s does not appear to be a lookup module (%s)\n", name, errormsg);
 +          dlclose(dl);
 +          moduleerrors++;
++          log_write(0, LOG_MAIN|LOG_PANIC, "%s does not appear to be a lookup module (%s)\n", name, errormsg);
 +          continue;
 +        }
 +        if (info->magic != LOOKUP_MODULE_INFO_MAGIC) {
 +          fprintf(stderr, "Lookup module %s is not compatible with this version of Exim\n", name);
 +          dlclose(dl);
 +          moduleerrors++;
++          log_write(0, LOG_MAIN|LOG_PANIC, "Lookup module %s is not compatible with this version of Exim\n", name);
 +          continue;
 +        }
 +
@@ -838,20 +825,21 @@ diff -uNr exim-4.69-old/src/drtables.c exim-4.69/src/drtables.c
 +}
 +
  /* End of drtables.c */
-diff -uNr exim-4.69-old/src/EDITME exim-4.69/src/EDITME
---- exim-4.69-old/src/EDITME	2008-08-13 15:29:21.000000000 +0100
-+++ exim-4.69/src/EDITME	2008-08-13 15:30:05.000000000 +0100
-@@ -248,6 +248,9 @@
- SUPPORT_MAILSTORE=yes
- SUPPORT_MBX=yes
+diff -uNr exim-4.71/src/EDITME exim-4.71-dynlookup/src/EDITME
+--- exim-4.71/src/EDITME	2009-11-20 12:18:19.000000000 +0000
++++ exim-4.71-dynlookup/src/EDITME	2009-12-24 19:54:45.000000000 +0000
+@@ -250,6 +250,10 @@
  
-+#------------------------------------------------------------------------------
-+# See below for dynamic lookup modules.
-+# LOOKUP_MODULE_DIR=/usr/lib/exim/lookups/
  
  #------------------------------------------------------------------------------
++# See below for dynamic lookup modules.
++# LOOKUP_MODULE_DIR=/usr/lib/exim/lookups/
++
++#------------------------------------------------------------------------------
  # These settings determine which file and database lookup methods are included
-@@ -257,6 +260,18 @@
+ # in the binary. See the manual chapter entitled "File and database lookups"
+ # for discussion. DBM and lsearch (linear search) are included by default. If
+@@ -257,6 +261,18 @@
  # LOOKUP_DNSDB does *not* refer to general mail routing using the DNS. It is
  # for the specialist case of using the DNS as a general database facility (not
  # common).
@@ -870,9 +858,9 @@ diff -uNr exim-4.69-old/src/EDITME exim-4.69/src/EDITME
  
  LOOKUP_DBM=yes
  LOOKUP_LSEARCH=yes
-diff -uNr exim-4.69-old/src/exim.c exim-4.69/src/exim.c
---- exim-4.69-old/src/exim.c	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/exim.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/exim.c exim-4.71-dynlookup/src/exim.c
+--- exim-4.71/src/exim.c	2009-11-16 19:50:36.000000000 +0000
++++ exim-4.71-dynlookup/src/exim.c	2009-12-24 19:54:45.000000000 +0000
 @@ -925,53 +925,53 @@
  #endif
  fprintf(f, "\n");
@@ -944,20 +932,21 @@ diff -uNr exim-4.69-old/src/exim.c exim-4.69/src/exim.c
    fprintf(f, " whoson");
  #endif
  fprintf(f, "\n");
-@@ -3424,6 +3424,9 @@
+@@ -3432,6 +3432,10 @@
    }
  #endif /* EXIM_PERL */
  
 +/* Initialise lookup_list */
++extern void init_lookup_list(void);
 +init_lookup_list();
 +
  /* Log the arguments of the call if the configuration file said so. This is
  a debugging feature for finding out what arguments certain MUAs actually use.
  Don't attempt it if logging is disabled, or if listing variables or if
-diff -uNr exim-4.69-old/src/expand.c exim-4.69/src/expand.c
---- exim-4.69-old/src/expand.c	2007-10-04 14:23:05.000000000 +0100
-+++ exim-4.69/src/expand.c	2008-08-13 15:30:05.000000000 +0100
-@@ -5373,8 +5373,8 @@
+diff -uNr exim-4.71/src/expand.c exim-4.71-dynlookup/src/expand.c
+--- exim-4.71/src/expand.c	2009-11-16 19:50:36.000000000 +0000
++++ exim-4.71-dynlookup/src/expand.c	2009-12-24 19:54:45.000000000 +0000
+@@ -5473,8 +5473,8 @@
            goto EXPAND_FAILED;
            }
  
@@ -968,10 +957,35 @@ diff -uNr exim-4.69-old/src/expand.c exim-4.69/src/expand.c
          else if (opt != NULL) sub = NULL;
  
          if (sub == NULL)
-diff -uNr exim-4.69-old/src/globals.h exim-4.69/src/globals.h
---- exim-4.69-old/src/globals.h	2008-08-13 15:29:21.000000000 +0100
-+++ exim-4.69/src/globals.h	2008-08-13 15:30:05.000000000 +0100
-@@ -432,7 +432,7 @@
+diff -uNr exim-4.71/src/globals.c exim-4.71-dynlookup/src/globals.c
+--- exim-4.71/src/globals.c	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71-dynlookup/src/globals.c	2009-12-24 19:54:45.000000000 +0000
+@@ -13,21 +13,6 @@
+ #include "exim.h"
+ 
+ 
+-/* The OSF1 linker puts out a worrying warning if any sections contain no
+-executable code. It says
+-
+-Warning: Linking some objects which contain exception information sections
+-        and some which do not. This may cause fatal runtime exception handling
+-        problems.
+-
+-As this may cause people to worry needlessly, include a dummy function here
+-to stop the message from appearing. Make it reference itself to stop picky
+-compilers complaining that it is unused, and put in a dummy argument to stop
+-even pickier compilers complaining about infinite loops. */
+-
+-static void dummy(int x) { dummy(x-1); }
+-
+-
+ /* Generic options for auths, all of which live inside auth_instance
+ data blocks and hence have the opt_public flag set. */
+ 
+diff -uNr exim-4.71/src/globals.h exim-4.71-dynlookup/src/globals.h
+--- exim-4.71/src/globals.h	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71-dynlookup/src/globals.h	2009-12-24 19:54:45.000000000 +0000
+@@ -440,7 +440,7 @@
  extern BOOL    log_timezone;           /* TRUE to include the timezone in log lines */
  extern unsigned int log_write_selector;/* Bit map of logging options for log_write() */
  extern uschar *login_sender_address;   /* The actual sender address */
@@ -980,10 +994,20 @@ diff -uNr exim-4.69-old/src/globals.h exim-4.69/src/globals.h
  extern int     lookup_list_count;      /* Number of entries in the list */
  extern int     lookup_open_max;        /* Max lookup files to cache */
  extern uschar *lookup_value;           /* Value looked up from file */
-diff -uNr exim-4.69-old/src/lookupapi.h exim-4.69/src/lookupapi.h
---- exim-4.69-old/src/lookupapi.h	1970-01-01 01:00:00.000000000 +0100
-+++ exim-4.69/src/lookupapi.h	2008-08-13 15:30:05.000000000 +0100
-@@ -0,0 +1,45 @@
+diff -uNr exim-4.71/src/lookupapi.h exim-4.71-dynlookup/src/lookupapi.h
+--- exim-4.71/src/lookupapi.h	1970-01-01 01:00:00.000000000 +0100
++++ exim-4.71-dynlookup/src/lookupapi.h	2009-12-24 19:54:45.000000000 +0000
+@@ -0,0 +1,58 @@
++/* $Cambridge$ */
++
++/*************************************************
++*     Exim - an Internet mail transport agent    *
++*************************************************/
++
++/* Copyright (c) University of Cambridge 1995 - 2009 */
++/* See the file NOTICE for conditions of use and distribution. */
++
++
 +/* The "type" field in each item is a set of bit flags:
 +
 +  lookup_querystyle     => this is a query-style lookup,
@@ -1021,7 +1045,8 @@ diff -uNr exim-4.69-old/src/lookupapi.h exim-4.69/src/lookupapi.h
 +    uschar *);                    /* additional data from quote name */
 +} lookup_info;
 +
-+/* "LMM1" */
++/* This magic number is used by the following lookup_module_info structure
++   for checking API compatibility. It's equivalent to the string"LMM1" */
 +#define LOOKUP_MODULE_INFO_MAGIC 0x4c4d4d31
 +
 +typedef struct lookup_module_info {
@@ -1029,9 +1054,11 @@ diff -uNr exim-4.69-old/src/lookupapi.h exim-4.69/src/lookupapi.h
 +  lookup_info **lookups;
 +  uint lookupcount;
 +} lookup_module_info;
-diff -uNr exim-4.69-old/src/lookups/cdb.c exim-4.69/src/lookups/cdb.c
---- exim-4.69-old/src/lookups/cdb.c	2005-06-27 15:29:44.000000000 +0100
-+++ exim-4.69/src/lookups/cdb.c	2008-08-13 15:30:05.000000000 +0100
++
++/* End of lookupapi.h */
+diff -uNr exim-4.71/src/lookups/cdb.c exim-4.71-dynlookup/src/lookups/cdb.c
+--- exim-4.71/src/lookups/cdb.c	2005-06-27 15:29:44.000000000 +0100
++++ exim-4.71-dynlookup/src/lookups/cdb.c	2009-12-24 19:54:45.000000000 +0000
 @@ -56,7 +56,6 @@
  
  #include "../exim.h"
@@ -1101,9 +1128,9 @@ diff -uNr exim-4.69-old/src/lookups/cdb.c exim-4.69/src/lookups/cdb.c
 +lookup_module_info cdb_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
 +
  /* End of lookups/cdb.c */
-diff -uNr exim-4.69-old/src/lookups/cdb.h exim-4.69/src/lookups/cdb.h
---- exim-4.69-old/src/lookups/cdb.h	2004-10-07 14:10:01.000000000 +0100
-+++ exim-4.69/src/lookups/cdb.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/cdb.h exim-4.71-dynlookup/src/lookups/cdb.h
+--- exim-4.71/src/lookups/cdb.h	2004-10-07 14:10:01.000000000 +0100
++++ exim-4.71-dynlookup/src/lookups/cdb.h	2009-12-24 19:54:45.000000000 +0000
 @@ -1,59 +0,0 @@
 -/* $Cambridge: exim/exim-src/src/lookups/cdb.h,v 1.1 2004/10/07 13:10:01 ph10 Exp $ */
 -
@@ -1164,9 +1191,9 @@ diff -uNr exim-4.69-old/src/lookups/cdb.h exim-4.69/src/lookups/cdb.h
 -extern void  cdb_close(void *);
 -
 -/* End of cdb.h */
-diff -uNr exim-4.69-old/src/lookups/dbmdb.c exim-4.69/src/lookups/dbmdb.c
---- exim-4.69-old/src/lookups/dbmdb.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/dbmdb.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/dbmdb.c exim-4.71-dynlookup/src/lookups/dbmdb.c
+--- exim-4.71/src/lookups/dbmdb.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/dbmdb.c	2009-12-24 19:54:45.000000000 +0000
 @@ -9,7 +9,6 @@
  
  #include "../exim.h"
@@ -1202,22 +1229,21 @@ diff -uNr exim-4.69-old/src/lookups/dbmdb.c exim-4.69/src/lookups/dbmdb.c
  dbmdb_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -121,7 +120,7 @@
- 
+@@ -122,7 +121,7 @@
  /* See local README for interface description */
  
--int
-+static int
- dbmnz_find(void *handle, uschar *filename, uschar *keystring, int length,
+ int
+-dbmnz_find(void *handle, uschar *filename, uschar *keystring, int length,
++static dbmnz_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -137,10 +136,39 @@
- 
+ return dbmdb_find(handle, filename, keystring, length-1, result, errmsg,
+@@ -138,9 +137,38 @@
  /* See local README for interface description */
  
--void
-+static void
- dbmdb_close(void *handle)
+ void
+-dbmdb_close(void *handle)
++static dbmdb_close(void *handle)
  {
  EXIM_DBCLOSE((EXIM_DB *)handle);
  }
@@ -1252,17 +1278,17 @@ diff -uNr exim-4.69-old/src/lookups/dbmdb.c exim-4.69/src/lookups/dbmdb.c
 +lookup_module_info dbmdb_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 2 };
 +
  /* End of lookups/dbmdb.c */
-diff -uNr exim-4.69-old/src/lookups/dbmdb.h exim-4.69/src/lookups/dbmdb.h
---- exim-4.69-old/src/lookups/dbmdb.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/dbmdb.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/dbmdb.h exim-4.71-dynlookup/src/lookups/dbmdb.h
+--- exim-4.71/src/lookups/dbmdb.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/dbmdb.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,21 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/dbmdb.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/dbmdb.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the dbm lookup. Use dbmdb in the code to avoid name
@@ -1277,91 +1303,18 @@ diff -uNr exim-4.69-old/src/lookups/dbmdb.h exim-4.69/src/lookups/dbmdb.h
 -extern void  dbmdb_close(void *);
 -
 -/* End of lookups/dbmdb.h */
-diff -uNr exim-4.69-old/src/lookups/dkim.c exim-4.69/src/lookups/dkim.c
---- exim-4.69-old/src/lookups/dkim.c	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/lookups/dkim.c	2008-08-13 15:30:05.000000000 +0100
-@@ -8,7 +8,6 @@
- /* See the file NOTICE for conditions of use and distribution. */
- 
- #include "../exim.h"
--#include "dkim.h"
- 
- 
- 
-@@ -18,7 +17,7 @@
- 
- /* See local README for interface description */
- 
--void *
-+static void *
- dkim_open(uschar *filename, uschar **errmsg)
- {
- filename = filename;     /* Keep picky compilers happy */
-@@ -35,7 +34,7 @@
- 
- /* See local README for interface description */
- 
--int
-+static int
- dkim_find(void *handle, uschar *filename, uschar *keystring, int length,
-   uschar **result, uschar **errmsg, BOOL *do_cache)
- {
-@@ -49,4 +48,22 @@
- #endif
- }
- 
-+lookup_info cdb_lookup_info = {
-+  US"dkim",                      /* lookup name */
-+  lookup_querystyle,             /* query style */
-+  dkim_open,                     /* open function */
-+  NULL,                          /* check function */
-+  dkim_find,                     /* find function */
-+  NULL,                          /* no close function */
-+  NULL,                          /* no tidy function */
-+  NULL                           /* no quoting function */
-+};
-+
-+#ifdef DYNLOOKUP
-+#define cdb_lookup_module_info _lookup_module_info
-+#endif
-+
-+static lookup_info *_lookup_list[] = { &dkim_lookup_info };
-+lookup_module_info cdb_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
-+
- /* End of lookups/dkim.c */
-diff -uNr exim-4.69-old/src/lookups/dkim.h exim-4.69/src/lookups/dkim.h
---- exim-4.69-old/src/lookups/dkim.h	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/lookups/dkim.h	1970-01-01 01:00:00.000000000 +0100
-@@ -1,16 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/dkim.h,v 1.1 2007/09/28 12:21:57 tom Exp $ */
--
--/*************************************************
--*     Exim - an Internet mail transport agent    *
--*************************************************/
--
--/* Copyright (c) University of Cambridge 1995 - 2007 */
--/* See the file NOTICE for conditions of use and distribution. */
--
--/* Header for the DKIM lookup */
--
--extern void *dkim_open(uschar *, uschar **);
--extern int   dkim_find(void *, uschar *, uschar *, int, uschar **, uschar **,
--               BOOL *);
--
--/* End of lookups/dkim.h */
-diff -uNr exim-4.69-old/src/lookups/dnsdb.c exim-4.69/src/lookups/dnsdb.c
---- exim-4.69-old/src/lookups/dnsdb.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/dnsdb.c	2008-08-13 15:30:05.000000000 +0100
-@@ -9,8 +9,6 @@
+diff -uNr exim-4.71/src/lookups/dnsdb.c exim-4.71-dynlookup/src/lookups/dnsdb.c
+--- exim-4.71/src/lookups/dnsdb.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/dnsdb.c	2009-12-24 19:54:47.000000000 +0000
+@@ -9,7 +9,6 @@
  
  #include "../exim.h"
  #include "lf_functions.h"
 -#include "dnsdb.h"
--
  
  
- /* Ancient systems (e.g. SunOS4) don't appear to have T_TXT defined in their
-@@ -67,7 +65,7 @@
+ 
+@@ -67,7 +66,7 @@
  
  /* See local README for interface description. */
  
@@ -1370,7 +1323,7 @@ diff -uNr exim-4.69-old/src/lookups/dnsdb.c exim-4.69/src/lookups/dnsdb.c
  dnsdb_open(uschar *filename, uschar **errmsg)
  {
  filename = filename;   /* Keep picky compilers happy */
-@@ -102,7 +100,7 @@
+@@ -102,7 +101,7 @@
  which may start with '<' in order to set a specific separator. The default
  separator, as always, is colon. */
  
@@ -1379,7 +1332,7 @@ diff -uNr exim-4.69-old/src/lookups/dnsdb.c exim-4.69/src/lookups/dnsdb.c
  dnsdb_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -394,4 +392,22 @@
+@@ -400,4 +399,22 @@
  return OK;
  }
  
@@ -1402,17 +1355,17 @@ diff -uNr exim-4.69-old/src/lookups/dnsdb.c exim-4.69/src/lookups/dnsdb.c
 +lookup_module_info dnsdb_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
 +
  /* End of lookups/dnsdb.c */
-diff -uNr exim-4.69-old/src/lookups/dnsdb.h exim-4.69/src/lookups/dnsdb.h
---- exim-4.69-old/src/lookups/dnsdb.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/dnsdb.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/dnsdb.h exim-4.71-dynlookup/src/lookups/dnsdb.h
+--- exim-4.71/src/lookups/dnsdb.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/dnsdb.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,16 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/dnsdb.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/dnsdb.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the dnsdb lookup */
@@ -1422,19 +1375,18 @@ diff -uNr exim-4.69-old/src/lookups/dnsdb.h exim-4.69/src/lookups/dnsdb.h
 -               BOOL *);
 -
 -/* End of lookups/dnsdb.h */
-diff -uNr exim-4.69-old/src/lookups/dsearch.c exim-4.69/src/lookups/dsearch.c
---- exim-4.69-old/src/lookups/dsearch.c	2007-05-31 13:42:07.000000000 +0100
-+++ exim-4.69/src/lookups/dsearch.c	2008-08-13 15:30:05.000000000 +0100
-@@ -14,8 +14,6 @@
+diff -uNr exim-4.71/src/lookups/dsearch.c exim-4.71-dynlookup/src/lookups/dsearch.c
+--- exim-4.71/src/lookups/dsearch.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/dsearch.c	2009-12-24 19:54:47.000000000 +0000
+@@ -14,7 +14,6 @@
  
  #include "../exim.h"
  #include "lf_functions.h"
 -#include "dsearch.h"
--
  
  
- /*************************************************
-@@ -27,7 +25,7 @@
+ 
+@@ -27,7 +26,7 @@
  it open, because the "search" can be done by a call to lstat() rather than
  actually scanning through the list of files. */
  
@@ -1443,31 +1395,30 @@ diff -uNr exim-4.69-old/src/lookups/dsearch.c exim-4.69/src/lookups/dsearch.c
  dsearch_open(uschar *dirname, uschar **errmsg)
  {
  DIR *dp = opendir(CS dirname);
-@@ -50,7 +48,7 @@
- /* The handle will always be (void *)(-1), but don't try casting it to an
+@@ -51,7 +50,7 @@
  integer as this gives warnings on 64-bit systems. */
  
--BOOL
-+static BOOL
- dsearch_check(void *handle, uschar *filename, int modemask, uid_t *owners,
+ BOOL
+-dsearch_check(void *handle, uschar *filename, int modemask, uid_t *owners,
++static dsearch_check(void *handle, uschar *filename, int modemask, uid_t *owners,
    gid_t *owngroups, uschar **errmsg)
  {
-@@ -68,7 +66,7 @@
- scanning the directory, as it is hopefully faster to let the OS do the scanning
+ handle = handle;
+@@ -69,7 +68,7 @@
  for us. */
  
--int
-+static int
- dsearch_find(void *handle, uschar *dirname, uschar *keystring, int length,
+ int
+-dsearch_find(void *handle, uschar *dirname, uschar *keystring, int length,
++static dsearch_find(void *handle, uschar *dirname, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -114,10 +112,28 @@
- 
+ struct stat statbuf;
+@@ -115,9 +114,27 @@
  /* See local README for interface description */
  
--void
-+static void
- dsearch_close(void *handle)
+ void
+-dsearch_close(void *handle)
++static dsearch_close(void *handle)
  {
  handle = handle;   /* Avoid compiler warning */
  }
@@ -1491,17 +1442,17 @@ diff -uNr exim-4.69-old/src/lookups/dsearch.c exim-4.69/src/lookups/dsearch.c
 +lookup_module_info dsearch_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
 +
  /* End of lookups/dsearch.c */
-diff -uNr exim-4.69-old/src/lookups/dsearch.h exim-4.69/src/lookups/dsearch.h
---- exim-4.69-old/src/lookups/dsearch.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/dsearch.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/dsearch.h exim-4.71-dynlookup/src/lookups/dsearch.h
+--- exim-4.71/src/lookups/dsearch.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/dsearch.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,18 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/dsearch.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/dsearch.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the dsearch lookup */
@@ -1513,9 +1464,9 @@ diff -uNr exim-4.69-old/src/lookups/dsearch.h exim-4.69/src/lookups/dsearch.h
 -extern void  dsearch_close(void *);
 -
 -/* End of lookups/dsearch.h */
-diff -uNr exim-4.69-old/src/lookups/ibase.c exim-4.69/src/lookups/ibase.c
---- exim-4.69-old/src/lookups/ibase.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/ibase.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/ibase.c exim-4.71-dynlookup/src/lookups/ibase.c
+--- exim-4.71/src/lookups/ibase.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/ibase.c	2009-12-24 19:54:48.000000000 +0000
 @@ -11,14 +11,7 @@
  
  #include "../exim.h"
@@ -1585,22 +1536,22 @@ diff -uNr exim-4.69-old/src/lookups/ibase.c exim-4.69/src/lookups/ibase.c
 +#ifdef DYNLOOKUP
 +#define ibase_lookup_module_info _lookup_module_info
  #endif
- 
++ 
 +static lookup_info *_lookup_list[] = { &_lookup_info };
 +lookup_module_info ibase_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
-+
+ 
  /* End of lookups/ibase.c */
-diff -uNr exim-4.69-old/src/lookups/ibase.h exim-4.69/src/lookups/ibase.h
---- exim-4.69-old/src/lookups/ibase.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/ibase.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/ibase.h exim-4.71-dynlookup/src/lookups/ibase.h
+--- exim-4.71/src/lookups/ibase.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/ibase.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,18 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/ibase.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/ibase.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the Interbase lookup functions */
@@ -1612,10 +1563,10 @@ diff -uNr exim-4.69-old/src/lookups/ibase.h exim-4.69/src/lookups/ibase.h
 -extern uschar *ibase_quote(uschar *, uschar *);
 -
 -/* End of lookups/ibase.h */
-diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
---- exim-4.69-old/src/lookups/ldap.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/ldap.c	2008-08-13 15:30:05.000000000 +0100
-@@ -15,21 +15,6 @@
+diff -uNr exim-4.71/src/lookups/ldap.c exim-4.71-dynlookup/src/lookups/ldap.c
+--- exim-4.71/src/lookups/ldap.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/ldap.c	2009-12-24 19:54:49.000000000 +0000
+@@ -15,20 +15,6 @@
  
  #include "../exim.h"
  #include "lf_functions.h"
@@ -1633,11 +1584,10 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
 -#ifndef LOOKUP_LDAP
 -static void dummy(int x) { dummy(x-1); }
 -#else
--
+ 
  
  /* Include LDAP headers. The code below uses some "old" LDAP interfaces that
- are deprecated in OpenLDAP. I don't know their status in other LDAP
-@@ -1196,7 +1181,7 @@
+@@ -1196,7 +1182,7 @@
  are handled by a common function, with a flag to differentiate between them.
  The handle and filename arguments are not used. */
  
@@ -1646,7 +1596,7 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
  eldap_find(void *handle, uschar *filename, uschar *ldap_url, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -1205,7 +1190,7 @@
+@@ -1205,7 +1191,7 @@
  return(control_ldap_search(ldap_url, SEARCH_LDAP_SINGLE, result, errmsg));
  }
  
@@ -1655,7 +1605,7 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
  eldapm_find(void *handle, uschar *filename, uschar *ldap_url, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -1214,7 +1199,7 @@
+@@ -1214,7 +1200,7 @@
  return(control_ldap_search(ldap_url, SEARCH_LDAP_MULTIPLE, result, errmsg));
  }
  
@@ -1664,7 +1614,7 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
  eldapdn_find(void *handle, uschar *filename, uschar *ldap_url, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -1240,7 +1225,7 @@
+@@ -1240,7 +1226,7 @@
  
  /* See local README for interface description. */
  
@@ -1673,7 +1623,7 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
  eldap_open(uschar *filename, uschar **errmsg)
  {
  return (void *)(1);    /* Just return something non-null */
-@@ -1255,7 +1240,7 @@
+@@ -1255,7 +1241,7 @@
  /* See local README for interface description.
  Make sure that eldap_dn does not refer to reclaimed or worse, freed store */
  
@@ -1682,7 +1632,7 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
  eldap_tidy(void)
  {
  LDAP_CONNECTION *lcp = NULL;
-@@ -1351,7 +1336,7 @@
+@@ -1351,7 +1337,7 @@
  
  
  
@@ -1691,7 +1641,7 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
  eldap_quote(uschar *s, uschar *opt)
  {
  register int c;
-@@ -1470,6 +1455,44 @@
+@@ -1470,6 +1456,44 @@
  return quoted;
  }
  
@@ -1737,11 +1687,11 @@ diff -uNr exim-4.69-old/src/lookups/ldap.c exim-4.69/src/lookups/ldap.c
 +lookup_module_info ldap_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 3 };
  
  /* End of lookups/ldap.c */
-diff -uNr exim-4.69-old/src/lookups/ldap.h exim-4.69/src/lookups/ldap.h
---- exim-4.69-old/src/lookups/ldap.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/ldap.h	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/ldap.h exim-4.71-dynlookup/src/lookups/ldap.h
+--- exim-4.71/src/lookups/ldap.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/ldap.h	2009-12-24 19:54:49.000000000 +0000
 @@ -7,18 +7,9 @@
- /* Copyright (c) University of Cambridge 1995 - 2007 */
+ /* Copyright (c) University of Cambridge 1995 - 2009 */
  /* See the file NOTICE for conditions of use and distribution. */
  
 -/* Header for the ldap lookups */
@@ -1760,9 +1710,9 @@ diff -uNr exim-4.69-old/src/lookups/ldap.h exim-4.69/src/lookups/ldap.h
 -extern uschar *eldap_quote(uschar *, uschar *);
  
  /* End of lookups/ldap.h */
-diff -uNr exim-4.69-old/src/lookups/lsearch.c exim-4.69/src/lookups/lsearch.c
---- exim-4.69-old/src/lookups/lsearch.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/lsearch.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/lsearch.c exim-4.71-dynlookup/src/lookups/lsearch.c
+--- exim-4.71/src/lookups/lsearch.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/lsearch.c	2009-12-24 19:54:49.000000000 +0000
 @@ -9,7 +9,6 @@
  
  #include "../exim.h"
@@ -1789,7 +1739,7 @@ diff -uNr exim-4.69-old/src/lookups/lsearch.c exim-4.69/src/lookups/lsearch.c
  lsearch_check(void *handle, uschar *filename, int modemask, uid_t *owners,
    gid_t *owngroups, uschar **errmsg)
  {
-@@ -320,7 +319,7 @@
+@@ -324,7 +323,7 @@
  
  /* See local README for interface description */
  
@@ -1798,7 +1748,7 @@ diff -uNr exim-4.69-old/src/lookups/lsearch.c exim-4.69/src/lookups/lsearch.c
  lsearch_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -337,7 +336,7 @@
+@@ -341,7 +340,7 @@
  
  /* See local README for interface description */
  
@@ -1807,7 +1757,7 @@ diff -uNr exim-4.69-old/src/lookups/lsearch.c exim-4.69/src/lookups/lsearch.c
  wildlsearch_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -354,7 +353,7 @@
+@@ -358,7 +357,7 @@
  
  /* See local README for interface description */
  
@@ -1816,7 +1766,7 @@ diff -uNr exim-4.69-old/src/lookups/lsearch.c exim-4.69/src/lookups/lsearch.c
  nwildlsearch_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -372,7 +371,7 @@
+@@ -376,7 +375,7 @@
  
  /* See local README for interface description */
  
@@ -1825,7 +1775,7 @@ diff -uNr exim-4.69-old/src/lookups/lsearch.c exim-4.69/src/lookups/lsearch.c
  iplsearch_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -401,10 +400,64 @@
+@@ -405,10 +404,64 @@
  
  /* See local README for interface description */
  
@@ -1891,17 +1841,17 @@ diff -uNr exim-4.69-old/src/lookups/lsearch.c exim-4.69/src/lookups/lsearch.c
 +lookup_module_info lsearch_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 4 };
 +
  /* End of lookups/lsearch.c */
-diff -uNr exim-4.69-old/src/lookups/lsearch.h exim-4.69/src/lookups/lsearch.h
---- exim-4.69-old/src/lookups/lsearch.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/lsearch.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/lsearch.h exim-4.71-dynlookup/src/lookups/lsearch.h
+--- exim-4.71/src/lookups/lsearch.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/lsearch.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,25 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/lsearch.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/lsearch.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the lsearch and wildlsearch lookups */
@@ -1920,18 +1870,18 @@ diff -uNr exim-4.69-old/src/lookups/lsearch.h exim-4.69/src/lookups/lsearch.h
 -               uschar **, BOOL *);
 -
 -/* End of lookups/lsearch.h */
-diff -uNr exim-4.69-old/src/lookups/Makefile exim-4.69/src/lookups/Makefile
---- exim-4.69-old/src/lookups/Makefile	2007-09-28 13:21:57.000000000 +0100
-+++ exim-4.69/src/lookups/Makefile	2008-08-13 15:30:05.000000000 +0100
-@@ -1,13 +1,181 @@
- # $Cambridge: exim/exim-src/src/lookups/Makefile,v 1.7 2007/09/28 12:21:57 tom Exp $
+diff -uNr exim-4.71/src/lookups/Makefile exim-4.71-dynlookup/src/lookups/Makefile
+--- exim-4.71/src/lookups/Makefile	2009-06-10 08:34:05.000000000 +0100
++++ exim-4.71-dynlookup/src/lookups/Makefile	2009-12-24 19:54:45.000000000 +0000
+@@ -1,13 +1,171 @@
+ # $Cambridge: exim/exim-src/src/lookups/Makefile,v 1.9 2009/06/10 07:34:05 tom Exp $
  
 -# Make file for building a library containing all the available lookups and
 -# calling it lookups.a. This is called from the main make file, after cd'ing
 -# to the lookups subdirectory. When the relevant LOOKUP_ macros are not
 -# defined, dummy modules get compiled.
 -
--OBJ = cdb.o dbmdb.o dkim.o dnsdb.o dsearch.o ibase.o ldap.o lsearch.o mysql.o nis.o \
+-OBJ = cdb.o dbmdb.o dnsdb.o dsearch.o ibase.o ldap.o lsearch.o mysql.o nis.o \
 -      nisplus.o oracle.o passwd.o pgsql.o spf.o sqlite.o testdb.o whoson.o \
 -      lf_check_file.o lf_quote.o lf_sqlperform.o
 +# Make file for building all the available lookups.
@@ -1961,16 +1911,6 @@ diff -uNr exim-4.69-old/src/lookups/Makefile exim-4.69/src/lookups/Makefile
 +else
 +ifneq ($(LOOKUP_DBM),)
 +OBJ += dbmdb.o
-+endif
-+endif
-+
-+ifeq ($(LOOKUP_DKIM),2)
-+MODS += dkim.so
-+LOOKUP_dkim_INCLUDE = $(LOOKUP_DKIM_INCLUDE)
-+LOOKUP_dkim_LIBS = $(LOOKUP_DKIM_LIBS)
-+else
-+ifneq ($(LOOKUP_DKIM),)
-+OBJ += dkim.o
 +endif
 +endif
 +
@@ -2113,9 +2053,9 @@ diff -uNr exim-4.69-old/src/lookups/Makefile exim-4.69/src/lookups/Makefile
  
  lookups.a:       $(OBJ)
  		 @$(RM_COMMAND) -f lookups.a
-@@ -16,31 +184,54 @@
+@@ -15,30 +173,51 @@
+ 		 @$(AR) lookups.a $(OBJ)
  		 $(RANLIB) $@
- 		 @$(RM_COMMAND) -rf ../drtables.o
  
 -.SUFFIXES:       .o .c
 +.SUFFIXES:       .o .c .so
@@ -2131,7 +2071,6 @@ diff -uNr exim-4.69-old/src/lookups/Makefile exim-4.69/src/lookups/Makefile
  
 -cdb.o:           $(HDRS) cdb.c       cdb.h
 -dbmdb.o:         $(HDRS) dbmdb.c     dbmdb.h
--dkim.o:		 $(HDRS) dkim.c      dkim.h
 -dnsdb.o:         $(HDRS) dnsdb.c     dnsdb.h
 -dsearch.o:       $(HDRS) dsearch.c   dsearch.h
 -ibase.o:         $(HDRS) ibase.c     ibase.h
@@ -2149,7 +2088,6 @@ diff -uNr exim-4.69-old/src/lookups/Makefile exim-4.69/src/lookups/Makefile
 -whoson.o:        $(HDRS) whoson.c    whoson.h
 +cdb.o:           $(HDRS) cdb.c
 +dbmdb.o:         $(HDRS) dbmdb.c
-+dkim.o:          $(HDRS) dkim.c
 +dnsdb.o:         $(HDRS) dnsdb.c
 +dsearch.o:       $(HDRS) dsearch.c
 +ibase.o:         $(HDRS) ibase.c
@@ -2168,7 +2106,6 @@ diff -uNr exim-4.69-old/src/lookups/Makefile exim-4.69/src/lookups/Makefile
 +
 +cdb.so:           $(HDRS) cdb.c
 +dbmdb.so:         $(HDRS) dbmdb.c
-+dkim.so:          $(HDRS) dkim.c
 +dnsdb.so:         $(HDRS) dnsdb.c
 +dsearch.so:       $(HDRS) dsearch.c
 +ibase.so:         $(HDRS) ibase.c
@@ -2184,12 +2121,11 @@ diff -uNr exim-4.69-old/src/lookups/Makefile exim-4.69/src/lookups/Makefile
 +sqlite.so:        $(HDRS) sqlite.c
 +testdb.so:        $(HDRS) testdb.c
 +whoson.so:        $(HDRS) whoson.c
-+
  
  # End
-diff -uNr exim-4.69-old/src/lookups/mysql.c exim-4.69/src/lookups/mysql.c
---- exim-4.69-old/src/lookups/mysql.c	2007-08-23 11:16:51.000000000 +0100
-+++ exim-4.69/src/lookups/mysql.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/mysql.c exim-4.71-dynlookup/src/lookups/mysql.c
+--- exim-4.71/src/lookups/mysql.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/mysql.c	2009-12-24 19:54:49.000000000 +0000
 @@ -13,22 +13,6 @@
  
  #include "../exim.h"
@@ -2275,17 +2211,17 @@ diff -uNr exim-4.69-old/src/lookups/mysql.c exim-4.69/src/lookups/mysql.c
 +lookup_module_info mysql_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
  
  /* End of lookups/mysql.c */
-diff -uNr exim-4.69-old/src/lookups/mysql.h exim-4.69/src/lookups/mysql.h
---- exim-4.69-old/src/lookups/mysql.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/mysql.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/mysql.h exim-4.71-dynlookup/src/lookups/mysql.h
+--- exim-4.71/src/lookups/mysql.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/mysql.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,18 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/mysql.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/mysql.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the mysql lookup functions */
@@ -2297,9 +2233,9 @@ diff -uNr exim-4.69-old/src/lookups/mysql.h exim-4.69/src/lookups/mysql.h
 -extern uschar *mysql_quote(uschar *, uschar *);
 -
 -/* End of lookups/mysql.h */
-diff -uNr exim-4.69-old/src/lookups/nis.c exim-4.69/src/lookups/nis.c
---- exim-4.69-old/src/lookups/nis.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/nis.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/nis.c exim-4.71-dynlookup/src/lookups/nis.c
+--- exim-4.71/src/lookups/nis.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/nis.c	2009-12-24 19:54:50.000000000 +0000
 @@ -9,19 +9,6 @@
  
  #include "../exim.h"
@@ -2382,17 +2318,17 @@ diff -uNr exim-4.69-old/src/lookups/nis.c exim-4.69/src/lookups/nis.c
 +lookup_module_info nis_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 2 };
  
  /* End of lookups/nis.c */
-diff -uNr exim-4.69-old/src/lookups/nis.h exim-4.69/src/lookups/nis.h
---- exim-4.69-old/src/lookups/nis.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/nis.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/nis.h exim-4.71-dynlookup/src/lookups/nis.h
+--- exim-4.71/src/lookups/nis.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/nis.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,18 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/nis.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/nis.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the nis and nis0 lookups */
@@ -2404,9 +2340,9 @@ diff -uNr exim-4.69-old/src/lookups/nis.h exim-4.69/src/lookups/nis.h
 -               BOOL *);
 -
 -/* End of lookups/nis.h */
-diff -uNr exim-4.69-old/src/lookups/nisplus.c exim-4.69/src/lookups/nisplus.c
---- exim-4.69-old/src/lookups/nisplus.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/nisplus.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/nisplus.c exim-4.71-dynlookup/src/lookups/nisplus.c
+--- exim-4.71/src/lookups/nisplus.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/nisplus.c	2009-12-24 19:54:51.000000000 +0000
 @@ -9,21 +9,6 @@
  
  #include "../exim.h"
@@ -2480,17 +2416,17 @@ diff -uNr exim-4.69-old/src/lookups/nisplus.c exim-4.69/src/lookups/nisplus.c
 +lookup_module_info nisplus_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
  
  /* End of lookups/nisplus.c */
-diff -uNr exim-4.69-old/src/lookups/nisplus.h exim-4.69/src/lookups/nisplus.h
---- exim-4.69-old/src/lookups/nisplus.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/nisplus.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/nisplus.h exim-4.71-dynlookup/src/lookups/nisplus.h
+--- exim-4.71/src/lookups/nisplus.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/nisplus.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,17 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/nisplus.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/nisplus.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the nisplus lookup */
@@ -2501,9 +2437,9 @@ diff -uNr exim-4.69-old/src/lookups/nisplus.h exim-4.69/src/lookups/nisplus.h
 -extern uschar *nisplus_quote(uschar *, uschar *);
 -
 -/* End of lookups/nisplus.h */
-diff -uNr exim-4.69-old/src/lookups/oracle.c exim-4.69/src/lookups/oracle.c
---- exim-4.69-old/src/lookups/oracle.c	2007-03-13 09:59:07.000000000 +0000
-+++ exim-4.69/src/lookups/oracle.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/oracle.c exim-4.71-dynlookup/src/lookups/oracle.c
+--- exim-4.71/src/lookups/oracle.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/oracle.c	2009-12-24 19:54:51.000000000 +0000
 @@ -15,27 +15,12 @@
  #include "../exim.h"
  
@@ -2592,17 +2528,17 @@ diff -uNr exim-4.69-old/src/lookups/oracle.c exim-4.69/src/lookups/oracle.c
 +lookup_module_info oracle_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
  
  /* End of lookups/oracle.c */
-diff -uNr exim-4.69-old/src/lookups/oracle.h exim-4.69/src/lookups/oracle.h
---- exim-4.69-old/src/lookups/oracle.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/oracle.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/oracle.h exim-4.71-dynlookup/src/lookups/oracle.h
+--- exim-4.71/src/lookups/oracle.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/oracle.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,18 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/oracle.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/oracle.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the Oracle lookup functions */
@@ -2614,19 +2550,18 @@ diff -uNr exim-4.69-old/src/lookups/oracle.h exim-4.69/src/lookups/oracle.h
 -extern uschar *oracle_quote(uschar *, uschar *);
 -
 -/* End of lookups/oracle.h */
-diff -uNr exim-4.69-old/src/lookups/passwd.c exim-4.69/src/lookups/passwd.c
---- exim-4.69-old/src/lookups/passwd.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/passwd.c	2008-08-13 15:30:05.000000000 +0100
-@@ -8,8 +8,6 @@
+diff -uNr exim-4.71/src/lookups/passwd.c exim-4.71-dynlookup/src/lookups/passwd.c
+--- exim-4.71/src/lookups/passwd.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/passwd.c	2009-12-24 19:54:52.000000000 +0000
+@@ -8,7 +8,6 @@
  /* See the file NOTICE for conditions of use and distribution. */
  
  #include "../exim.h"
 -#include "passwd.h"
--
  
  
- /*************************************************
-@@ -18,7 +16,7 @@
+ 
+@@ -18,7 +17,7 @@
  
  /* See local README for interface description */
  
@@ -2635,7 +2570,7 @@ diff -uNr exim-4.69-old/src/lookups/passwd.c exim-4.69/src/lookups/passwd.c
  passwd_open(uschar *filename, uschar **errmsg)
  {
  filename = filename;     /* Keep picky compilers happy */
-@@ -35,7 +33,7 @@
+@@ -35,7 +34,7 @@
  
  /* See local README for interface description */
  
@@ -2644,7 +2579,7 @@ diff -uNr exim-4.69-old/src/lookups/passwd.c exim-4.69/src/lookups/passwd.c
  passwd_find(void *handle, uschar *filename, uschar *keystring, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -53,4 +51,22 @@
+@@ -53,4 +52,22 @@
  return OK;
  }
  
@@ -2667,17 +2602,17 @@ diff -uNr exim-4.69-old/src/lookups/passwd.c exim-4.69/src/lookups/passwd.c
 +lookup_module_info passwd_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
 +
  /* End of lookups/passwd.c */
-diff -uNr exim-4.69-old/src/lookups/passwd.h exim-4.69/src/lookups/passwd.h
---- exim-4.69-old/src/lookups/passwd.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/passwd.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/passwd.h exim-4.71-dynlookup/src/lookups/passwd.h
+--- exim-4.71/src/lookups/passwd.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/passwd.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,16 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/passwd.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/passwd.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the passwd lookup */
@@ -2687,9 +2622,9 @@ diff -uNr exim-4.69-old/src/lookups/passwd.h exim-4.69/src/lookups/passwd.h
 -               BOOL *);
 -
 -/* End of lookups/passwd.h */
-diff -uNr exim-4.69-old/src/lookups/pgsql.c exim-4.69/src/lookups/pgsql.c
---- exim-4.69-old/src/lookups/pgsql.c	2007-08-23 11:16:51.000000000 +0100
-+++ exim-4.69/src/lookups/pgsql.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/pgsql.c exim-4.71-dynlookup/src/lookups/pgsql.c
+--- exim-4.71/src/lookups/pgsql.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/pgsql.c	2009-12-24 19:54:52.000000000 +0000
 @@ -13,21 +13,6 @@
  
  #include "../exim.h"
@@ -2772,17 +2707,17 @@ diff -uNr exim-4.69-old/src/lookups/pgsql.c exim-4.69/src/lookups/pgsql.c
 +lookup_module_info pgsql_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
  
  /* End of lookups/pgsql.c */
-diff -uNr exim-4.69-old/src/lookups/pgsql.h exim-4.69/src/lookups/pgsql.h
---- exim-4.69-old/src/lookups/pgsql.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/pgsql.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/pgsql.h exim-4.71-dynlookup/src/lookups/pgsql.h
+--- exim-4.71/src/lookups/pgsql.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/pgsql.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,18 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/pgsql.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/pgsql.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the pgsql lookup functions */
@@ -2794,9 +2729,9 @@ diff -uNr exim-4.69-old/src/lookups/pgsql.h exim-4.69/src/lookups/pgsql.h
 -extern uschar *pgsql_quote(uschar *, uschar *);
 -
 -/* End of lookups/pgsql.h */
-diff -uNr exim-4.69-old/src/lookups/spf.c exim-4.69/src/lookups/spf.c
---- exim-4.69-old/src/lookups/spf.c	2005-06-27 19:01:02.000000000 +0100
-+++ exim-4.69/src/lookups/spf.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/spf.c exim-4.71-dynlookup/src/lookups/spf.c
+--- exim-4.71/src/lookups/spf.c	2009-11-11 14:43:28.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/spf.c	2009-12-24 19:54:53.000000000 +0000
 @@ -24,7 +24,6 @@
  #else
  
@@ -2814,7 +2749,7 @@ diff -uNr exim-4.69-old/src/lookups/spf.c exim-4.69/src/lookups/spf.c
    SPF_server_t *spf_server = NULL;
    spf_server = SPF_server_new(SPF_DNS_CACHE, 0);
    if (spf_server == NULL) {
-@@ -42,13 +41,14 @@
+@@ -42,12 +41,12 @@
    return (void *) spf_server;
  }
  
@@ -2825,14 +2760,11 @@ diff -uNr exim-4.69-old/src/lookups/spf.c exim-4.69/src/lookups/spf.c
  }
  
 -int spf_find(void *handle, uschar *filename, uschar *keystring, int key_len,
--             uschar **result, uschar **errmsg, BOOL *do_cache) {
-+static int
-+spf_find(void *handle, uschar *filename, uschar *keystring, int key_len,
-+         uschar **result, uschar **errmsg, BOOL *do_cache) {
++static int spf_find(void *handle, uschar *filename, uschar *keystring, int key_len,
+              uschar **result, uschar **errmsg, BOOL *do_cache) {
    SPF_server_t *spf_server = handle;
    SPF_request_t *spf_request = NULL;
-   SPF_response_t *spf_response = NULL;
-@@ -75,4 +75,22 @@
+@@ -75,4 +74,22 @@
    return OK;
  }
  
@@ -2855,9 +2787,9 @@ diff -uNr exim-4.69-old/src/lookups/spf.c exim-4.69/src/lookups/spf.c
 +lookup_module_info spf_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
 +
  #endif /* EXPERIMENTAL_SPF */
-diff -uNr exim-4.69-old/src/lookups/spf.h exim-4.69/src/lookups/spf.h
---- exim-4.69-old/src/lookups/spf.h	2005-05-25 21:07:55.000000000 +0100
-+++ exim-4.69/src/lookups/spf.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/spf.h exim-4.71-dynlookup/src/lookups/spf.h
+--- exim-4.71/src/lookups/spf.h	2005-05-25 21:07:55.000000000 +0100
++++ exim-4.71-dynlookup/src/lookups/spf.h	2009-12-24 19:54:53.000000000 +0000
 @@ -1,26 +0,0 @@
 -/* $Cambridge: exim/exim-src/src/lookups/spf.h,v 1.1 2005/05/25 20:07:55 tom Exp $ */
 -
@@ -2885,9 +2817,9 @@ diff -uNr exim-4.69-old/src/lookups/spf.h exim-4.69/src/lookups/spf.h
 -extern int spf_find(void *, uschar *, uschar *, int, uschar **, uschar **,
 -                    BOOL *);
 -
-diff -uNr exim-4.69-old/src/lookups/sqlite.c exim-4.69/src/lookups/sqlite.c
---- exim-4.69-old/src/lookups/sqlite.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/sqlite.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/lookups/sqlite.c exim-4.71-dynlookup/src/lookups/sqlite.c
+--- exim-4.71/src/lookups/sqlite.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/sqlite.c	2009-12-24 19:54:53.000000000 +0000
 @@ -9,11 +9,7 @@
  
  #include "../exim.h"
@@ -2960,17 +2892,17 @@ diff -uNr exim-4.69-old/src/lookups/sqlite.c exim-4.69/src/lookups/sqlite.c
 +lookup_module_info sqlite_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
  
  /* End of lookups/sqlite.c */
-diff -uNr exim-4.69-old/src/lookups/sqlite.h exim-4.69/src/lookups/sqlite.h
---- exim-4.69-old/src/lookups/sqlite.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/sqlite.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/sqlite.h exim-4.71-dynlookup/src/lookups/sqlite.h
+--- exim-4.71/src/lookups/sqlite.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/sqlite.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,18 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/sqlite.h,v 1.3 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/sqlite.h,v 1.4 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the sqlite lookup */
@@ -2982,19 +2914,18 @@ diff -uNr exim-4.69-old/src/lookups/sqlite.h exim-4.69/src/lookups/sqlite.h
 -extern uschar *sqlite_quote(uschar *, uschar *);
 -
 -/* End of lookups/sqlite.h */
-diff -uNr exim-4.69-old/src/lookups/testdb.c exim-4.69/src/lookups/testdb.c
---- exim-4.69-old/src/lookups/testdb.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/testdb.c	2008-08-13 15:30:05.000000000 +0100
-@@ -9,8 +9,6 @@
+diff -uNr exim-4.71/src/lookups/testdb.c exim-4.71-dynlookup/src/lookups/testdb.c
+--- exim-4.71/src/lookups/testdb.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/testdb.c	2009-12-24 19:54:54.000000000 +0000
+@@ -9,7 +9,6 @@
  
  #include "../exim.h"
  #include "lf_functions.h"
 -#include "testdb.h"
--
+ 
  
  /* These are not real lookup functions; they are just a way of testing the
- rest of Exim by providing an easy way of specifying particular yields from
-@@ -23,7 +21,7 @@
+@@ -23,7 +22,7 @@
  
  /* See local README for interface description. */
  
@@ -3003,7 +2934,7 @@ diff -uNr exim-4.69-old/src/lookups/testdb.c exim-4.69/src/lookups/testdb.c
  testdb_open(uschar *filename, uschar **errmsg)
  {
  filename = filename;   /* Keep picky compilers happy */
-@@ -39,7 +37,7 @@
+@@ -39,7 +38,7 @@
  
  /* See local README for interface description. */
  
@@ -3012,7 +2943,7 @@ diff -uNr exim-4.69-old/src/lookups/testdb.c exim-4.69/src/lookups/testdb.c
  testdb_find(void *handle, uschar *filename, uschar *query, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -66,4 +64,22 @@
+@@ -66,4 +65,22 @@
  return OK;
  }
  
@@ -3035,17 +2966,17 @@ diff -uNr exim-4.69-old/src/lookups/testdb.c exim-4.69/src/lookups/testdb.c
 +lookup_module_info testdb_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
 +
  /* End of lookups/testdb.c */
-diff -uNr exim-4.69-old/src/lookups/testdb.h exim-4.69/src/lookups/testdb.h
---- exim-4.69-old/src/lookups/testdb.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/testdb.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/testdb.h exim-4.71-dynlookup/src/lookups/testdb.h
+--- exim-4.71/src/lookups/testdb.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/testdb.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,16 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/testdb.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/testdb.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the testdb lookup */
@@ -3055,10 +2986,10 @@ diff -uNr exim-4.69-old/src/lookups/testdb.h exim-4.69/src/lookups/testdb.h
 -               BOOL *);
 -
 -/* End of lookups/testdb.h */
-diff -uNr exim-4.69-old/src/lookups/whoson.c exim-4.69/src/lookups/whoson.c
---- exim-4.69-old/src/lookups/whoson.c	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/whoson.c	2008-08-13 15:30:05.000000000 +0100
-@@ -12,23 +12,7 @@
+diff -uNr exim-4.71/src/lookups/whoson.c exim-4.71-dynlookup/src/lookups/whoson.c
+--- exim-4.71/src/lookups/whoson.c	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/whoson.c	2009-12-24 19:54:54.000000000 +0000
+@@ -12,22 +12,7 @@
  #include "../exim.h"
  
  
@@ -3078,11 +3009,10 @@ diff -uNr exim-4.69-old/src/lookups/whoson.c exim-4.69/src/lookups/whoson.c
 -
  #include <whoson.h>        /* Public header */
 -#include "whoson.h"        /* Local header */
--
+ 
  
  /*************************************************
- *              Open entry point                  *
-@@ -36,7 +20,7 @@
+@@ -36,7 +21,7 @@
  
  /* See local README for interface description. */
  
@@ -3091,7 +3021,7 @@ diff -uNr exim-4.69-old/src/lookups/whoson.c exim-4.69/src/lookups/whoson.c
  whoson_open(uschar *filename, uschar **errmsg)
  {
  filename = filename;   /* Keep picky compilers happy */
-@@ -51,7 +35,7 @@
+@@ -51,7 +36,7 @@
  
  /* See local README for interface description. */
  
@@ -3100,7 +3030,7 @@ diff -uNr exim-4.69-old/src/lookups/whoson.c exim-4.69/src/lookups/whoson.c
  whoson_find(void *handle, uschar *filename, uschar *query, int length,
    uschar **result, uschar **errmsg, BOOL *do_cache)
  {
-@@ -77,6 +61,22 @@
+@@ -77,6 +62,22 @@
    }
  }
  
@@ -3124,17 +3054,17 @@ diff -uNr exim-4.69-old/src/lookups/whoson.c exim-4.69/src/lookups/whoson.c
 +lookup_module_info whoson_lookup_module_info = { LOOKUP_MODULE_INFO_MAGIC, _lookup_list, 1 };
  
  /* End of lookups/whoson.c */
-diff -uNr exim-4.69-old/src/lookups/whoson.h exim-4.69/src/lookups/whoson.h
---- exim-4.69-old/src/lookups/whoson.h	2007-01-08 10:50:19.000000000 +0000
-+++ exim-4.69/src/lookups/whoson.h	1970-01-01 01:00:00.000000000 +0100
+diff -uNr exim-4.71/src/lookups/whoson.h exim-4.71-dynlookup/src/lookups/whoson.h
+--- exim-4.71/src/lookups/whoson.h	2009-11-16 19:50:38.000000000 +0000
++++ exim-4.71-dynlookup/src/lookups/whoson.h	1970-01-01 01:00:00.000000000 +0100
 @@ -1,16 +0,0 @@
--/* $Cambridge: exim/exim-src/src/lookups/whoson.h,v 1.4 2007/01/08 10:50:19 ph10 Exp $ */
+-/* $Cambridge: exim/exim-src/src/lookups/whoson.h,v 1.5 2009/11/16 19:50:38 nm4 Exp $ */
 -
 -/*************************************************
 -*     Exim - an Internet mail transport agent    *
 -*************************************************/
 -
--/* Copyright (c) University of Cambridge 1995 - 2007 */
+-/* Copyright (c) University of Cambridge 1995 - 2009 */
 -/* See the file NOTICE for conditions of use and distribution. */
 -
 -/* Header for the whoson lookup */
@@ -3144,9 +3074,9 @@ diff -uNr exim-4.69-old/src/lookups/whoson.h exim-4.69/src/lookups/whoson.h
 -               BOOL *);
 -
 -/* End of lookups/whoson.h */
-diff -uNr exim-4.69-old/src/macros.h exim-4.69/src/macros.h
---- exim-4.69-old/src/macros.h	2007-08-22 11:10:23.000000000 +0100
-+++ exim-4.69/src/macros.h	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/macros.h exim-4.71-dynlookup/src/macros.h
+--- exim-4.71/src/macros.h	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71-dynlookup/src/macros.h	2009-12-24 19:54:55.000000000 +0000
 @@ -96,7 +96,7 @@
  
  /* A macro to simplify testing bits in lookup types */
@@ -3156,9 +3086,9 @@ diff -uNr exim-4.69-old/src/macros.h exim-4.69/src/macros.h
  
  /* Debugging control */
  
-diff -uNr exim-4.69-old/src/search.c exim-4.69/src/search.c
---- exim-4.69-old/src/search.c	2007-08-29 15:02:22.000000000 +0100
-+++ exim-4.69/src/search.c	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/search.c exim-4.71-dynlookup/src/search.c
+--- exim-4.71/src/search.c	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71-dynlookup/src/search.c	2009-12-24 19:54:55.000000000 +0000
 @@ -71,7 +71,7 @@
  while (top > bot)
    {
@@ -3245,9 +3175,9 @@ diff -uNr exim-4.69-old/src/search.c exim-4.69/src/search.c
    {
    search_cache *c = (search_cache *)(t->data.ptr);
    tree_node *up = c->up;
-diff -uNr exim-4.69-old/src/structs.h exim-4.69/src/structs.h
---- exim-4.69-old/src/structs.h	2007-06-18 14:57:50.000000000 +0100
-+++ exim-4.69/src/structs.h	2008-08-13 15:30:05.000000000 +0100
+diff -uNr exim-4.71/src/structs.h exim-4.71-dynlookup/src/structs.h
+--- exim-4.71/src/structs.h	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71-dynlookup/src/structs.h	2009-12-24 19:54:55.000000000 +0000
 @@ -322,34 +322,7 @@
  
  /* Structure for holding information about a lookup type. */
@@ -3284,10 +3214,10 @@ diff -uNr exim-4.69-old/src/structs.h exim-4.69/src/structs.h
  
  
  /* Structure for holding information about the configured authentication
-diff -uNr exim-4.69-old/src/verify.c exim-4.69/src/verify.c
---- exim-4.69-old/src/verify.c	2007-06-14 15:18:19.000000000 +0100
-+++ exim-4.69/src/verify.c	2008-08-13 15:30:05.000000000 +0100
-@@ -2219,7 +2219,7 @@
+diff -uNr exim-4.71/src/verify.c exim-4.71-dynlookup/src/verify.c
+--- exim-4.71/src/verify.c	2009-11-16 19:50:37.000000000 +0000
++++ exim-4.71-dynlookup/src/verify.c	2009-12-24 19:54:55.000000000 +0000
+@@ -2256,7 +2256,7 @@
      }
    else   /* Single-key style */
      {
