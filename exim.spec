@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.71
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -186,6 +186,7 @@ greylisting unconditional.
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
+sed -i 's@^# AUTH_LIBS=-lsasl2@AUTH_LIBS=-lsasl2@' Local/Makefile
 cp exim_monitor/EDITME Local/eximon.conf
 
 
@@ -483,6 +484,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Feb 09 2010 Adam Jackson <ajax@redhat.com> 4.71-2
+- Fix FTBFS with --no-add-needed
+
 * Thu Dec 24 2009 David Woodhouse <David.Woodhouse@intel.com> - 4.69-20
 - Update to 4.71
 
