@@ -23,11 +23,6 @@ else
 	QUEUE=1h
 fi
 
-# Check that networking is up.
-[ ${NETWORKING} = "no" ] && exit 0
-
-[ -f /usr/sbin/exim ] || exit 0
-
 gen_cert() {
 	if [ ! -f /etc/pki/tls/certs/exim.pem ] ; then
 		umask 077
@@ -59,6 +54,10 @@ EOF
 }
 
 start() {
+	[ "$EUID" != "0" ] && exit 4
+	[ "${NETWORKING}" = "no" ] && exit 1
+	[ -f /usr/sbin/exim ] || exit 5
+
 	# check ownerships
 	# do this by seeing if /var/log/exim/main.log exists and is
 	# owned by exim - if owned by someone else we fix it up
@@ -83,6 +82,7 @@ start() {
 }
 
 stop() {
+	[ "$EUID" != "0" ] && exit 4
         # Stop daemons.
         echo -n $"Shutting down exim: "
         killproc exim
@@ -107,22 +107,22 @@ case "$1" in
   restart)
 	restart
 	;;
-  reload)
-	if [ -f /var/lock/subsys/exim ]; then
-	    echo -n $"Reloading exim:"
-	    killproc exim -HUP
-	    echo
-	fi
+  reload|force-reload)
+	status exim > /dev/null || exit 7
+	echo -n $"Reloading exim:"
+	killproc exim -HUP
+	echo
 	;;
-  condrestart)
-	[ -f /var/lock/subsys/exim ] && restart || :
+  condrestart|try-restart)
+	status exim > /dev/null || exit 0
+	restart
 	;;
   status)
 	status exim
 	;;
   *)
-	echo $"Usage: $0 {start|stop|restart|reload|status|condrestart}"
-	exit 1
+	echo $"Usage: $0 {start|stop|restart|reload|force-reload|status|condrestart|try-restart}"
+	exit 2
 esac
 
 exit $RETVAL

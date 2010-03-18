@@ -12,13 +12,12 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.71
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-Provides: MTA smtpd smtpdaemon server(smtp) /usr/bin/newaliases
-Provides: /usr/sbin/sendmail /usr/bin/mailq /usr/bin/rmail
+Provides: MTA smtpd smtpdaemon server(smtp)
 Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(preun): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
@@ -292,6 +291,14 @@ mkdir -p $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}
 touch $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}/exim.pem
 chmod 600 $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}/exim.pem
 
+# generate alternatives ghosts
+mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
+for i in %{_sbindir}/sendmail %{_bindir}/{mailq,runq,rsmtp,rmail,newaliases} \
+	/usr/lib/sendmail %{_sysconfdir}/pam.d/smtp %{_mandir}/man1/mailq.1.gz
+do
+	touch $RPM_BUILD_ROOT$i
+done
+
 %if 0%{?buildclam}
 # Munge the clamav init and config files from clamav-devel. This really ought
 # to be a subpackage of clamav, but this hack will have to do for now.
@@ -430,6 +437,16 @@ fi
 %attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/certs/exim.pem
 %attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/private/exim.pem
 
+%attr(0755,root,root) %ghost %{_sbindir}/sendmail
+%attr(0755,root,root) %ghost %{_bindir}/mailq
+%attr(0755,root,root) %ghost %{_bindir}/runq
+%attr(0755,root,root) %ghost %{_bindir}/rsmtp
+%attr(0755,root,root) %ghost %{_bindir}/rmail
+%attr(0755,root,root) %ghost %{_bindir}/newaliases
+%attr(0755,root,root) %ghost /usr/lib/sendmail
+%ghost %{_sysconfdir}/pam.d/smtp
+%ghost %{_mandir}/man1/mailq.1.gz
+
 %files mysql
 %defattr(-,root,root,-)
 %{_libdir}/exim/%{version}-%{release}/lookups/mysql.so
@@ -484,6 +501,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Mar 18 2010 Miroslav Lichvar <mlichvar@redhat.com> - 4.71-3
+- follow guidelines for alternatives (#570800)
+- fix init script LSB compliance (#523238)
+- handle undefined NETWORKING in init script (#483528)
+
 * Tue Feb 09 2010 Adam Jackson <ajax@redhat.com> 4.71-2
 - Fix FTBFS with --no-add-needed
 
