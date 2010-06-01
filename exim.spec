@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.71
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -501,6 +501,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Jun 01 2010 Marcela Maslanova <mmaslano@redhat.com> - 4.71-4
+- Mass rebuild with perl-5.12.0
+
 * Thu Mar 18 2010 Miroslav Lichvar <mlichvar@redhat.com> - 4.71-3
 - follow guidelines for alternatives (#570800)
 - fix init script LSB compliance (#523238)
