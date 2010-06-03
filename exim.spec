@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.71
-Release: 4%{?dist}
+Version: 4.72
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -501,6 +501,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Jun 03 2010 David Woodhouse <David.Woodhouse@intel.com> - 4.72-1
+- Update to 4.72 (fixes CVE-2010-2023, CVS-2010-2024)
+
 * Tue Jun 01 2010 Marcela Maslanova <mmaslano@redhat.com> - 4.71-4
 - Mass rebuild with perl-5.12.0
 
