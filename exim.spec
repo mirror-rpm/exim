@@ -501,6 +501,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat Aug 07 2010 David Woodhouse <David.Woodhouse@intel.com> - 4.72-2
+- Fedora infrastructure ate my package; bump release and rebuild
+
 * Thu Jun 03 2010 David Woodhouse <David.Woodhouse@intel.com> - 4.72-1
 - Update to 4.72 (fixes CVE-2010-2023, CVS-2010-2024)
 
