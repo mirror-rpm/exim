@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.72
-Release: 2%{?dist}
+Version: 4.73
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -36,9 +36,10 @@ Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
 Source20: exim-greylist.conf.inc
 Source21: mk-greylist-db.sql
 Source22: greylist-tidy.sh
+Source23: trusted-configs
 
 Patch4: exim-rhl.patch
-Patch6: exim-4.50-config.patch
+Patch6: exim-4.73-config.patch
 Patch8: exim-4.24-libdir.patch
 Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
@@ -49,7 +50,7 @@ Patch20: exim-4.63-allow-filter.patch
 Patch21: exim-4.63-localhost-is-local.patch
 Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
-Patch24: exim-4.71-dynlookup.patch
+Patch24: exim-4.73-dynlookup.patch
 Patch25: exim-4.69-dynlookup-config.patch
 Patch26: exim-4.69-strictaliasing.patch
 
@@ -179,7 +180,7 @@ greylisting unconditional.
 %patch21 -p1 -b .localhost
 %patch22 -p1 -b .grey
 %patch23 -p1 -b .smarthost
-%patch24 -p1 -b .dynlookup
+%patch24 -p2 -b .dynlookup
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .strictaliasing
 
@@ -329,6 +330,7 @@ install -m644 %{SOURCE20} $RPM_BUILD_ROOT/%_sysconfdir/exim/exim-greylist.conf.i
 install -m644 %{SOURCE21} $RPM_BUILD_ROOT/%_sysconfdir/exim/mk-greylist-db.sql
 mkdir -p $RPM_BUILD_ROOT/%_sysconfdir/cron.daily
 install -m755 %{SOURCE22} $RPM_BUILD_ROOT/%_sysconfdir/cron.daily/greylist-tidy.sh
+install -m644 %{SOURCE23} $RPM_BUILD_ROOT/%_sysconfdir/exim/trusted-configs
 touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
 
 %clean
@@ -420,11 +422,10 @@ fi
 %dir %{_var}/spool/exim/msglog
 %dir %{_var}/log/exim
 
-%defattr(-,root,mail)
+%defattr(-,root,root)
 %dir %{_sysconfdir}/exim
 %config(noreplace) %{_sysconfdir}/exim/exim.conf
-
-%defattr(-,root,root)
+%config(noreplace) %{_sysconfdir}/exim/trusted-configs
 %config(noreplace) %{_sysconfdir}/sysconfig/exim
 %{_sysconfdir}/rc.d/init.d/exim
 %config(noreplace) %{_sysconfdir}/logrotate.d/exim
@@ -501,6 +502,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jan 05 2011 David Woodhouse <David.Woodhouse@intel.com> - 4.73-1
+- Update to 4.73
+
 * Sat Aug 07 2010 David Woodhouse <David.Woodhouse@intel.com> - 4.72-2
 - Fedora infrastructure ate my package; bump release and rebuild
 

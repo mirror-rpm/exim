@@ -1,5 +1,16 @@
---- exim-4.71/src/EDITME.config	2009-11-20 12:18:19.000000000 +0000
-+++ exim-4.71/src/EDITME	2009-12-24 19:02:19.000000000 +0000
+--- exim-4.73/scripts/Configure-Makefile.config	2010-12-26 18:17:23.000000000 +0000
++++ exim-4.73/scripts/Configure-Makefile	2011-01-05 22:25:49.000000000 +0000
+@@ -137,7 +137,7 @@ if [ "${EXIM_PERL}" != "" ] ; then
+ 
+   mv $mft $mftt
+   echo "PERL_CC=`$PERL_COMMAND -MConfig -e 'print $Config{cc}'`" >>$mft
+-  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts`" >>$mft
++  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts` \$(CFLAGS)" >>$mft
+   echo "PERL_LIBS=`$PERL_COMMAND -MExtUtils::Embed -e ldopts`" >>$mft
+   echo "" >>$mft
+   cat $mftt >> $mft
+--- exim-4.73/src/EDITME.config	2010-12-26 18:17:23.000000000 +0000
++++ exim-4.73/src/EDITME	2011-01-05 22:29:05.000000000 +0000
 @@ -100,7 +100,7 @@
  # /usr/local/sbin. The installation script will try to create this directory,
  # and any superior directories, if they do not exist.
@@ -18,16 +29,16 @@
  
  # It is possible to specify a colon-separated list of files for CONFIGURE_FILE.
  # In this case, Exim will use the first of them that exists when it is run.
-@@ -134,7 +134,7 @@ CONFIGURE_FILE=/usr/exim/configure
- # owner of a local mailbox.) Specifying these values as root is very strongly
- # discouraged.
+@@ -133,7 +133,7 @@ CONFIGURE_FILE=/usr/exim/configure
+ # deliveries. (Local deliveries run as various non-root users, typically as the
+ # owner of a local mailbox.) Specifying these values as root is not supported.
  
 -EXIM_USER=
 +EXIM_USER=93
  
  # If you specify EXIM_USER as a name, this is looked up at build time, and the
  # uid number is built into the binary. However, you can specify that this
-@@ -155,7 +155,7 @@ EXIM_USER=
+@@ -154,7 +154,7 @@ EXIM_USER=
  # for EXIM_USER (e.g. EXIM_USER=exim), you don't need to set EXIM_GROUP unless
  # you want to use a group other than the default group for the given user.
  
@@ -36,7 +47,7 @@
  
  # Many sites define a user called "exim", with an appropriate default group,
  # and use
-@@ -235,7 +235,7 @@ TRANSPORT_SMTP=yes
+@@ -234,7 +234,7 @@ TRANSPORT_SMTP=yes
  # This one is special-purpose, and commonly not required, so it is not
  # included by default.
  
@@ -45,7 +56,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -244,9 +244,9 @@ TRANSPORT_SMTP=yes
+@@ -243,9 +243,9 @@ TRANSPORT_SMTP=yes
  # MBX, is included only when requested. If you do not know what this is about,
  # leave these settings commented out.
  
@@ -58,7 +69,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -262,17 +262,20 @@ LOOKUP_DBM=yes
+@@ -261,17 +261,20 @@ LOOKUP_DBM=yes
  LOOKUP_LSEARCH=yes
  LOOKUP_DNSDB=yes
  
@@ -88,7 +99,7 @@
  # LOOKUP_WHOSON=yes
  
  # These two settings are obsolete; all three lookups are compiled when
-@@ -343,14 +346,14 @@ EXIM_MONITOR=eximon.bin
+@@ -342,14 +345,14 @@ EXIM_MONITOR=eximon.bin
  # and the MIME ACL. Please read the documentation to learn more about these
  # features.
  
@@ -103,9 +114,18 @@
 -# WITH_OLD_DEMIME=yes
 +WITH_OLD_DEMIME=yes
  
+ # If you're using ClamAV and are backporting fixes to an old version, instead
+ # of staying current (which is the more usual approach) then you may need to
+@@ -482,7 +485,7 @@ FIXED_NEVER_USERS=root
+ # CONFIGURE_OWNER setting, to specify a configuration file which is listed in
+ # the TRUSTED_CONFIG_LIST file, then root privileges are not dropped by Exim.
+ 
+-# TRUSTED_CONFIG_LIST=/usr/exim/trusted_configs
++TRUSTED_CONFIG_LIST=/etc/exim/trusted-configs
+ 
+ 
  #------------------------------------------------------------------------------
- # Compiling Exim with experimental features. These are documented in
-@@ -486,11 +489,11 @@ FIXED_NEVER_USERS=root
+@@ -527,11 +530,11 @@ FIXED_NEVER_USERS=root
  # included in the Exim binary. You will then need to set up the run time
  # configuration to make use of the mechanism(s) selected.
  
@@ -122,7 +142,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -507,7 +510,7 @@ FIXED_NEVER_USERS=root
+@@ -548,7 +551,7 @@ FIXED_NEVER_USERS=root
  # one that is set in the headers_charset option. The default setting is
  # defined by this setting:
  
@@ -131,7 +151,7 @@
  
  # If you are going to make use of $header_xxx expansions in your configuration
  # file, or if your users are going to use them in filter files, and the normal
-@@ -527,7 +530,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -568,7 +571,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # the Sieve filter support. For those OS where iconv() is known to be installed
  # as standard, the file in OS/Makefile-xxxx contains
  #
@@ -140,7 +160,7 @@
  #
  # If you are not using one of those systems, but have installed iconv(), you
  # need to uncomment that line above. In some cases, you may find that iconv()
-@@ -589,10 +592,11 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -630,10 +633,11 @@ HEADERS_CHARSET="ISO-8859-1"
  # leave these settings commented out.
  
  # This setting is required for any TLS support (either OpenSSL or GnuTLS)
@@ -154,7 +174,7 @@
  
  # Uncomment these settings if you are using GnuTLS
  # USE_GNUTLS=yes
-@@ -643,7 +647,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -684,7 +688,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # Once you have done this, "make install" will build the info files and
  # install them in the directory you have defined.
  
@@ -163,7 +183,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -656,7 +660,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -697,7 +701,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # %s. This will be replaced by one of the strings "main", "panic", or "reject"
  # to form the final file names. Some installations may want something like this:
  
@@ -172,7 +192,7 @@
  
  # which results in files with names /var/log/exim_mainlog, etc. The directory
  # in which the log files are placed must exist; Exim does not try to create
-@@ -705,7 +709,7 @@ EXICYCLOG_MAX=10
+@@ -746,7 +750,7 @@ EXICYCLOG_MAX=10
  # files. Both the name of the command and the suffix that it adds to files
  # need to be defined here. See also the EXICYCLOG_MAX configuration.
  
@@ -181,7 +201,7 @@
  COMPRESS_SUFFIX=gz
  
  
-@@ -713,7 +717,7 @@ COMPRESS_SUFFIX=gz
+@@ -754,7 +758,7 @@ COMPRESS_SUFFIX=gz
  # If the exigrep utility is fed compressed log files, it tries to uncompress
  # them using this command.
  
@@ -190,7 +210,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -722,7 +726,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -763,7 +767,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # (version 5.004 or later) installed, set EXIM_PERL to perl.o. Using embedded
  # Perl costs quite a lot of resources. Only do this if you really need it.
  
@@ -199,7 +219,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -732,7 +736,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -773,7 +777,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # that the local_scan API is made available by the linker. You may also need
  # to add -ldl to EXTRALIBS so that dlopen() is available to Exim.
  
@@ -208,7 +228,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -742,7 +746,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -783,7 +787,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # support, which is intended for use in conjunction with the SMTP AUTH
  # facilities, is included only when requested by the following setting:
  
@@ -217,7 +237,7 @@
  
  # You probably need to add -lpam to EXTRALIBS, and in some releases of
  # GNU/Linux -ldl is also needed.
-@@ -810,7 +814,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -851,7 +855,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
  
@@ -226,7 +246,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -823,9 +827,9 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -864,9 +868,9 @@ ZCAT_COMMAND=/usr/bin/zcat
  # You may well also have to specify a local "include" file and an additional
  # library for TCP wrappers, so you probably need something like this:
  #
@@ -239,7 +259,7 @@
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM
  # as well.
-@@ -870,13 +874,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -918,13 +922,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # is "yes", as well as supporting line editing, a history of input lines in the
  # current run is maintained.
  
@@ -255,7 +275,7 @@
  
  ###############################################################################
  #              THINGS YOU ALMOST NEVER NEED TO MENTION                        #
-@@ -897,13 +901,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -945,13 +949,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # haven't got Perl, Exim will still build and run; you just won't be able to
  # use those utilities.
  
@@ -276,7 +296,7 @@
  
  
  #------------------------------------------------------------------------------
-@@ -1097,7 +1101,7 @@ TMPDIR="/tmp"
+@@ -1145,7 +1149,7 @@ TMPDIR="/tmp"
  # (process id) to a file so that it can easily be identified. The path of the
  # file can be specified here. Some installations may want something like this:
  
@@ -285,14 +305,3 @@
  
  # If PID_FILE_PATH is not defined, Exim writes a file in its spool directory
  # using the name "exim-daemon.pid".
---- exim-4.71/scripts/Configure-Makefile.config	2009-11-20 21:22:20.000000000 +0000
-+++ exim-4.71/scripts/Configure-Makefile	2009-12-24 18:59:48.000000000 +0000
-@@ -137,7 +137,7 @@ if [ "${EXIM_PERL}" != "" ] ; then
- 
-   mv $mft $mftt
-   echo "PERL_CC=`$PERL_COMMAND -MConfig -e 'print $Config{cc}'`" >>$mft
--  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts`" >>$mft
-+  echo "PERL_CCOPTS=`$PERL_COMMAND -MExtUtils::Embed -e ccopts` \$(CFLAGS)" >>$mft
-   echo "PERL_LIBS=`$PERL_COMMAND -MExtUtils::Embed -e ldopts`" >>$mft
-   echo "" >>$mft
-   cat $mftt >> $mft
