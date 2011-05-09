@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.73
-Release: 3%{?dist}
+Version: 4.76
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -50,7 +50,6 @@ Patch20: exim-4.63-allow-filter.patch
 Patch21: exim-4.63-localhost-is-local.patch
 Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
-Patch24: exim-4.73-dynlookup.patch
 Patch25: exim-4.69-dynlookup-config.patch
 Patch26: exim-4.69-strictaliasing.patch
 
@@ -180,7 +179,6 @@ greylisting unconditional.
 %patch21 -p1 -b .localhost
 %patch22 -p1 -b .grey
 %patch23 -p1 -b .smarthost
-%patch24 -p2 -b .dynlookup
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .strictaliasing
 
@@ -502,6 +500,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon May 09 2011 David Woodhouse <David.Woodhouse@intel.com> - 4.76-1
+- Update to 4.76 (fixes CVS-2011-1764)
+
 * Wed Mar 23 2011 Dan Horák <dan@danny.cz> - 4.73-3
 - rebuilt for mysql 5.5.10 (soname bump in libmysqlclient)
 
