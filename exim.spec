@@ -9,17 +9,20 @@
 %define buildclam 1
 %endif
 
+%global sysv2systemdnvr 4.76-6
+
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.76
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon server(smtp)
-Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
-Requires(preun): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives
+Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives systemd-units systemd-sysv
+Requires(preun): %{_sbindir}/alternatives systemd-units
+Requires(postun): %{_sbindir}/alternatives systemd-units
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if 0%{?buildclam}
 BuildRequires: clamav-devel
@@ -37,6 +40,9 @@ Source20: exim-greylist.conf.inc
 Source21: mk-greylist-db.sql
 Source22: greylist-tidy.sh
 Source23: trusted-configs
+Source24: exim.service
+Source25: exim-gen-cert
+Source26: clamd.exim.service
 
 Patch4: exim-rhl.patch
 Patch6: exim-4.73-config.patch
@@ -64,8 +70,9 @@ BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
 BuildRequires: openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
+BuildRequires:  systemd-units
 
-%description 
+%description
 Exim is a message transfer agent (MTA) developed at the University of
 Cambridge for use on Unix systems connected to the Internet. It is
 freely available under the terms of the GNU General Public Licence. In
@@ -74,6 +81,17 @@ general. There is a great deal of flexibility in the way mail can be
 routed, and there are extensive facilities for checking incoming
 mail. Exim can be installed in place of sendmail, although the
 configuration of exim is quite different to that of sendmail.
+
+%package sysvinit
+Summary: SysV initscript for Exim
+Group: System Environment/Daemons
+BuildArch: noarch
+Requires: %{name} = %{version}-%{release}
+Requires(preun): chkconfig
+Requires(post): chkconfig
+
+%description sysvinit
+This package contains the SysV initscript for Exim.
 
 %package mysql
 Summary: MySQL lookup support for Exim
@@ -111,6 +129,7 @@ The exim-sa package is an old method for allowing SpamAssassin to be run on
 incoming mail at SMTP time. It is deprecated in favour of the built-in ACL
 support for content scanning.
 
+%if 0%{?buildclam}
 %package clamav
 Summary: Clam Antivirus scanner dæmon configuration for use with Exim
 Group: System Environment/Daemons
@@ -135,6 +154,18 @@ as follows:
 For further details of Exim content scanning, see chapter 41 of the Exim
 specification:
 http://www.exim.org/exim-html-%{version}/doc/html/spec_html/ch41.html
+
+%package clamav-sysvinit
+Summary: SysV initscript for Clam Antivirus scanner for Exim
+Group: System Environment/Daemons
+BuildArch: noarch
+Requires: exim-clamav = %{version}-%{release}
+Requires(preun): chkconfig
+Requires(post): chkconfig
+
+%description clamav-sysvinit
+This package contains the SysV initscript.
+%endif
 
 %package greylist
 Summary: Example configuration for greylisting using Exim
@@ -270,6 +301,13 @@ install -m 644 %SOURCE3 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/exim
 mkdir -p $RPM_BUILD_ROOT%{_initrddir}
 install %SOURCE2 $RPM_BUILD_ROOT%{_initrddir}/exim
 
+# Systemd
+mkdir -p %{buildroot}%{_unitdir}
+mkdir -p $RPM_BUILD_ROOT%{_libexecdir}
+install -m644 %{SOURCE24} %{buildroot}%{_unitdir}
+install -m755 %{SOURCE25} %{buildroot}%{_libexecdir}
+install -m644 %{SOURCE26} %{buildroot}%{_unitdir}
+
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
 
@@ -347,7 +385,7 @@ fi
 exit 0
 
 %post
-/sbin/chkconfig --add exim
+[ $1 -eq 1 ] && /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 
 %{_sbindir}/alternatives --install %{_sbindir}/sendmail mta %{_sbindir}/sendmail.exim 10 \
 	--slave %{_bindir}/mailq mta-mailq %{_bindir}/mailq.exim \
@@ -362,19 +400,41 @@ exit 0
 
 %preun
 if [ $1 = 0 ]; then
-	/sbin/service exim stop > /dev/null 2>&1
-	/sbin/chkconfig --del exim
+	/bin/systemctl --no-reload exim.service > /dev/null 2>&1 || :
+	/bin/systemctl stop exim.service > /dev/null 2>&1 || :
 	%{_sbindir}/alternatives --remove mta %{_sbindir}/sendmail.exim
 fi
 
 %postun
-if [ "$1" -ge "1" ]; then
-	/sbin/service exim  condrestart > /dev/null 2>&1
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ]; then
+	/bin/systemctl try-restart exim.service >/dev/null 2>&1 || :
 	mta=`readlink /etc/alternatives/mta`
 	if [ "$mta" == "%{_sbindir}/sendmail.exim" ]; then
 		/usr/sbin/alternatives --set mta %{_sbindir}/sendmail.exim
 	fi
 fi
+
+%triggerun -- exim < %{sysv2systemdnvr}
+%{_bindir}/systemd-sysv-convert --save exim >/dev/null 2>&1 ||:
+/bin/systemctl enable exim.service >/dev/null 2>&1
+/sbin/chkconfig --del exim >/dev/null 2>&1 || :
+/bin/systemctl try-restart exim.service >/dev/null 2>&1 || :
+
+%triggerpostun -n exim-sysvinit -- exim < %{sysv2systemdnvr}
+/sbin/chkconfig --add exim >/dev/null 2>&1 || :
+
+%post sysvinit
+/sbin/chkconfig --add exim >/dev/null 2>&1 ||:
+
+%preun sysvinit
+if [ "$1" = 0 ]; then
+	%{_initrddir}/exim stop >/dev/null 2>&1 ||:
+	/sbin/chkconfig --del exim >/dev/null 2>&1 ||:
+fi
+
+%postun sysvinit
+[ "$1" -ge "1" ] && %{_initrddir}/exim condrestart >/dev/null 2>&1 ||:
 
 %post greylist
 if [ ! -r %{_var}/spool/exim/db/greylist.db ]; then
@@ -425,7 +485,8 @@ fi
 %config(noreplace) %{_sysconfdir}/exim/exim.conf
 %config(noreplace) %{_sysconfdir}/exim/trusted-configs
 %config(noreplace) %{_sysconfdir}/sysconfig/exim
-%{_sysconfdir}/rc.d/init.d/exim
+%{_unitdir}/exim.service
+%{_libexecdir}/exim-gen-cert
 %config(noreplace) %{_sysconfdir}/logrotate.d/exim
 %config(noreplace) %{_sysconfdir}/pam.d/exim
 %{_sysconfdir}/cron.daily/exim-tidydb
@@ -445,6 +506,10 @@ fi
 %attr(0755,root,root) %ghost /usr/lib/sendmail
 %ghost %{_sysconfdir}/pam.d/smtp
 %ghost %{_mandir}/man1/mailq.1.gz
+
+%files sysvinit
+%defattr(-,root,root,-)
+%{_initrddir}/exim
 
 %files mysql
 %defattr(-,root,root,-)
@@ -472,24 +537,54 @@ fi
 %post clamav
 /bin/touch %{_var}/log/clamd.exim
 /bin/chown exim.exim %{_var}/log/clamd.exim
-/sbin/chkconfig --add clamd.exim
+if [ $1 -eq 1 ] ; then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
 
 %preun clamav
-test "$1" != 0 || %{_initrddir}/clamd.exim stop &>/dev/null || :
-test "$1" != 0 || /sbin/chkconfig --del clamd.exim
+if [ $1 = 0 ]; then
+  /bin/systemctl --no-reload clamd.exim.service > /dev/null 2>&1 || :
+  /bin/systemctl stop clamd.exim.service > /dev/null 2>&1 || :
+fi
 
 %postun clamav
-test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    /bin/systemctl try-restart clamd.exim.service >/dev/null 2>&1 || :
+fi
+
+%triggerun -- clamav < %{sysv2systemdnvr}
+%{_bindir}/systemd-sysv-convert --save clamd.exim >/dev/null 2>&1 ||:
+/bin/systemctl enable clamd.exim.service >/dev/null 2>&1
+/sbin/chkconfig --del clamd.exim >/dev/null 2>&1 || :
+/bin/systemctl try-restart clamd.exim.service >/dev/null 2>&1 || :
+
+%triggerpostun -n exim-clamav-sysvinit -- exim < %{sysv2systemdnvr}
+/sbin/chkconfig --add clamd.exim >/dev/null 2>&1 ||:
+
+%post clamav-sysvinit
+/sbin/chkconfig --add clamd.exim >/dev/null 2>&1 ||:
+
+%preun clamav-sysvinit
+test "$1" != 0 || %{_initrddir}/clamd.exim stop >/dev/null 2>&1 || :
+test "$1" != 0 || /sbin/chkconfig --del clamd.exim >/dev/null 2>&1 || :
+
+%postun clamav-sysvinit
+test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 
 %files clamav
 %defattr(-,root,root,-)
 %{_sbindir}/clamd.exim
-%attr(0755,root,root) %config %{_initrddir}/clamd.exim
+%{_unitdir}/clamd.exim.service
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/clamd.d/exim.conf
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/sysconfig/clamd.exim
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/logrotate.d/clamd.exim
 %attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
 %ghost %attr(0644,exim,exim) %{_var}/log/clamd.exim
+
+%files clamav-sysvinit
+%defattr(-,root,root,-)
+%attr(0755,root,root) %config %{_initrddir}/clamd.exim
 %endif
 
 %files greylist
@@ -500,6 +595,13 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Jan 30 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.76-6
+- Introduced systemd unit file, thanks to Jóhann B. Guðmundsson <johannbg@gmail.com>
+  Resoloves: rhbz#721354
+- Provided SysV initscripts in sysvinit subpackages
+- Used PrivateTmp
+  Resolves: rhbz#782502
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.76-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
