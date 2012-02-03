@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.76
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -25,6 +25,7 @@ Requires(preun): %{_sbindir}/alternatives systemd-units
 Requires(postun): %{_sbindir}/alternatives systemd-units
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if 0%{?buildclam}
+Requires: initscripts
 BuildRequires: clamav-devel
 %endif
 Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.bz2
@@ -33,6 +34,10 @@ Source3: exim.sysconfig
 Source4: exim.logrotate
 Source5: exim-tidydb.sh
 Source11: exim.pam
+%if 0%{?buildclam}
+Source12: exim-clamav-tmpfiles.conf
+%endif
+
 %if 0%{?buildsa}
 Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
 %endif
@@ -70,7 +75,7 @@ BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
 BuildRequires: openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
-BuildRequires:  systemd-units
+BuildRequires: systemd-units
 
 %description
 Exim is a message transfer agent (MTA) developed at the University of
@@ -355,6 +360,8 @@ CLAMD_SOCKET=%{_var}/run/clamd.exim/clamd.sock
 EOF
 ln -sf clamd $RPM_BUILD_ROOT/usr/sbin/clamd.exim
 
+mkdir -p %{buildroot}%{_sysconfdir}/tmpfiles.d
+install -m 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/tmpfiles.d/exim-clamav.conf
 mkdir -p $RPM_BUILD_ROOT%{_var}/run/clamd.exim
 mkdir -p $RPM_BUILD_ROOT%{_var}/log
 touch $RPM_BUILD_ROOT%{_var}/log/clamd.exim
@@ -535,6 +542,8 @@ fi
 
 %if 0%{?buildclam}
 %post clamav
+/bin/mkdir -p 0750 %{_var}/run/clamd.exim
+/bin/chown exim:exim %{_var}/run/clamd.exim
 /bin/touch %{_var}/log/clamd.exim
 /bin/chown exim.exim %{_var}/log/clamd.exim
 if [ $1 -eq 1 ] ; then
@@ -579,7 +588,8 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/clamd.d/exim.conf
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/sysconfig/clamd.exim
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/logrotate.d/clamd.exim
-%attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
+%config(noreplace) %{_sysconfdir}/tmpfiles.d/exim-clamav.conf
+%ghost %attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
 %ghost %attr(0644,exim,exim) %{_var}/log/clamd.exim
 
 %files clamav-sysvinit
@@ -595,6 +605,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Feb  2 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.76-7
+- Fixed exim-clamav to work with /var/run on tmpfs
+
 * Mon Jan 30 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.76-6
 - Introduced systemd unit file, thanks to Jóhann B. Guðmundsson <johannbg@gmail.com>
   Resoloves: rhbz#721354
