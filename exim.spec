@@ -14,13 +14,13 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.76
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon server(smtp)
-Requires(post): /sbin/chkconfig /sbin/service %{_sbindir}/alternatives systemd-units systemd-sysv
+Requires(post): /sbin/chkconfig /sbin/service /sbin/restorecon %{_sbindir}/alternatives systemd-units systemd-sysv
 Requires(preun): %{_sbindir}/alternatives systemd-units
 Requires(postun): %{_sbindir}/alternatives systemd-units
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
@@ -546,6 +546,7 @@ fi
 /bin/chown exim:exim %{_var}/run/clamd.exim
 /bin/touch %{_var}/log/clamd.exim
 /bin/chown exim.exim %{_var}/log/clamd.exim
+/sbin/restorecon %{_var}/log/clamd.exim
 if [ $1 -eq 1 ] ; then
     /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
@@ -605,6 +606,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Feb  6 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.76-8
+- Workarounded wrong SELinux context of /var/log/clamd.exim
+
 * Thu Feb  2 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.76-7
 - Fixed exim-clamav to work with /var/run on tmpfs
 
