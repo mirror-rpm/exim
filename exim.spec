@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.76
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -606,6 +606,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 4.76-9
+- Rebuild against PCRE 8.30
+
 * Mon Feb  6 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.76-8
 - Workarounded wrong SELinux context of /var/log/clamd.exim
 
