@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.76
-Release: 9%{?dist}
+Version: 4.77
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -62,12 +62,11 @@ Patch21: exim-4.63-localhost-is-local.patch
 Patch22: exim-4.66-greylist-conf.patch
 Patch23: exim-4.67-smarthost-config.patch
 Patch25: exim-4.69-dynlookup-config.patch
-Patch26: exim-4.69-strictaliasing.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-BuildRequires: db4-devel openssl-devel openldap-devel pam-devel
+BuildRequires: libdb-devel openssl-devel openldap-devel pam-devel
 %if 0%{?buildsa}
 BuildRequires: lynx
 %endif
@@ -216,7 +215,6 @@ greylisting unconditional.
 %patch22 -p1 -b .grey
 %patch23 -p1 -b .smarthost
 %patch25 -p1 -b .dynconfig
-%patch26 -p1 -b .strictaliasing
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -606,6 +604,12 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Feb 29 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.77-1
+- New version
+- Removed unused ldap-deprecated patch
+- Dropped strict aliasing patch
+- Built with libdb-5.2
+
 * Fri Feb 10 2012 Petr Pisar <ppisar@redhat.com> - 4.76-9
 - Rebuild against PCRE 8.30
 
