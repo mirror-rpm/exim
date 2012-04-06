@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.77
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -604,6 +604,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Apr  6 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.77-2
+- Rebuilt with libdb-5.2
+
 * Wed Feb 29 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.77-1
 - New version
 - Removed unused ldap-deprecated patch
