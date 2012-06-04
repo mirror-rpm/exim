@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.77
-Release: 2%{?dist}
+Version: 4.80
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -50,7 +50,7 @@ Source25: exim-gen-cert
 Source26: clamd.exim.service
 
 Patch4: exim-rhl.patch
-Patch6: exim-4.73-config.patch
+Patch6: exim-4.80-config.patch
 Patch8: exim-4.24-libdir.patch
 Patch12: exim-4.33-cyrus.patch
 Patch13: exim-4.43-pamconfig.patch
@@ -74,7 +74,7 @@ BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
 BuildRequires: openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
-BuildRequires: systemd-units
+BuildRequires: systemd-units libgsasl-devel
 
 %description
 Exim is a message transfer agent (MTA) developed at the University of
@@ -604,6 +604,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Jun  4 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.80-1
+- New version
+  Resolves: rhbz#827963
+
 * Fri Apr  6 2012 Jaroslav Škarvada <jskarvad@redhat.com> - 4.77-2
 - Rebuilt with libdb-5.2
 
