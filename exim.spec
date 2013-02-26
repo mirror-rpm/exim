@@ -14,15 +14,15 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.80.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon server(smtp)
-Requires(post): /sbin/chkconfig /sbin/service /sbin/restorecon %{_sbindir}/alternatives systemd-units systemd-sysv
-Requires(preun): %{_sbindir}/alternatives systemd-units
-Requires(postun): %{_sbindir}/alternatives systemd-units
+Requires(post): /sbin/chkconfig /sbin/service /sbin/restorecon %{_sbindir}/alternatives systemd systemd-sysv
+Requires(preun): %{_sbindir}/alternatives systemd
+Requires(postun): %{_sbindir}/alternatives systemd
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if 0%{?buildclam}
 Requires: initscripts
@@ -390,7 +390,7 @@ fi
 exit 0
 
 %post
-[ $1 -eq 1 ] && /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+%systemd_post %{name}.service
 
 %{_sbindir}/alternatives --install %{_sbindir}/sendmail mta %{_sbindir}/sendmail.exim 10 \
 	--slave %{_bindir}/mailq mta-mailq %{_bindir}/mailq.exim \
@@ -404,16 +404,14 @@ exit 0
 	--initscript exim
 
 %preun
+%systemd_preun %{name}.service
 if [ $1 = 0 ]; then
-	/bin/systemctl --no-reload exim.service > /dev/null 2>&1 || :
-	/bin/systemctl stop exim.service > /dev/null 2>&1 || :
 	%{_sbindir}/alternatives --remove mta %{_sbindir}/sendmail.exim
 fi
 
 %postun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+%systemd_postun_with_restart %{name}.service
 if [ $1 -ge 1 ]; then
-	/bin/systemctl try-restart exim.service >/dev/null 2>&1 || :
 	mta=`readlink /etc/alternatives/mta`
 	if [ "$mta" == "%{_sbindir}/sendmail.exim" ]; then
 		/usr/sbin/alternatives --set mta %{_sbindir}/sendmail.exim
@@ -604,6 +602,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Feb 26 2013 Jaroslav Škarvada <jskarvad@redhat.com> - 4.80.1-3
+- Switched to systemd-rpm macros
+  Resolves: rhbz#850102
+
 * Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.80.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
