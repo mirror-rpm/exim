@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.80.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -602,6 +602,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jul 17 2013 Petr Pisar <ppisar@redhat.com> - 4.80.1-4
+- Perl 5.18 rebuild
+
 * Tue Feb 26 2013 Jaroslav Škarvada <jskarvad@redhat.com> - 4.80.1-3
 - Switched to systemd-rpm macros
   Resolves: rhbz#850102
