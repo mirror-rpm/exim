@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.80.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -174,7 +174,8 @@ This package contains the SysV initscript.
 %package greylist
 Summary: Example configuration for greylisting using Exim
 Group: System Environment/Daemons
-Requires: sqlite exim %{_sysconfdir}/cron.daily
+Requires: sqlite exim 
+Requires: crontabs
 
 %description greylist
 This package contains a simple example of how to do greylisting in Exim's
@@ -602,6 +603,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat Jul 27 2013 Jóhann B. Guðmundsson <johannbg@fedoraproject.org> - 4.80.1-5
+- Add a missing requirement on crontabs to spec file
+
 * Wed Jul 17 2013 Petr Pisar <ppisar@redhat.com> - 4.80.1-4
 - Perl 5.18 rebuild
 
