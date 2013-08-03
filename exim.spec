@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.80.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -603,6 +603,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat Aug 03 2013 Petr Pisar <ppisar@redhat.com> - 4.80.1-6
+- Perl 5.18 rebuild
+
 * Sat Jul 27 2013 Jóhann B. Guðmundsson <johannbg@fedoraproject.org> - 4.80.1-5
 - Add a missing requirement on crontabs to spec file
 
