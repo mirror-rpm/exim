@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.80.1
-Release: 6%{?dist}
+Version: 4.82
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -50,18 +50,18 @@ Source25: exim-gen-cert
 Source26: clamd.exim.service
 
 Patch4: exim-rhl.patch
-Patch6: exim-4.80-config.patch
-Patch8: exim-4.24-libdir.patch
-Patch12: exim-4.33-cyrus.patch
-Patch13: exim-4.43-pamconfig.patch
-Patch14: exim-4.50-spamdconf.patch
-Patch18: exim-4.71-dlopen-localscan.patch
-Patch19: exim-4.63-procmail.patch
-Patch20: exim-4.63-allow-filter.patch
-Patch21: exim-4.63-localhost-is-local.patch
-Patch22: exim-4.66-greylist-conf.patch
-Patch23: exim-4.67-smarthost-config.patch
-Patch25: exim-4.69-dynlookup-config.patch
+Patch6: exim-4.82-config.patch
+Patch8: exim-4.82-libdir.patch
+Patch12: exim-4.82-cyrus.patch
+Patch13: exim-4.82-pamconfig.patch
+Patch14: exim-4.82-spamdconf.patch
+Patch18: exim-4.82-dlopen-localscan.patch
+Patch19: exim-4.82-procmail.patch
+Patch20: exim-4.82-allow-filter.patch
+Patch21: exim-4.82-localhost-is-local.patch
+Patch22: exim-4.82-greylist-conf.patch
+Patch23: exim-4.82-smarthost-config.patch
+Patch25: exim-4.82-dynlookup-config.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -472,7 +472,7 @@ fi
 %{_bindir}/rmail.exim
 %{_bindir}/newaliases.exim
 /usr/lib/sendmail.exim
-%{_mandir}/*/*
+%{_mandir}/man8/*
 %dir %{_libdir}/exim
 %dir %{_libdir}/exim/%{version}-%{release}
 %dir %{_libdir}/exim/%{version}-%{release}/lookups
@@ -603,6 +603,13 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Oct 29 2013 Jaroslav Škarvada <jskarvad@redhat.com> - 4.82-1
+- New version
+  Resolves: rhbz#1024196
+- Fixed bogus dates in the changelog (best effort)
+- De-fuzzified patches
+- Fixed double packaging of mailq.1.gz
+
 * Sat Aug 03 2013 Petr Pisar <ppisar@redhat.com> - 4.80.1-6
 - Perl 5.18 rebuild
 
@@ -835,7 +842,7 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 - fixed permissions for some binaries
 - fixed pam file to use include instead of pam_stack
 
-* Fri Jul  4 2006 David Woodhouse <dwmw2@redhat.com> 4.62-4
+* Tue Jul  4 2006 David Woodhouse <dwmw2@redhat.com> 4.62-4
 - Package review
 
 * Wed Jun 28 2006 David Woodhouse <dwmw2@redhat.com> 4.62-3
@@ -1187,7 +1194,7 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 - Added eximconfig script, thanks to Mark Baker
 - Exim now uses the Berkeley DB library.
 
-* Fri Aug 4 1999 Mark Bergsma <mark@mbergsma.demon.nl>
+* Wed Aug 4 1999 Mark Bergsma <mark@mbergsma.demon.nl>
 - Upgraded to version 3.03
 - Removed version number out of the spec file name.
 

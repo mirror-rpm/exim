@@ -1,7 +1,8 @@
-diff -uNr exim-4.69-new/src/configure.default exim-4.69/src/configure.default
---- exim-4.69-new/src/configure.default	2008-08-13 15:15:01.000000000 +0100
-+++ exim-4.69/src/configure.default	2008-08-13 15:16:44.000000000 +0100
-@@ -140,7 +140,7 @@
+diff --git a/src/configure.default b/src/configure.default
+index 153c77b..38f0f56 100644
+--- a/src/configure.default
++++ b/src/configure.default
+@@ -141,7 +141,7 @@ acl_smtp_data = acl_check_data
  
  # Allow any client to use TLS.
  
@@ -10,7 +11,7 @@ diff -uNr exim-4.69-new/src/configure.default exim-4.69/src/configure.default
  
  # Specify the location of the Exim server's TLS certificate and private key.
  # The private key must not be encrypted (password protected). You can put
-@@ -148,8 +148,8 @@
+@@ -149,8 +149,8 @@ acl_smtp_data = acl_check_data
  # need the first setting, or in separate files, in which case you need both
  # options.
  
@@ -21,7 +22,7 @@ diff -uNr exim-4.69-new/src/configure.default exim-4.69/src/configure.default
  
  # In order to support roaming users who wish to send email from anywhere,
  # you may want to make Exim listen on other ports as well as port 25, in
-@@ -160,8 +160,8 @@
+@@ -161,8 +161,8 @@ acl_smtp_data = acl_check_data
  # them you should also allow TLS-on-connect on the traditional but
  # non-standard port 465.
  
@@ -32,7 +33,7 @@ diff -uNr exim-4.69-new/src/configure.default exim-4.69/src/configure.default
  
  
  # Specify the domain you want to be added to all unqualified addresses
-@@ -219,6 +219,24 @@
+@@ -220,6 +220,24 @@ never_users = root
  
  host_lookup = *
  
@@ -57,21 +58,21 @@ diff -uNr exim-4.69-new/src/configure.default exim-4.69/src/configure.default
  
  # The settings below, which are actually the same as the defaults in the
  # code, cause Exim to make RFC 1413 (ident) callbacks for all incoming SMTP
-@@ -756,7 +774,7 @@
+@@ -800,7 +818,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
 -#  server_condition           = Authentication is not yet configured
 +#  server_condition           = ${if saslauthd{{$2}{$3}{smtp}} {1}}
- #  server_advertise_condition = ${if def:tls_cipher }
+ #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -768,7 +786,7 @@
+@@ -812,7 +830,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:
 -#  server_condition           = Authentication is not yet configured
 +#  server_condition           = ${if saslauthd{{$1}{$2}{smtp}} {1}}
- #  server_advertise_condition = ${if def:tls_cipher }
+ #  server_advertise_condition = ${if def:tls_in_cipher }
  
  

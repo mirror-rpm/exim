@@ -1,6 +1,8 @@
---- exim-4.24/OS/Makefile-Linux.libdir	2003-09-22 10:29:52.000000000 +0200
-+++ exim-4.24/OS/Makefile-Linux	2003-11-13 12:05:15.000000000 +0100
-@@ -17,8 +17,8 @@
+diff --git a/OS/Makefile-Linux b/OS/Makefile-Linux
+index 990f884..d1ef114 100644
+--- a/OS/Makefile-Linux
++++ b/OS/Makefile-Linux
+@@ -24,8 +24,8 @@ LIBRESOLV = -lresolv
  
  X11=/usr/X11R6
  XINCLUDE=-I$(X11)/include

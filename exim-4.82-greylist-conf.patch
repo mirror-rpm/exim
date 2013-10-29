@@ -1,6 +1,8 @@
---- exim-4.66/src/configure.default.grey	2007-02-07 13:07:40.000000000 +0000
-+++ exim-4.66/src/configure.default	2007-02-08 10:16:17.000000000 +0000
-@@ -105,6 +105,7 @@ hostlist   relay_from_hosts = 127.0.0.1
+diff --git a/src/configure.default b/src/configure.default
+index 3728043..0126880 100644
+--- a/src/configure.default
++++ b/src/configure.default
+@@ -106,6 +106,7 @@ hostlist   relay_from_hosts = localhost
  # manual for details. The lists above are used in the access control lists for
  # checking incoming messages. The names of these ACLs are defined here:
  
@@ -8,7 +10,7 @@
  acl_smtp_rcpt = acl_check_rcpt
  acl_smtp_data = acl_check_data
  acl_smtp_mime = acl_check_mime
-@@ -318,6 +319,29 @@ timeout_frozen_after = 7d
+@@ -340,6 +341,29 @@ timeout_frozen_after = 7d
  
  begin acl
  
@@ -27,10 +29,10 @@
 +
 +  # Use the lack of reverse DNS to trigger greylisting. Some people
 +  # even reject for it but that would be a little excessive.
-+  
++
 +  warn condition = ${if eq{$sender_host_name}{} {1}}
 +       set acl_m_greylistreasons = Host $sender_host_address lacks reverse DNS\n$acl_m_greylistreasons
-+  
++
 +  accept
 +
 +
@@ -38,7 +40,7 @@
  # This access control list is used for every RCPT command in an incoming
  # SMTP message. The tests are run in order until the address is either
  # accepted or denied.
-@@ -435,7 +459,8 @@ acl_check_rcpt:
+@@ -460,7 +484,8 @@ acl_check_rcpt:
    # There are no default checks on DNS black lists because the domains that
    # contain these lists are changing all the time. However, here are two
    # examples of how you can get Exim to perform a DNS black list lookup at this
@@ -48,7 +50,7 @@
    #
    # deny    message       = rejected because $sender_host_address is in a black list at $dnslist_domain\n$dnslist_text
    #         dnslists      = black.list.example
-@@ -443,6 +468,10 @@ acl_check_rcpt:
+@@ -468,6 +493,10 @@ acl_check_rcpt:
    # warn    dnslists      = black.list.example
    #         add_header    = X-Warning: $sender_host_address is in a black list at $dnslist_domain
    #         log_message   = found in $dnslist_domain
@@ -59,7 +61,7 @@
    #############################################################################
  
    #############################################################################
-@@ -456,6 +485,10 @@ acl_check_rcpt:
+@@ -481,6 +510,10 @@ acl_check_rcpt:
    # require verify = csa
    #############################################################################
  
@@ -70,12 +72,12 @@
    # At this point, the address has passed all the checks that have been
    # configured, so we accept it unconditionally.
  
-@@ -481,6 +514,12 @@ acl_check_data:
+@@ -506,6 +539,12 @@ acl_check_data:
    # deny    condition  = ${if !def:h_Message-ID: {1}}
    #         message    = RFC2822 says that all mail SHOULD have a Message-ID header.\n\
    #                      Most messages without it are spam, so your mail has been rejected.
 +  #
-+  # Alternatively if we're feeling more lenient we could just use it to 
++  # Alternatively if we're feeling more lenient we could just use it to
 +  # trigger greylisting instead:
 +
 +  warn    condition  = ${if !def:h_Message-ID: {1}}
@@ -83,7 +85,7 @@
  
    # Deny if the message contains a virus. Before enabling this check, you
    # must install a virus scanner and set the av_scanner option above.
-@@ -515,8 +554,30 @@ acl_check_data:
+@@ -540,8 +579,30 @@ acl_check_data:
    #         message   = Your message scored $spam_score SpamAssassin point. Report follows:\n\
    #  	    	        $spam_report
  
@@ -109,7 +111,7 @@
 +
    accept
  
-+# To enable the greylisting, also uncomment this line: 
++# To enable the greylisting, also uncomment this line:
 +# .include /etc/exim/exim-greylist.conf.inc
  
  acl_check_mime:

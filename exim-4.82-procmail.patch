@@ -1,6 +1,8 @@
---- exim-4.63/src/configure.default~	2006-09-03 15:02:28.000000000 -0700
-+++ exim-4.63/src/configure.default	2006-09-03 15:46:53.000000000 -0700
-@@ -680,6 +680,12 @@ userforward:
+diff --git a/src/configure.default b/src/configure.default
+index 8b599d2..37a6a00 100644
+--- a/src/configure.default
++++ b/src/configure.default
+@@ -692,6 +692,12 @@ userforward:
    pipe_transport = address_pipe
    reply_transport = address_reply
  
@@ -13,7 +15,7 @@
  
  # This router matches local user mailboxes. If the router fails, the error
  # message is "Unknown user".
-@@ -717,6 +723,16 @@ begin transports
+@@ -729,6 +735,16 @@ begin transports
  remote_smtp:
    driver = smtp
  

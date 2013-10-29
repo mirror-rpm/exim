@@ -1,7 +1,8 @@
-diff -uNr exim-4.69.orig/src/configure.default exim-4.69/src/configure.default
---- exim-4.69.orig/src/configure.default	2007-06-26 12:21:36.000000000 +0100
-+++ exim-4.69/src/configure.default	2008-08-13 14:41:14.000000000 +0100
-@@ -548,7 +548,7 @@
+diff --git a/src/configure.default b/src/configure.default
+index 1274349..b631a4d 100644
+--- a/src/configure.default
++++ b/src/configure.default
+@@ -590,7 +590,7 @@ system_aliases:
    driver = redirect
    allow_fail
    allow_defer
@@ -10,7 +11,7 @@ diff -uNr exim-4.69.orig/src/configure.default exim-4.69/src/configure.default
  # user = exim
    file_transport = address_file
    pipe_transport = address_pipe
-@@ -643,8 +643,8 @@
+@@ -687,8 +687,8 @@ local_delivery:
    delivery_date_add
    envelope_to_add
    return_path_add
