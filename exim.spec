@@ -13,7 +13,7 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.82
+Version: 4.82.1
 Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
@@ -603,6 +603,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Jun  2 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 4.82.1-1
+- New version
+
 * Tue Oct 29 2013 Jaroslav Škarvada <jskarvad@redhat.com> - 4.82-1
 - New version
   Resolves: rhbz#1024196
