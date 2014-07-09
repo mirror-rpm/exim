@@ -1,20 +1,16 @@
 # SA-Exim has long since been obsoleted by the proper built-in ACL support
-# from exiscan. Disable it for FC6 unless people scream.
-%if 0%{?fedora} < 6
-%define buildsa 1
-%endif
+# from exiscan. Disable it by default
+%bcond_with sa
 
-# Build clamav subpackage for FC5 and above.
-%if 0%{?fedora} >= 5
-%define buildclam 1
-%endif
+# Build clamav subpackage by default
+%bcond_without clamav
 
 %global sysv2systemdnvr 4.76-6
 
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.82.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -24,7 +20,7 @@ Requires(post): /sbin/chkconfig /sbin/service /sbin/restorecon %{_sbindir}/alter
 Requires(preun): %{_sbindir}/alternatives systemd
 Requires(postun): %{_sbindir}/alternatives systemd
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
-%if 0%{?buildclam}
+%if %{with clamav}
 Requires: initscripts
 BuildRequires: clamav-devel
 %endif
@@ -34,11 +30,11 @@ Source3: exim.sysconfig
 Source4: exim.logrotate
 Source5: exim-tidydb.sh
 Source11: exim.pam
-%if 0%{?buildclam}
+%if %{with clamav}
 Source12: exim-clamav-tmpfiles.conf
 %endif
 
-%if 0%{?buildsa}
+%if %{with sa}
 Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
 %endif
 Source20: exim-greylist.conf.inc
@@ -67,7 +63,7 @@ Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires: libdb-devel openssl-devel openldap-devel pam-devel
-%if 0%{?buildsa}
+%if %{with sa}
 BuildRequires: lynx
 %endif
 BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
@@ -123,6 +119,7 @@ displays information about Exim's processing in an X window, and an
 administrator can perform a number of control actions from the window
 interface.
 
+%if %{with sa}
 %package sa
 Summary: Exim SpamAssassin at SMTP time - d/l plugin
 Group: System Environment/Daemons
@@ -132,8 +129,9 @@ Requires: exim = %{version}-%{release}
 The exim-sa package is an old method for allowing SpamAssassin to be run on
 incoming mail at SMTP time. It is deprecated in favour of the built-in ACL
 support for content scanning.
+%endif
 
-%if 0%{?buildclam}
+%if %{with clamav}
 %package clamav
 Summary: Clam Antivirus scanner dæmon configuration for use with Exim
 Group: System Environment/Daemons
@@ -199,7 +197,7 @@ greylisting unconditional.
 
 %prep
 %setup -q
-%if 0%{?buildsa}
+%if %{with sa}
 %setup -q -T -D -a 13
 %endif
 
@@ -231,7 +229,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %endif
 make LFLAGS=-pie _lib=%{_lib} FULLECHO=
 
-%if 0%{?buildsa}
+%if %{with sa}
 # build sa-exim
 cd sa-exim*
 perl -pi -e 's|\@lynx|HOME=/ /usr/bin/lynx|g;' Makefile
@@ -318,7 +316,7 @@ install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
 install -m 0755 %SOURCE5 $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/exim-tidydb
 
-%if 0%{?buildsa}
+%if %{with sa}
 # install sa
 cd sa-exim*
 mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/exim
@@ -340,7 +338,7 @@ do
 	touch $RPM_BUILD_ROOT$i
 done
 
-%if 0%{?buildclam}
+%if %{with clamav}
 # Munge the clamav init and config files from clamav-devel. This really ought
 # to be a subpackage of clamav, but this hack will have to do for now.
 function clamsubst() {
@@ -528,7 +526,7 @@ fi
 %{_sbindir}/eximon
 %{_sbindir}/eximon.bin
 
-%if 0%{?buildsa}
+%if %{with sa}
 %files sa
 %defattr(-,root,root)
 %{_libexecdir}/exim
@@ -537,7 +535,7 @@ fi
 %doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
 %endif
 
-%if 0%{?buildclam}
+%if %{with clamav}
 %post clamav
 /bin/mkdir -p 0750 %{_var}/run/clamd.exim
 /bin/chown exim:exim %{_var}/run/clamd.exim
@@ -603,6 +601,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jul  9 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 4.82.1-3
+- Dropped support for FC6 and earlier, without sa and with clamav are
+  now the defaults, they can be overriden by --with / --without
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.82.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
