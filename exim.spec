@@ -2,15 +2,20 @@
 # from exiscan. Disable it by default
 %bcond_with sa
 
-# Build clamav subpackage by default
+# By default build clamav subpackage on Fedora,
+# do not build on RHEL
+%if 0%{?rhel}
+%bcond_with clamav
+%else
 %bcond_without clamav
+%endif
 
 %global sysv2systemdnvr 4.76-6
 
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.82.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -43,7 +48,9 @@ Source22: greylist-tidy.sh
 Source23: trusted-configs
 Source24: exim.service
 Source25: exim-gen-cert
+%if %{with clamav}
 Source26: clamd.exim.service
+%endif
 
 Patch4: exim-rhl.patch
 Patch6: exim-4.82-config.patch
@@ -308,7 +315,10 @@ mkdir -p %{buildroot}%{_unitdir}
 mkdir -p $RPM_BUILD_ROOT%{_libexecdir}
 install -m644 %{SOURCE24} %{buildroot}%{_unitdir}
 install -m755 %{SOURCE25} %{buildroot}%{_libexecdir}
+
+%if %{with clamav}
 install -m644 %{SOURCE26} %{buildroot}%{_unitdir}
+%endif
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
@@ -601,6 +611,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jul  9 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 4.82.1-4
+- Do not build clamav on RHEL
+- Fixed build without clamav
+
 * Wed Jul  9 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 4.82.1-3
 - Dropped support for FC6 and earlier, without sa and with clamav are
   now the defaults, they can be overriden by --with / --without
