@@ -72,7 +72,7 @@ index 38f0f56..8b599d2 100644
 -  #                      X-Spam_score_int: $spam_score_int\n\
 -  #                      X-Spam_bar: $spam_bar\n\
 -  #                      X-Spam_report: $spam_report
-+  
++
 +  # Unconditionally add score and report headers
 +  #
 +  # warn    add_header = X-Spam-Score: $spam_score ($spam_bar)\n\
