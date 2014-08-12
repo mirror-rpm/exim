@@ -52,10 +52,10 @@ index d3f9987..c01d430 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index 265f94e..fde0f47 100644
+index 2bedcf5..6085955 100644
 --- a/src/globals.h
 +++ b/src/globals.h
-@@ -117,6 +117,10 @@ extern uschar *tls_verify_certificates;/* Path for certificates to check */
+@@ -126,6 +126,10 @@ extern uschar *tls_verify_certificates;/* Path for certificates to check */
  extern uschar *tls_verify_hosts;       /* Mandatory client verification */
  #endif
  
