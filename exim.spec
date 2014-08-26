@@ -15,7 +15,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.84
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -611,6 +611,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Aug 26 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4.84-3
+- Perl 5.20 rebuild
+
 * Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.84-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
