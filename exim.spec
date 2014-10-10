@@ -234,7 +234,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 %else
 	export PIE=-fPIE
 %endif
-make LFLAGS=-pie _lib=%{_lib} FULLECHO=
+make _lib=%{_lib} FULLECHO=
 
 %if %{with sa}
 # build sa-exim

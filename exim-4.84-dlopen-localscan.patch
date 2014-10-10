@@ -17,7 +17,7 @@ index a3ffd48..c186529 100644
 +# linker flags.  Without it, the loaded .so won't be able to access any
 +# functions from exim.
 +
-+LFLAGS=-rdynamic -ldl
++LFLAGS=-rdynamic -ldl -pie
 +
 +#------------------------------------------------------------------------------
  # The default distribution of Exim contains only the plain text form of the
