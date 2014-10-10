@@ -15,7 +15,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.84
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -611,6 +611,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Oct 10 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 4.84-4
+- Do not override LFLAGS (problem reported by Todd Lyons)
+
 * Tue Aug 26 2014 Jitka Plesnikova <jplesnik@redhat.com> - 4.84-3
 - Perl 5.20 rebuild
 
