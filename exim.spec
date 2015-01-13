@@ -14,8 +14,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.84
-Release: 4%{?dist}
+Version: 4.85
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -53,12 +53,12 @@ Source26: clamd.exim.service
 %endif
 
 Patch4: exim-rhl.patch
-Patch6: exim-4.83-config.patch
+Patch6: exim-4.85-config.patch
 Patch8: exim-4.82-libdir.patch
 Patch12: exim-4.82-cyrus.patch
 Patch13: exim-4.82-pamconfig.patch
 Patch14: exim-4.83-spamdconf.patch
-Patch18: exim-4.84-dlopen-localscan.patch
+Patch18: exim-4.85-dlopen-localscan.patch
 Patch19: exim-4.82-procmail.patch
 Patch20: exim-4.82-allow-filter.patch
 Patch21: exim-4.82-localhost-is-local.patch
@@ -611,6 +611,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Jan 13 2015 Jaroslav Škarvada <jskarvad@redhat.com> - 4.85-1
+- New version
+  Resolves: rhbz#1181479
+- De-fuzzified config and dlopen-localscan patches
+
 * Fri Oct 10 2014 Jaroslav Škarvada <jskarvad@redhat.com> - 4.84-4
 - Do not override LFLAGS (problem reported by Todd Lyons)
 

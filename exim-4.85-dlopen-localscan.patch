@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index a3ffd48..c186529 100644
+index b4c60cb..5f95c89 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -783,6 +783,20 @@ TLS_LIBS=-lssl -lcrypto
+@@ -786,6 +786,20 @@ TLS_LIBS=-lssl -lcrypto
  
  
  #------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ index a3ffd48..c186529 100644
  # documentation. Other forms are available separately. If you want to install
  # the documentation in "info" format, first fetch the Texinfo documentation
 diff --git a/src/config.h.defaults b/src/config.h.defaults
-index ba4615c..878e687 100644
+index a0997a0..9dd84f8 100644
 --- a/src/config.h.defaults
 +++ b/src/config.h.defaults
 @@ -27,6 +27,8 @@ it's a default value. */
@@ -37,10 +37,10 @@ index ba4615c..878e687 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index d3f9987..c01d430 100644
+index fb705d9..efee424 100644
 --- a/src/globals.c
 +++ b/src/globals.c
-@@ -162,6 +162,10 @@ uschar *tls_verify_certificates= NULL;
+@@ -170,6 +170,10 @@ uschar *tls_verify_certificates= NULL;
  uschar *tls_verify_hosts       = NULL;
  #endif
  
@@ -52,10 +52,10 @@ index d3f9987..c01d430 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index 2bedcf5..6085955 100644
+index f4baa0b..729426c 100644
 --- a/src/globals.h
 +++ b/src/globals.h
-@@ -126,6 +126,10 @@ extern uschar *tls_verify_certificates;/* Path for certificates to check */
+@@ -130,6 +130,10 @@ extern uschar *tls_verify_certificates;/* Path for certificates to check */
  extern uschar *tls_verify_hosts;       /* Mandatory client verification */
  #endif
  
@@ -250,10 +250,10 @@ index 3500047..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index adb538c..d378b3a 100644
+index 40af940..81be47f 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
-@@ -290,6 +290,9 @@ static optionlist optionlist_config[] = {
+@@ -293,6 +293,9 @@ static optionlist optionlist_config[] = {
    { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
    { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
    { "local_interfaces",         opt_stringptr,   &local_interfaces },
