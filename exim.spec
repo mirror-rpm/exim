@@ -15,7 +15,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.85
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -65,6 +65,8 @@ Patch21: exim-4.82-localhost-is-local.patch
 Patch22: exim-4.82-greylist-conf.patch
 Patch23: exim-4.82-smarthost-config.patch
 Patch25: exim-4.82-dynlookup-config.patch
+# Upstream ticket: http://bugs.exim.org/show_bug.cgi?id=1584
+Patch26: exim-4.85-pic.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -221,6 +223,7 @@ greylisting unconditional.
 %patch22 -p1 -b .grey
 %patch23 -p1 -b .smarthost
 %patch25 -p1 -b .dynconfig
+%patch26 -p1 -b .fpic
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -231,8 +234,10 @@ cp exim_monitor/EDITME Local/eximon.conf
 %build
 %ifnarch s390 s390x sparc sparcv9 sparcv9v sparc64 sparc64v
 	export PIE=-fpie
+	export PIC=-fpic
 %else
 	export PIE=-fPIE
+	export PIC=-fPIC
 %endif
 make _lib=%{_lib} FULLECHO=
 
@@ -611,6 +616,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Feb 10 2015 Jaroslav Škarvada <jskarvad@redhat.com> - 4.85-2
+- Shared objects are now compiled with PIC, not PIE, which is needed for gcc-5,
+  (by pic patch)
+  Resolves: rhbz#1190784
+
 * Tue Jan 13 2015 Jaroslav Škarvada <jskarvad@redhat.com> - 4.85-1
 - New version
   Resolves: rhbz#1181479
