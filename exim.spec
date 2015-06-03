@@ -15,7 +15,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.85
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -634,6 +634,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jun 03 2015 Jitka Plesnikova <jplesnik@redhat.com> - 4.85-4
+- Perl 5.22 rebuild
+
 * Tue Mar 10 2015 Adam Jackson <ajax@redhat.com> 4.85-3
 - Drop sysvinit subpackages for F23+
 
