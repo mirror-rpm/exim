@@ -12,7 +12,7 @@ index eeb26ee..9cb6385 100755
    echo "" >>$mft
    cat $mftt >> $mft
 diff --git a/src/EDITME b/src/EDITME
-index 4a290a4..b4c60cb 100644
+index d481122..9372675 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -98,7 +98,7 @@
@@ -121,7 +121,7 @@ index 4a290a4..b4c60cb 100644
  
  # If you're using ClamAV and are backporting fixes to an old version, instead
  # of staying current (which is the more usual approach) then you may need to
-@@ -576,7 +578,7 @@ FIXED_NEVER_USERS=root
+@@ -583,7 +585,7 @@ FIXED_NEVER_USERS=root
  # CONFIGURE_OWNER setting, to specify a configuration file which is listed in
  # the TRUSTED_CONFIG_LIST file, then root privileges are not dropped by Exim.
  
@@ -130,7 +130,7 @@ index 4a290a4..b4c60cb 100644
  
  
  #------------------------------------------------------------------------------
-@@ -621,15 +623,13 @@ FIXED_NEVER_USERS=root
+@@ -628,16 +630,14 @@ FIXED_NEVER_USERS=root
  # included in the Exim binary. You will then need to set up the run time
  # configuration to make use of the mechanism(s) selected.
  
@@ -143,6 +143,7 @@ index 4a290a4..b4c60cb 100644
 -# AUTH_HEIMDAL_GSSAPI_PC=heimdal-gssapi
 -# AUTH_PLAINTEXT=yes
 -# AUTH_SPA=yes
+-# AUTH_TLS=yes
 +AUTH_CRAM_MD5=yes
 +AUTH_CYRUS_SASL=yes
 +AUTH_DOVECOT=yes
@@ -150,10 +151,11 @@ index 4a290a4..b4c60cb 100644
 +AUTH_GSASL_PC=libgsasl
 +AUTH_PLAINTEXT=yes
 +AUTH_SPA=yes
++AUTH_TLS=yes
  
  
  #------------------------------------------------------------------------------
-@@ -650,7 +650,7 @@ FIXED_NEVER_USERS=root
+@@ -658,7 +658,7 @@ FIXED_NEVER_USERS=root
  # one that is set in the headers_charset option. The default setting is
  # defined by this setting:
  
@@ -162,7 +164,7 @@ index 4a290a4..b4c60cb 100644
  
  # If you are going to make use of $header_xxx expansions in your configuration
  # file, or if your users are going to use them in filter files, and the normal
-@@ -670,7 +670,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -678,7 +678,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # the Sieve filter support. For those OS where iconv() is known to be installed
  # as standard, the file in OS/Makefile-xxxx contains
  #
@@ -171,7 +173,7 @@ index 4a290a4..b4c60cb 100644
  #
  # If you are not using one of those systems, but have installed iconv(), you
  # need to uncomment that line above. In some cases, you may find that iconv()
-@@ -732,11 +732,11 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -740,11 +740,11 @@ HEADERS_CHARSET="ISO-8859-1"
  # leave these settings commented out.
  
  # This setting is required for any TLS support (either OpenSSL or GnuTLS)
@@ -186,7 +188,7 @@ index 4a290a4..b4c60cb 100644
  
  # Uncomment the first and either the second or the third of these if you
  # are using GnuTLS.  If you have pkg-config, then the second, else the third.
-@@ -801,7 +801,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -809,7 +809,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # Once you have done this, "make install" will build the info files and
  # install them in the directory you have defined.
  
@@ -195,7 +197,7 @@ index 4a290a4..b4c60cb 100644
  
  
  #------------------------------------------------------------------------------
-@@ -814,7 +814,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -822,7 +822,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # %s. This will be replaced by one of the strings "main", "panic", or "reject"
  # to form the final file names. Some installations may want something like this:
  
@@ -204,7 +206,7 @@ index 4a290a4..b4c60cb 100644
  
  # which results in files with names /var/log/exim_mainlog, etc. The directory
  # in which the log files are placed must exist; Exim does not try to create
-@@ -880,7 +880,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -894,7 +894,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # (version 5.004 or later) installed, set EXIM_PERL to perl.o. Using embedded
  # Perl costs quite a lot of resources. Only do this if you really need it.
  
@@ -213,7 +215,7 @@ index 4a290a4..b4c60cb 100644
  
  
  #------------------------------------------------------------------------------
-@@ -890,7 +890,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -904,7 +904,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # that the local_scan API is made available by the linker. You may also need
  # to add -ldl to EXTRALIBS so that dlopen() is available to Exim.
  
@@ -222,7 +224,7 @@ index 4a290a4..b4c60cb 100644
  
  
  #------------------------------------------------------------------------------
-@@ -900,7 +900,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -914,7 +914,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # support, which is intended for use in conjunction with the SMTP AUTH
  # facilities, is included only when requested by the following setting:
  
@@ -231,7 +233,7 @@ index 4a290a4..b4c60cb 100644
  
  # You probably need to add -lpam to EXTRALIBS, and in some releases of
  # GNU/Linux -ldl is also needed.
-@@ -968,7 +968,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -982,7 +982,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
  
@@ -240,7 +242,7 @@ index 4a290a4..b4c60cb 100644
  
  
  #------------------------------------------------------------------------------
-@@ -981,9 +981,9 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -995,9 +995,9 @@ ZCAT_COMMAND=/usr/bin/zcat
  # You may well also have to specify a local "include" file and an additional
  # library for TCP wrappers, so you probably need something like this:
  #
@@ -253,7 +255,7 @@ index 4a290a4..b4c60cb 100644
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM
  # as well.
-@@ -1035,7 +1035,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1049,7 +1049,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # is "yes", as well as supporting line editing, a history of input lines in the
  # current run is maintained.
  
@@ -262,7 +264,7 @@ index 4a290a4..b4c60cb 100644
  
  # You may need to add -ldl to EXTRALIBS when you set USE_READLINE=yes.
  # Note that this option adds to the size of the Exim binary, because the
-@@ -1045,7 +1045,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1059,7 +1059,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  #------------------------------------------------------------------------------
  # Uncomment this setting to include IPv6 support.
  
@@ -271,7 +273,7 @@ index 4a290a4..b4c60cb 100644
  
  ###############################################################################
  #              THINGS YOU ALMOST NEVER NEED TO MENTION                        #
-@@ -1066,13 +1066,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1080,13 +1080,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # haven't got Perl, Exim will still build and run; you just won't be able to
  # use those utilities.
  
@@ -292,7 +294,7 @@ index 4a290a4..b4c60cb 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1272,7 +1272,7 @@ TMPDIR="/tmp"
+@@ -1286,7 +1286,7 @@ TMPDIR="/tmp"
  # (process id) to a file so that it can easily be identified. The path of the
  # file can be specified here. Some installations may want something like this:
  

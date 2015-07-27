@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index 37a6a00..52e0536 100644
+index 96ffe56..843edd2 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -684,7 +684,7 @@ userforward:
+@@ -699,7 +699,7 @@ userforward:
  # local_part_suffix = +* : -*
  # local_part_suffix_optional
    file = $home/.forward

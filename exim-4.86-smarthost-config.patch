@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index 0126880..b7c30ac 100644
+index 8b1f3bf..b2c8046 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -796,6 +796,15 @@ begin transports
+@@ -811,6 +811,15 @@ begin transports
  remote_smtp:
    driver = smtp
  
@@ -18,7 +18,7 @@ index 0126880..b7c30ac 100644
  # This transport invokes procmail to deliver mail
  procmail:
    driver = pipe
-@@ -904,6 +913,21 @@ begin rewrite
+@@ -919,6 +928,21 @@ begin rewrite
  #                   AUTHENTICATION CONFIGURATION                     #
  ######################################################################
  
@@ -40,7 +40,7 @@ index 0126880..b7c30ac 100644
  # The following authenticators support plaintext username/password
  # authentication using the standard PLAIN mechanism and the traditional
  # but non-standard LOGIN mechanism, with Exim acting as the server.
-@@ -919,7 +943,7 @@ begin rewrite
+@@ -934,7 +958,7 @@ begin rewrite
  # The default RCPT ACL checks for successful authentication, and will accept
  # messages from authenticated users from anywhere on the Internet.
  

@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index b631a4d..153c77b 100644
+index 97e9053..5393ca3 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -721,6 +721,16 @@ address_reply:
+@@ -736,6 +736,16 @@ address_reply:
    driver = autoreply
  
  

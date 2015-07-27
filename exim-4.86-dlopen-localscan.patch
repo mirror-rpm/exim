@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index b4c60cb..5f95c89 100644
+index 9372675..813dd41 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -786,6 +786,20 @@ TLS_LIBS=-lssl -lcrypto
+@@ -794,6 +794,20 @@ TLS_LIBS=-lssl -lcrypto
  
  
  #------------------------------------------------------------------------------
@@ -24,10 +24,10 @@ index b4c60cb..5f95c89 100644
  # documentation. Other forms are available separately. If you want to install
  # the documentation in "info" format, first fetch the Texinfo documentation
 diff --git a/src/config.h.defaults b/src/config.h.defaults
-index a0997a0..9dd84f8 100644
+index c33e098..6983a83 100644
 --- a/src/config.h.defaults
 +++ b/src/config.h.defaults
-@@ -27,6 +27,8 @@ it's a default value. */
+@@ -28,6 +28,8 @@ it's a default value. */
  
  #define AUTH_VARS                     3
  
@@ -37,10 +37,10 @@ index a0997a0..9dd84f8 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index fb705d9..efee424 100644
+index 66baffe..3a35d01 100644
 --- a/src/globals.c
 +++ b/src/globals.c
-@@ -170,6 +170,10 @@ uschar *tls_verify_certificates= NULL;
+@@ -169,6 +169,10 @@ uschar *tls_verify_certificates= US"system";
  uschar *tls_verify_hosts       = NULL;
  #endif
  
@@ -52,10 +52,10 @@ index fb705d9..efee424 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index f4baa0b..729426c 100644
+index ab03302..cb2db5a 100644
 --- a/src/globals.h
 +++ b/src/globals.h
-@@ -130,6 +130,10 @@ extern uschar *tls_verify_certificates;/* Path for certificates to check */
+@@ -131,6 +131,10 @@ extern uschar *tls_verify_certificates;/* Path for certificates to check */
  extern uschar *tls_verify_hosts;       /* Mandatory client verification */
  #endif
  
@@ -63,9 +63,9 @@ index f4baa0b..729426c 100644
 +extern uschar *local_scan_path;        /* Path to local_scan() library */
 +#endif
 +
- #ifdef EXPERIMENTAL_DSN
  extern uschar  *dsn_envid;             /* DSN envid string */
  extern int      dsn_ret;               /* DSN ret type*/
+ extern const pcre  *regex_DSN;         /* For recognizing DSN settings */
 diff --git a/src/local_scan.c b/src/local_scan.c
 index 3500047..8599172 100644
 --- a/src/local_scan.c
@@ -250,10 +250,10 @@ index 3500047..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index 40af940..81be47f 100644
+index 8a62d02..69c8c89 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
-@@ -293,6 +293,9 @@ static optionlist optionlist_config[] = {
+@@ -295,6 +295,9 @@ static optionlist optionlist_config[] = {
    { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
    { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
    { "local_interfaces",         opt_stringptr,   &local_interfaces },

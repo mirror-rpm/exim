@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index 1274349..b631a4d 100644
+index 3223bff..97e9053 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -590,7 +590,7 @@ system_aliases:
+@@ -605,7 +605,7 @@ system_aliases:
    driver = redirect
    allow_fail
    allow_defer
@@ -11,7 +11,7 @@ index 1274349..b631a4d 100644
  # user = exim
    file_transport = address_file
    pipe_transport = address_pipe
-@@ -687,8 +687,8 @@ local_delivery:
+@@ -702,8 +702,8 @@ local_delivery:
    delivery_date_add
    envelope_to_add
    return_path_add

@@ -14,8 +14,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.85
-Release: 5%{?dist}
+Version: 4.86
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -54,18 +54,18 @@ Source25: exim-gen-cert
 Source26: clamd.exim.service
 %endif
 
-Patch4: exim-rhl.patch
-Patch6: exim-4.85-config.patch
+Patch4: exim-4.86-rhl.patch
+Patch6: exim-4.86-config.patch
 Patch8: exim-4.82-libdir.patch
-Patch12: exim-4.82-cyrus.patch
-Patch13: exim-4.82-pamconfig.patch
-Patch14: exim-4.83-spamdconf.patch
-Patch18: exim-4.85-dlopen-localscan.patch
-Patch19: exim-4.82-procmail.patch
-Patch20: exim-4.82-allow-filter.patch
+Patch12: exim-4.86-cyrus.patch
+Patch13: exim-4.86-pamconfig.patch
+Patch14: exim-4.86-spamdconf.patch
+Patch18: exim-4.86-dlopen-localscan.patch
+Patch19: exim-4.86-procmail.patch
+Patch20: exim-4.86-allow-filter.patch
 Patch21: exim-4.82-localhost-is-local.patch
-Patch22: exim-4.82-greylist-conf.patch
-Patch23: exim-4.82-smarthost-config.patch
+Patch22: exim-4.86-greylist-conf.patch
+Patch23: exim-4.86-smarthost-config.patch
 Patch25: exim-4.82-dynlookup-config.patch
 # Upstream ticket: http://bugs.exim.org/show_bug.cgi?id=1584
 Patch26: exim-4.85-pic.patch
@@ -634,6 +634,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Jul 27 2015 Jaroslav Škarvada <jskarvad@redhat.com> - 4.86-1
+- New version
+  Resolves: rhbz#1246923
+- Updated and defuzzified patches
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.85-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 

@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index 8b599d2..37a6a00 100644
+index 5250b58..96ffe56 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -692,6 +692,12 @@ userforward:
+@@ -707,6 +707,12 @@ userforward:
    pipe_transport = address_pipe
    reply_transport = address_reply
  
@@ -15,7 +15,7 @@ index 8b599d2..37a6a00 100644
  
  # This router matches local user mailboxes. If the router fails, the error
  # message is "Unknown user".
-@@ -729,6 +735,16 @@ begin transports
+@@ -744,6 +750,16 @@ begin transports
  remote_smtp:
    driver = smtp
  
