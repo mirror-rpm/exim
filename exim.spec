@@ -12,10 +12,13 @@
 
 %global sysv2systemdnvr 4.76-6
 
+# hardened build if not overridden
+%{!?_hardened_build:%global _hardened_build 1}
+
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.86
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -245,7 +248,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 	export PIE=-fPIE
 	export PIC=-fPIC
 %endif
-make _lib=%{_lib} FULLECHO=
+make _lib=%{_lib} FULLECHO= LDFLAGS="%{?__global_ldflags} %{?_hardened_build:-pie -Wl,-z,relro,-z,now}"
 
 %if %{with sa}
 # build sa-exim
@@ -634,6 +637,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Sep 18 2015 Jaroslav Škarvada <jskarvad@redhat.com> - 4.86-2
+- Hardened build, rebuilt with the full RELRO (only the daemon)
+
 * Mon Jul 27 2015 Jaroslav Škarvada <jskarvad@redhat.com> - 4.86-1
 - New version
   Resolves: rhbz#1246923
