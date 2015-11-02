@@ -22,11 +22,11 @@ ${FQDN}
 root@${FQDN}
 EOF
                 if [ $? -eq 0 ]; then
-                        success
+                        echo success
                         chown exim.exim /etc/pki/tls/{private,certs}/exim.pem
                         chmod 600 /etc/pki/tls/{private,certs}/exim.pem
                 else
-                        failure
+                        echo failure
                 fi
                 echo
         fi
