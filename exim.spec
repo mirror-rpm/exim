@@ -18,7 +18,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.86
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -637,6 +637,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4.86-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Mon Nov  2 2015 Jaroslav Škarvada <jskarvad@redhat.com> - 4.86-3
 - Fixed exim-gen-cert not to output error on success
 
