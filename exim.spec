@@ -17,8 +17,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.86
-Release: 4%{?dist}
+Version: 4.86.2
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -63,7 +63,7 @@ Patch8: exim-4.82-libdir.patch
 Patch12: exim-4.86-cyrus.patch
 Patch13: exim-4.86-pamconfig.patch
 Patch14: exim-4.86-spamdconf.patch
-Patch18: exim-4.86-dlopen-localscan.patch
+Patch18: exim-4.86.2-dlopen-localscan.patch
 Patch19: exim-4.86-procmail.patch
 Patch20: exim-4.86-allow-filter.patch
 Patch21: exim-4.82-localhost-is-local.patch
@@ -637,6 +637,13 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Mar  3 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.86.2-1
+- New version
+  Resolves: rhbz#1314118
+- Fixed local privilege escalation for set-uid root when using perl_startup
+  Resolves: CVE-2016-1531
+- Defuzzified patches
+
 * Wed Feb 03 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4.86-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 

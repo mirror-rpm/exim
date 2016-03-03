@@ -37,7 +37,7 @@ index c33e098..6983a83 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index 66baffe..3a35d01 100644
+index 1dbc015..10fb3e4 100644
 --- a/src/globals.c
 +++ b/src/globals.c
 @@ -169,6 +169,10 @@ uschar *tls_verify_certificates= US"system";
@@ -52,7 +52,7 @@ index 66baffe..3a35d01 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index ab03302..cb2db5a 100644
+index f3e884b..7063d97 100644
 --- a/src/globals.h
 +++ b/src/globals.h
 @@ -131,6 +131,10 @@ extern uschar *tls_verify_certificates;/* Path for certificates to check */
@@ -250,10 +250,10 @@ index 3500047..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index 8a62d02..69c8c89 100644
+index 1de6bd7..d1e5142 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
-@@ -295,6 +295,9 @@ static optionlist optionlist_config[] = {
+@@ -300,6 +300,9 @@ static optionlist optionlist_config[] = {
    { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
    { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
    { "local_interfaces",         opt_stringptr,   &local_interfaces },
