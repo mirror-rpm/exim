@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index 52e0536..3728043 100644
+index d1ce2f1..1f10008 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -54,7 +54,7 @@
+@@ -55,7 +55,7 @@
  # +local_domains, +relay_to_domains, and +relay_from_hosts, respectively. They
  # are all colon-separated lists:
  

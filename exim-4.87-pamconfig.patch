@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index 5393ca3..dae5a54 100644
+index 0af6fb8..531435b 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -141,7 +141,7 @@ acl_smtp_data = acl_check_data
+@@ -142,7 +142,7 @@ acl_smtp_data = acl_check_data
  
  # Allow any client to use TLS.
  
@@ -11,7 +11,7 @@ index 5393ca3..dae5a54 100644
  
  # Specify the location of the Exim server's TLS certificate and private key.
  # The private key must not be encrypted (password protected). You can put
-@@ -149,8 +149,8 @@ acl_smtp_data = acl_check_data
+@@ -150,8 +150,8 @@ acl_smtp_data = acl_check_data
  # need the first setting, or in separate files, in which case you need both
  # options.
  
@@ -22,7 +22,7 @@ index 5393ca3..dae5a54 100644
  
  # In order to support roaming users who wish to send email from anywhere,
  # you may want to make Exim listen on other ports as well as port 25, in
-@@ -161,8 +161,8 @@ acl_smtp_data = acl_check_data
+@@ -162,8 +162,8 @@ acl_smtp_data = acl_check_data
  # them you should also allow TLS-on-connect on the traditional but
  # non-standard port 465.
  
@@ -33,7 +33,7 @@ index 5393ca3..dae5a54 100644
  
  
  # Specify the domain you want to be added to all unqualified addresses
-@@ -220,6 +220,24 @@ never_users = root
+@@ -221,6 +221,24 @@ never_users = root
  
  host_lookup = *
  
@@ -58,7 +58,7 @@ index 5393ca3..dae5a54 100644
  
  # The settings below cause Exim to make RFC 1413 (ident) callbacks
  # for all incoming SMTP calls. You can limit the hosts to which these
-@@ -815,7 +833,7 @@ begin authenticators
+@@ -842,7 +860,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -67,7 +67,7 @@ index 5393ca3..dae5a54 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -827,7 +845,7 @@ begin authenticators
+@@ -854,7 +872,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:
