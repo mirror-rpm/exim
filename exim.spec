@@ -18,7 +18,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.87
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -72,6 +72,7 @@ Patch23: exim-4.87-smarthost-config.patch
 Patch25: exim-4.87-dynlookup-config.patch
 # Upstream ticket: http://bugs.exim.org/show_bug.cgi?id=1584
 Patch26: exim-4.85-pic.patch
+Patch27: exim-4.87-environment.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -233,6 +234,7 @@ greylisting unconditional.
 %patch23 -p1 -b .smarthost
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .fpic
+%patch27 -p1 -b .environment
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -637,6 +639,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Apr 18 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.87-2
+- Used sane environment defaults in default configuration
+  Resolves: rhbz#1323775
+
 * Sun Apr 10 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.87-1
 - New version
   Resolves: rhbz#1325557

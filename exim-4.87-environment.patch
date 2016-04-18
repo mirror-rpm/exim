@@ -1,0 +1,14 @@
+diff --git a/src/configure.default b/src/configure.default
+--- a/src/configure.default
++++ b/src/configure.default
+@@ -357,8 +357,8 @@ timeout_frozen_after = 7d
+ # Note that TZ is handled separateley by the timezone runtime option
+ # and TIMEZONE_DEFAULT buildtime option.
+ 
+-# keep_environment = ^LDAP
+-# add_environment = PATH=/usr/bin::/bin
++keep_environment = ^LDAP
++add_environment = PATH=/usr/bin::/bin
+ 
+ 
+ 
