@@ -1,7 +1,3 @@
-# SA-Exim has long since been obsoleted by the proper built-in ACL support
-# from exiscan. Disable it by default
-%bcond_with sa
-
 # By default build clamav subpackage on Fedora,
 # do not build on RHEL
 %if 0%{?rhel}
@@ -18,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.87
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -40,22 +36,15 @@ Source3: exim.sysconfig
 Source4: exim.logrotate
 Source5: exim-tidydb.sh
 Source11: exim.pam
-%if %{with clamav}
 Source12: exim-clamav-tmpfiles.conf
-%endif
 
-%if %{with sa}
-Source13: http://marc.merlins.org/linux/exim/files/sa-exim-4.2.tar.gz
-%endif
 Source20: exim-greylist.conf.inc
 Source21: mk-greylist-db.sql
 Source22: greylist-tidy.sh
 Source23: trusted-configs
 Source24: exim.service
 Source25: exim-gen-cert
-%if %{with clamav}
 Source26: clamd.exim.service
-%endif
 
 Patch4: exim-4.87-rhl.patch
 Patch6: exim-4.87-config.patch
@@ -78,9 +67,6 @@ Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires: libdb-devel openssl-devel openldap-devel pam-devel
-%if %{with sa}
-BuildRequires: lynx
-%endif
 BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
 BuildRequires: openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
@@ -135,18 +121,6 @@ The Exim Monitor is an optional supplement to the Exim package. It
 displays information about Exim's processing in an X window, and an
 administrator can perform a number of control actions from the window
 interface.
-
-%if %{with sa}
-%package sa
-Summary: Exim SpamAssassin at SMTP time - d/l plugin
-Group: System Environment/Daemons
-Requires: exim = %{version}-%{release}
-
-%description sa
-The exim-sa package is an old method for allowing SpamAssassin to be run on
-incoming mail at SMTP time. It is deprecated in favour of the built-in ACL
-support for content scanning.
-%endif
 
 %if %{with clamav}
 %package clamav
@@ -216,9 +190,6 @@ greylisting unconditional.
 
 %prep
 %setup -q
-%if %{with sa}
-%setup -q -T -D -a 13
-%endif
 
 %patch4 -p1 -b .rhl
 %patch6 -p1 -b .config
@@ -251,13 +222,6 @@ cp exim_monitor/EDITME Local/eximon.conf
 	export PIC=-fPIC
 %endif
 make _lib=%{_lib} FULLECHO= LDFLAGS="%{?__global_ldflags} %{?_hardened_build:-pie -Wl,-z,relro,-z,now}"
-
-%if %{with sa}
-# build sa-exim
-cd sa-exim*
-perl -pi -e 's|\@lynx|HOME=/ /usr/bin/lynx|g;' Makefile
-make SACONF=%{_sysconfdir}/exim/sa-exim.conf CFLAGS="$RPM_OPT_FLAGS -fPIC"
-%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -343,15 +307,6 @@ install -m 0644 %SOURCE4 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/exim
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
 install -m 0755 %SOURCE5 $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/exim-tidydb
-
-%if %{with sa}
-# install sa
-cd sa-exim*
-mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/exim
-install *.so  $RPM_BUILD_ROOT%{_libexecdir}/exim
-install -m 644 *.conf $RPM_BUILD_ROOT%{_sysconfdir}/exim
-ln -s sa-exim*.so $RPM_BUILD_ROOT%{_libexecdir}/exim/sa-exim.so
-%endif
 
 # generate ghost .pem file
 mkdir -p $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}
@@ -560,15 +515,6 @@ fi
 %{_sbindir}/eximon
 %{_sbindir}/eximon.bin
 
-%if %{with sa}
-%files sa
-%defattr(-,root,root)
-%{_libexecdir}/exim
-%config(noreplace) %{_sysconfdir}/exim/sa-*.conf
-%doc sa-exim*/*.html
-%doc sa-exim*/{ACKNOWLEDGEMENTS,INSTALL,LICENSE,TODO}
-%endif
-
 %if %{with clamav}
 %post clamav
 /bin/mkdir -p 0750 %{_var}/run/clamd.exim
@@ -639,6 +585,12 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed May  4 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.87-3
+- Dropped sa-exim which has been obsoleted long time ago by the proper
+  built-in ACL support
+- Unconditionalized sources
+  Resolves: rhbz#1332211
+
 * Mon Apr 18 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.87-2
 - Used sane environment defaults in default configuration
   Resolves: rhbz#1323775
