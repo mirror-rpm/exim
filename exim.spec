@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.87
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -585,6 +585,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat May 14 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4.87-4
+- Perl 5.24 rebuild
+
 * Wed May  4 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.87-3
 - Dropped sa-exim which has been obsoleted long time ago by the proper
   built-in ACL support
