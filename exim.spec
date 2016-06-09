@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.87
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -585,6 +585,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Jun  9 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.87-5
+- Allow configuration of user:group through sysconfig
+  Resolves: rhbz#1344250
+
 * Sat May 14 2016 Jitka Plesnikova <jplesnik@redhat.com> - 4.87-4
 - Perl 5.24 rebuild
 

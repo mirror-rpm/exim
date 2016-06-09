@@ -2,6 +2,14 @@
 
 . /etc/sysconfig/network
 
+# Source exim configureation.
+if [ -f /etc/sysconfig/exim ] ; then
+        . /etc/sysconfig/exim
+fi
+
+USER=${USER:=exim}
+GROUP=${GROUP:=exim}
+
 gen_cert() {
         if [ ! -f /etc/pki/tls/certs/exim.pem ] ; then
                 umask 077
@@ -23,7 +31,7 @@ root@${FQDN}
 EOF
                 if [ $? -eq 0 ]; then
                         echo success
-                        chown exim.exim /etc/pki/tls/{private,certs}/exim.pem
+                        chown $USER:$GROUP /etc/pki/tls/{private,certs}/exim.pem
                         chmod 600 /etc/pki/tls/{private,certs}/exim.pem
                 else
                         echo failure

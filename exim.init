@@ -23,6 +23,9 @@ else
 	QUEUE=1h
 fi
 
+USER=${USER:=exim}
+GROUP=${GROUP:=exim}
+
 gen_cert() {
 	if [ ! -f /etc/pki/tls/certs/exim.pem ] ; then
 		umask 077
@@ -44,7 +47,7 @@ root@${FQDN}
 EOF
 		if [ $? -eq 0 ]; then
 			success
-			chown exim.exim /etc/pki/tls/{private,certs}/exim.pem
+			chown $USER:$GROUP /etc/pki/tls/{private,certs}/exim.pem
 			chmod 600 /etc/pki/tls/{private,certs}/exim.pem
 		else
 			failure
@@ -65,7 +68,7 @@ start() {
 	then
 	    if [ "exim" != "`ls -l /var/log/exim/main.log | awk '{print $4}'`" ]
 	    then
-		chown -R exim:exim /var/log/exim /var/spool/exim
+		chown -R $USER:$GROUP /var/log/exim /var/spool/exim
 	    fi
 	fi
 
