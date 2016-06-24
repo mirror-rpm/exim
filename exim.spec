@@ -70,6 +70,8 @@ BuildRequires: libdb-devel openssl-devel openldap-devel pam-devel
 BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
 BuildRequires: openldap-devel openssl-devel mysql-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
+BuildRequires: perl-devel
+BuildRequires: perl-generators
 BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
 BuildRequires: systemd-units libgsasl-devel
 
