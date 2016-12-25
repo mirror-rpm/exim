@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.87
-Release: 5%{?dist}
+Version: 4.88
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -587,6 +587,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sun Dec 25 2016 David Woodhouse <dwmw2@infradead.org> - 4.88-1
+- Update to 4.88 (CVE-2016-9963 / rhbz#1405323)
+
 * Thu Jun  9 2016 Jaroslav Škarvada <jskarvad@redhat.com> - 4.87-5
 - Allow configuration of user:group through sysconfig
   Resolves: rhbz#1344250
