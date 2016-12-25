@@ -47,7 +47,7 @@ Source25: exim-gen-cert
 Source26: clamd.exim.service
 
 Patch4: exim-4.87-rhl.patch
-Patch6: exim-4.87-config.patch
+Patch6: exim-4.88-config.patch
 Patch8: exim-4.82-libdir.patch
 Patch12: exim-4.87-cyrus.patch
 Patch13: exim-4.87-pamconfig.patch

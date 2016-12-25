@@ -1,8 +1,8 @@
-diff --git a/scripts/Configure-Makefile b/scripts/Configure-Makefile
-index 4aa7d76..3a5263c 100755
+diff --git a/src/scripts/Configure-Makefile b/src/scripts/Configure-Makefile
+index 3e486a6..6c4afec 100755
 --- a/scripts/Configure-Makefile
 +++ b/scripts/Configure-Makefile
-@@ -253,7 +253,7 @@ if [ "${EXIM_PERL}" != "" ] ; then
+@@ -269,7 +269,7 @@ if [ "${EXIM_PERL}" != "" ] ; then
  
    mv $mft $mftt
    echo "PERL_CC=`$PERL_COMMAND -MConfig -e 'print $Config{cc}'`" >>$mft
@@ -11,8 +11,8 @@ index 4aa7d76..3a5263c 100755
    echo "PERL_LIBS=`$PERL_COMMAND -MExtUtils::Embed -e ldopts`" >>$mft
    echo "" >>$mft
    cat $mftt >> $mft
-diff --git a/src/EDITME b/src/EDITME
-index d852103..bbb7527 100644
+diff --git a/src/src/EDITME b/src/src/EDITME
+index 6929346..5a08197 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -98,7 +98,7 @@
@@ -105,24 +105,16 @@ index d852103..bbb7527 100644
  # LOOKUP_WHOSON=yes
  
  # These two settings are obsolete; all three lookups are compiled when
-@@ -390,14 +392,14 @@ EXIM_MONITOR=eximon.bin
+@@ -390,7 +392,7 @@ EXIM_MONITOR=eximon.bin
  # and the MIME ACL. Please read the documentation to learn more about these
  # features.
  
 -# WITH_CONTENT_SCAN=yes
 +WITH_CONTENT_SCAN=yes
  
- # If you want to use the deprecated "demime" condition in the DATA ACL,
- # uncomment the line below. Doing so will also explicitly turn on the
- # WITH_CONTENT_SCAN option. If possible, use the MIME ACL instead of
- # the "demime" condition.
- 
--# WITH_OLD_DEMIME=yes
-+WITH_OLD_DEMIME=yes
- 
  #------------------------------------------------------------------------------
  # If you're using ClamAV and are backporting fixes to an old version, instead
-@@ -573,7 +575,7 @@ FIXED_NEVER_USERS=root
+@@ -577,7 +579,7 @@ FIXED_NEVER_USERS=root
  # CONFIGURE_OWNER setting, to specify a configuration file which is listed in
  # the TRUSTED_CONFIG_LIST file, then root privileges are not dropped by Exim.
  
@@ -131,7 +123,7 @@ index d852103..bbb7527 100644
  
  
  #------------------------------------------------------------------------------
-@@ -618,16 +620,14 @@ FIXED_NEVER_USERS=root
+@@ -622,16 +624,14 @@ FIXED_NEVER_USERS=root
  # included in the Exim binary. You will then need to set up the run time
  # configuration to make use of the mechanism(s) selected.
  
@@ -156,7 +148,7 @@ index d852103..bbb7527 100644
  
  
  #------------------------------------------------------------------------------
-@@ -648,7 +648,7 @@ FIXED_NEVER_USERS=root
+@@ -652,7 +652,7 @@ FIXED_NEVER_USERS=root
  # one that is set in the headers_charset option. The default setting is
  # defined by this setting:
  
@@ -165,7 +157,7 @@ index d852103..bbb7527 100644
  
  # If you are going to make use of $header_xxx expansions in your configuration
  # file, or if your users are going to use them in filter files, and the normal
-@@ -668,7 +668,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -672,7 +672,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # the Sieve filter support. For those OS where iconv() is known to be installed
  # as standard, the file in OS/Makefile-xxxx contains
  #
@@ -174,7 +166,7 @@ index d852103..bbb7527 100644
  #
  # If you are not using one of those systems, but have installed iconv(), you
  # need to uncomment that line above. In some cases, you may find that iconv()
-@@ -730,11 +730,11 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -734,11 +734,11 @@ HEADERS_CHARSET="ISO-8859-1"
  # leave these settings commented out.
  
  # This setting is required for any TLS support (either OpenSSL or GnuTLS)
@@ -189,7 +181,7 @@ index d852103..bbb7527 100644
  
  # Uncomment the first and either the second or the third of these if you
  # are using GnuTLS.  If you have pkg-config, then the second, else the third.
-@@ -799,7 +799,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -807,7 +807,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # Once you have done this, "make install" will build the info files and
  # install them in the directory you have defined.
  
@@ -198,7 +190,7 @@ index d852103..bbb7527 100644
  
  
  #------------------------------------------------------------------------------
-@@ -812,7 +812,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -820,7 +820,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # %s. This will be replaced by one of the strings "main", "panic", or "reject"
  # to form the final file names. Some installations may want something like this:
  
@@ -207,7 +199,7 @@ index d852103..bbb7527 100644
  
  # which results in files with names /var/log/exim_mainlog, etc. The directory
  # in which the log files are placed must exist; Exim does not try to create
-@@ -884,7 +884,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -892,7 +892,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # (version 5.004 or later) installed, set EXIM_PERL to perl.o. Using embedded
  # Perl costs quite a lot of resources. Only do this if you really need it.
  
@@ -216,7 +208,7 @@ index d852103..bbb7527 100644
  
  
  #------------------------------------------------------------------------------
-@@ -894,7 +894,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -902,7 +902,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # that the local_scan API is made available by the linker. You may also need
  # to add -ldl to EXTRALIBS so that dlopen() is available to Exim.
  
@@ -225,7 +217,7 @@ index d852103..bbb7527 100644
  
  
  #------------------------------------------------------------------------------
-@@ -904,7 +904,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -912,7 +912,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # support, which is intended for use in conjunction with the SMTP AUTH
  # facilities, is included only when requested by the following setting:
  
@@ -234,7 +226,7 @@ index d852103..bbb7527 100644
  
  # You probably need to add -lpam to EXTRALIBS, and in some releases of
  # GNU/Linux -ldl is also needed.
-@@ -998,7 +998,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1006,7 +1006,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
  
@@ -243,7 +235,7 @@ index d852103..bbb7527 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1011,9 +1011,9 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1019,9 +1019,9 @@ ZCAT_COMMAND=/usr/bin/zcat
  # You may well also have to specify a local "include" file and an additional
  # library for TCP wrappers, so you probably need something like this:
  #
@@ -256,7 +248,7 @@ index d852103..bbb7527 100644
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM
  # as well.
-@@ -1065,7 +1065,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1073,7 +1073,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # is "yes", as well as supporting line editing, a history of input lines in the
  # current run is maintained.
  
@@ -265,7 +257,7 @@ index d852103..bbb7527 100644
  
  # You may need to add -ldl to EXTRALIBS when you set USE_READLINE=yes.
  # Note that this option adds to the size of the Exim binary, because the
-@@ -1075,7 +1075,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1083,7 +1083,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  #------------------------------------------------------------------------------
  # Uncomment this setting to include IPv6 support.
  
@@ -274,7 +266,7 @@ index d852103..bbb7527 100644
  
  ###############################################################################
  #              THINGS YOU ALMOST NEVER NEED TO MENTION                        #
-@@ -1096,13 +1096,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1104,13 +1104,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # haven't got Perl, Exim will still build and run; you just won't be able to
  # use those utilities.
  
@@ -295,7 +287,7 @@ index d852103..bbb7527 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1304,7 +1304,7 @@ EXIM_TMPDIR="/tmp"
+@@ -1312,7 +1312,7 @@ EXIM_TMPDIR="/tmp"
  # (process id) to a file so that it can easily be identified. The path of the
  # file can be specified here. Some installations may want something like this:
  
