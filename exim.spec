@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.88
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -344,8 +344,8 @@ CLAMD_SOCKET=%{_var}/run/clamd.exim/clamd.sock
 EOF
 ln -sf clamd $RPM_BUILD_ROOT/usr/sbin/clamd.exim
 
-mkdir -p %{buildroot}%{_sysconfdir}/tmpfiles.d
-install -m 0644 %{SOURCE12} %{buildroot}%{_sysconfdir}/tmpfiles.d/exim-clamav.conf
+mkdir -p %{buildroot}%{_tmpfilesdir}
+install -m 0644 %{SOURCE12} %{buildroot}%{_tmpfilesdir}/exim-clamav.conf
 mkdir -p $RPM_BUILD_ROOT%{_var}/run/clamd.exim
 mkdir -p $RPM_BUILD_ROOT%{_var}/log
 touch $RPM_BUILD_ROOT%{_var}/log/clamd.exim
@@ -482,7 +482,8 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/exim
 %{_sysconfdir}/cron.daily/exim-tidydb
 
-%doc ACKNOWLEDGMENTS LICENCE NOTICE README.UPDATING README 
+%license LICENCE NOTICE
+%doc ACKNOWLEDGMENTS README.UPDATING README
 %doc doc util/unknownuser.sh
 
 %attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) /etc/pki/tls/certs/exim.pem
@@ -568,7 +569,7 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/clamd.d/exim.conf
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/sysconfig/clamd.exim
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/logrotate.d/clamd.exim
-%config(noreplace) %{_sysconfdir}/tmpfiles.d/exim-clamav.conf
+%{_tmpfilesdir}/exim-clamav.conf
 %ghost %attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
 %ghost %attr(0644,exim,exim) %{_var}/log/clamd.exim
 
@@ -587,6 +588,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat Jan 14 2017 Ville Skyttä <ville.skytta@iki.fi> - 4.88-2
+- Move tmpfiles.d config to %%{_tmpfilesdir}
+- Install license files as %%license
+
 * Sun Dec 25 2016 David Woodhouse <dwmw2@infradead.org> - 4.88-1
 - Update to 4.88 (CVE-2016-9963 / rhbz#1405323)
 
