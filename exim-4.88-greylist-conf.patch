@@ -1,5 +1,5 @@
 diff --git a/src/configure.default b/src/configure.default
-index 1f10008..40b3bb2 100644
+index 921c53b..a92c954 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -107,6 +107,7 @@ hostlist   relay_from_hosts = localhost
@@ -72,7 +72,7 @@ index 1f10008..40b3bb2 100644
    # At this point, the address has passed all the checks that have been
    # configured, so we accept it unconditionally.
  
-@@ -544,6 +577,12 @@ acl_check_data:
+@@ -546,6 +579,12 @@ acl_check_data:
    # deny    condition  = ${if !def:h_Message-ID: {1}}
    #         message    = RFC2822 says that all mail SHOULD have a Message-ID header.\n\
    #                      Most messages without it are spam, so your mail has been rejected.
@@ -85,7 +85,7 @@ index 1f10008..40b3bb2 100644
  
    # Deny if the message contains a virus. Before enabling this check, you
    # must install a virus scanner and set the av_scanner option above.
-@@ -578,8 +617,30 @@ acl_check_data:
+@@ -580,8 +619,30 @@ acl_check_data:
    #         message   = Your message scored $spam_score SpamAssassin point. Report follows:\n\
    #  	    	        $spam_report
  

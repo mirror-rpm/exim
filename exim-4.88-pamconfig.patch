@@ -1,5 +1,5 @@
 diff --git a/src/configure.default b/src/configure.default
-index 0af6fb8..531435b 100644
+index d588898..61bdae8 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -142,7 +142,7 @@ acl_smtp_data = acl_check_data
@@ -43,7 +43,7 @@ index 0af6fb8..531435b 100644
 +# Kerberos rather than only local users, then you possibly also want
 +# to configure /etc/sysconfig/saslauthd to use the 'pam' mechanism
 +# too. Once a user is authenticated, the acl_check_rcpt ACL then
-+# allows them to relay through the system. 
++# allows them to relay through the system.
 +#
 +# auth_advertise_hosts = ${if eq {$tls_cipher}{}{}{*}}
 +#
@@ -58,7 +58,7 @@ index 0af6fb8..531435b 100644
  
  # The settings below cause Exim to make RFC 1413 (ident) callbacks
  # for all incoming SMTP calls. You can limit the hosts to which these
-@@ -842,7 +860,7 @@ begin authenticators
+@@ -844,7 +862,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -67,7 +67,7 @@ index 0af6fb8..531435b 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -854,7 +872,7 @@ begin authenticators
+@@ -856,7 +874,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:

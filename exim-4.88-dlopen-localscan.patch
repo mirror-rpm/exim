@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index bbb7527..df3dcc8 100644
+index 5a08197..3921db6 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -784,6 +784,20 @@ TLS_LIBS=-lssl -lcrypto
+@@ -792,6 +792,20 @@ TLS_LIBS=-lssl -lcrypto
  
  
  #------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ index bbb7527..df3dcc8 100644
  # documentation. Other forms are available separately. If you want to install
  # the documentation in "info" format, first fetch the Texinfo documentation
 diff --git a/src/config.h.defaults b/src/config.h.defaults
-index 266c268..6a4a1f8 100644
+index bafdc1b..c6ba256 100644
 --- a/src/config.h.defaults
 +++ b/src/config.h.defaults
 @@ -28,6 +28,8 @@ it's a default value. */
@@ -37,10 +37,10 @@ index 266c268..6a4a1f8 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index ec2685b..f8375bf 100644
+index f83d850..c722059 100644
 --- a/src/globals.c
 +++ b/src/globals.c
-@@ -171,6 +171,10 @@ uschar *tls_verify_hosts       = NULL;
+@@ -167,6 +167,10 @@ uschar *tls_verify_hosts       = NULL;
  uschar *tls_advertise_hosts    = NULL;
  #endif
  
@@ -52,10 +52,10 @@ index ec2685b..f8375bf 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index 57a5695..0a60902 100644
+index b3747a8..e3dd507 100644
 --- a/src/globals.h
 +++ b/src/globals.h
-@@ -129,6 +129,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
+@@ -126,6 +126,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
  extern uschar *tls_verify_certificates;/* Path for certificates to check */
  extern uschar *tls_verify_hosts;       /* Mandatory client verification */
  #endif
@@ -251,10 +251,10 @@ index 3500047..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index 5ca6a84..f1ec503 100644
+index b2a3c73..6f2efa0 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
-@@ -317,6 +317,9 @@ static optionlist optionlist_config[] = {
+@@ -314,6 +314,9 @@ static optionlist optionlist_config[] = {
    { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
    { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
    { "local_interfaces",         opt_stringptr,   &local_interfaces },
