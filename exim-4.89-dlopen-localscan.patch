@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index 5a08197..3921db6 100644
+index 0caf02d..6957546 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -792,6 +792,20 @@ TLS_LIBS=-lssl -lcrypto
+@@ -802,6 +802,20 @@ TLS_LIBS=-lssl -lcrypto
  
  
  #------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ index 5a08197..3921db6 100644
  # documentation. Other forms are available separately. If you want to install
  # the documentation in "info" format, first fetch the Texinfo documentation
 diff --git a/src/config.h.defaults b/src/config.h.defaults
-index bafdc1b..c6ba256 100644
+index 58e1813..9b18f98 100644
 --- a/src/config.h.defaults
 +++ b/src/config.h.defaults
 @@ -28,6 +28,8 @@ it's a default value. */
@@ -37,7 +37,7 @@ index bafdc1b..c6ba256 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index f83d850..c722059 100644
+index 79ac37f..b7d690f 100644
 --- a/src/globals.c
 +++ b/src/globals.c
 @@ -167,6 +167,10 @@ uschar *tls_verify_hosts       = NULL;
@@ -52,7 +52,7 @@ index f83d850..c722059 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index b3747a8..e3dd507 100644
+index 340f1ae..4b65781 100644
 --- a/src/globals.h
 +++ b/src/globals.h
 @@ -126,6 +126,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
@@ -251,10 +251,10 @@ index 3500047..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index b2a3c73..6f2efa0 100644
+index 790f073..6e88bcd 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
-@@ -314,6 +314,9 @@ static optionlist optionlist_config[] = {
+@@ -318,6 +318,9 @@ static optionlist optionlist_config[] = {
    { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
    { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
    { "local_interfaces",         opt_stringptr,   &local_interfaces },

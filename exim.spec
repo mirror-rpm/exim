@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.88
-Release: 4%{?dist}
+Version: 4.89
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -30,7 +30,7 @@ Requires: initscripts
 %endif
 BuildRequires: clamav-devel
 %endif
-Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.bz2
+Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.xz
 Source2: exim.init
 Source3: exim.sysconfig
 Source4: exim.logrotate
@@ -47,12 +47,12 @@ Source25: exim-gen-cert
 Source26: clamd.exim.service
 
 Patch4: exim-4.88-rhl.patch
-Patch6: exim-4.88-config.patch
+Patch6: exim-4.89-config.patch
 Patch8: exim-4.82-libdir.patch
 Patch12: exim-4.88-cyrus.patch
 Patch13: exim-4.88-pamconfig.patch
 Patch14: exim-4.87-spamdconf.patch
-Patch18: exim-4.88-dlopen-localscan.patch
+Patch18: exim-4.89-dlopen-localscan.patch
 Patch19: exim-4.88-procmail.patch
 Patch20: exim-4.88-allow-filter.patch
 Patch21: exim-4.87-localhost-is-local.patch
@@ -61,10 +61,7 @@ Patch23: exim-4.88-smarthost-config.patch
 Patch25: exim-4.87-dynlookup-config.patch
 # Upstream ticket: http://bugs.exim.org/show_bug.cgi?id=1584
 Patch26: exim-4.85-pic.patch
-Patch27: exim-4.87-environment.patch
-# Upstream ticket: https://bugs.exim.org/show_bug.cgi?id=2016
-# Upsream patch: https://git.exim.org/exim.git/patch/bd8fbe3606d80e5a3fc02fe71b521146c6938448
-Patch28: exim-4.88-DKIM-fix.patch
+Patch27: exim-4.89-environment.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -211,7 +208,6 @@ greylisting unconditional.
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .fpic
 %patch27 -p1 -b .environment
-%patch28 -p1 -b .DKIM-fix
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -592,6 +588,12 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Mar  8 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-1
+- New version
+  Resolves: rhbz#1430156
+- Switched to xz archive
+- Dropped DKIM-fix patch (already upstream)
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4.88-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
