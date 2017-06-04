@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -588,6 +588,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sun Jun 04 2017 Jitka Plesnikova <jplesnik@redhat.com> - 4.89-2
+- Perl 5.26 rebuild
+
 * Wed Mar  8 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-1
 - New version
   Resolves: rhbz#1430156
