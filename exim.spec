@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -62,6 +62,14 @@ Patch25: exim-4.87-dynlookup-config.patch
 # Upstream ticket: http://bugs.exim.org/show_bug.cgi?id=1584
 Patch26: exim-4.85-pic.patch
 Patch27: exim-4.89-environment.patch
+# https://github.com/Exim/exim/pull/56
+Patch28: exim-4.89-mariadb-10.2-compile-fix.patch
+# Backported from upstream:
+# https://github.com/Exim/exim/commit/65e061b76867a9ea7aeeb535341b790b90ae6c21
+Patch29: exim-4.89-CVE-2017-1000369.patch
+# Backported from upstream:
+# https://git.exim.org/exim.git/commitdiff/14de8063d82edc5bf003ed50abdea55ac542679b
+Patch30: exim-4.89-calloutsize.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -167,7 +175,7 @@ This package contains the SysV initscript.
 %package greylist
 Summary: Example configuration for greylisting using Exim
 Group: System Environment/Daemons
-Requires: sqlite exim 
+Requires: sqlite exim
 Requires: crontabs
 
 %description greylist
@@ -187,7 +195,7 @@ a list of 'offended' which it's committed, which may include having
 SpamAssassin points, lacking a Message-ID: header, coming from a blacklisted
 host, etc. There are examples of these in the default configuration file,
 mostly commented out. These should be sufficient for you to you trigger
-greylisting for whatever 'offences' you can dream of, or even to make 
+greylisting for whatever 'offences' you can dream of, or even to make
 greylisting unconditional.
 
 %prep
@@ -208,6 +216,9 @@ greylisting unconditional.
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .fpic
 %patch27 -p1 -b .environment
+%patch28 -p1 -b .mariadb-10.2-compile-fix
+%patch29 -p1 -b .CVE-2017-1000369
+%patch30 -p1 -b .calloutsize
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -520,7 +531,7 @@ fi
 
 %if %{with clamav}
 %post clamav
-/bin/mkdir -p 0750 %{_var}/run/clamd.exim
+/bin/mkdir -pm 0750 %{_var}/run/clamd.exim
 /bin/chown exim:exim %{_var}/run/clamd.exim
 /bin/touch %{_var}/log/clamd.exim
 /bin/chown exim.exim %{_var}/log/clamd.exim
@@ -588,6 +599,18 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Aug 18 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-5
+- Fixed compilation with the mariadb-10.2
+  Resolves: rhbz#1467312
+- Fixed multiple memory leaks
+  Resolves: CVE-2017-1000369
+- Fixed typo causing exim-clamav to create /0750 directory
+  Resolves: rhbz#1412028
+- On callout avoid SIZE option when doing recipient verification with
+  caching enabled
+  Resolves: rhbz#1482217
+- Fixed some minor whitespace problems in the spec
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4.89-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 

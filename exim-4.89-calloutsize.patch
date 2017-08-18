@@ -1,0 +1,524 @@
+--- exim-4.89/src/exim.c.calloutsize	2017-03-04 16:21:35.000000000 -0500
++++ exim-4.89/src/exim.c	2017-08-16 15:52:41.424866990 -0400
+@@ -2738,7 +2738,7 @@
+     /* -MCD: set the smtp_use_dsn flag; this indicates that the host
+        that exim is connected to supports the esmtp extension DSN */
+ 
+-	case 'D': smtp_peer_options |= PEER_OFFERED_DSN; break;
++	case 'D': smtp_peer_options |= OPTION_DSN; break;
+ 
+     /* -MCG: set the queue name, to a non-default value */
+ 
+@@ -2748,12 +2748,12 @@
+ 
+     /* -MCK: the peer offered CHUNKING.  Must precede -MC */
+ 
+-	case 'K': smtp_peer_options |= PEER_OFFERED_CHUNKING; break;
++	case 'K': smtp_peer_options |= OPTION_CHUNKING; break;
+ 
+     /* -MCP: set the smtp_use_pipelining flag; this is useful only when
+     it preceded -MC (see above) */
+ 
+-	case 'P': smtp_peer_options |= PEER_OFFERED_PIPE; break;
++	case 'P': smtp_peer_options |= OPTION_PIPE; break;
+ 
+     /* -MCQ: pass on the pid of the queue-running process that started
+     this chain of deliveries and the fd of its synchronizing pipe; this
+@@ -2768,14 +2768,14 @@
+     /* -MCS: set the smtp_use_size flag; this is useful only when it
+     precedes -MC (see above) */
+ 
+-	case 'S': smtp_peer_options |= PEER_OFFERED_SIZE; break;
++	case 'S': smtp_peer_options |= OPTION_SIZE; break;
+ 
+ #ifdef SUPPORT_TLS
+     /* -MCT: set the tls_offered flag; this is useful only when it
+     precedes -MC (see above). The flag indicates that the host to which
+     Exim is connected has offered TLS support. */
+ 
+-	case 'T': smtp_peer_options |= PEER_OFFERED_TLS; break;
++	case 'T': smtp_peer_options |= OPTION_TLS; break;
+ #endif
+ 
+ 	default:  badarg = TRUE; break;
+--- exim-4.89/src/macros.h.calloutsize	2017-03-04 16:21:35.000000000 -0500
++++ exim-4.89/src/macros.h	2017-08-16 15:38:52.876969094 -0400
+@@ -959,14 +959,14 @@
+ 
+ /* Codes for ESMTP facilities offered by peer */
+ 
+-#define PEER_OFFERED_TLS	BIT(0)
+-#define PEER_OFFERED_IGNQ	BIT(1)
+-#define PEER_OFFERED_PRDR	BIT(2)
+-#define PEER_OFFERED_UTF8	BIT(3)
+-#define PEER_OFFERED_DSN	BIT(4)
+-#define PEER_OFFERED_PIPE	BIT(5)
+-#define PEER_OFFERED_SIZE	BIT(6)
+-#define PEER_OFFERED_CHUNKING	BIT(7)
++#define OPTION_TLS	BIT(0)
++#define OPTION_IGNQ	BIT(1)
++#define OPTION_PRDR	BIT(2)
++#define OPTION_UTF8	BIT(3)
++#define OPTION_DSN	BIT(4)
++#define OPTION_PIPE	BIT(5)
++#define OPTION_SIZE	BIT(6)
++#define OPTION_CHUNKING	BIT(7)
+ 
+ /* Argument for *_getc */
+ 
+--- exim-4.89/src/transport.c.calloutsize	2017-08-16 15:38:52.876969094 -0400
++++ exim-4.89/src/transport.c	2017-08-16 15:55:23.681414193 -0400
+@@ -1976,13 +1976,12 @@
+   argv = CUSS child_exec_exim(CEE_RETURN_ARGV, TRUE, &i, FALSE, 0);
+ 
+   if (smtp_authenticated) argv[i++] = US"-MCA";
+-
+-  if (smtp_peer_options & PEER_OFFERED_CHUNKING) argv[i++] = US"-MCK";
+-  if (smtp_peer_options & PEER_OFFERED_DSN) argv[i++] = US"-MCD";
+-  if (smtp_peer_options & PEER_OFFERED_PIPE) argv[i++] = US"-MCP";
+-  if (smtp_peer_options & PEER_OFFERED_SIZE) argv[i++] = US"-MCS";
++  if (smtp_peer_options & OPTION_CHUNKING)       argv[i++] = US"-MCK";
++  if (smtp_peer_options & OPTION_DSN)            argv[i++] = US"-MCD";
++  if (smtp_peer_options & OPTION_PIPE)           argv[i++] = US"-MCP";
++  if (smtp_peer_options & OPTION_SIZE)           argv[i++] = US"-MCS";
+ #ifdef SUPPORT_TLS
+-  if (smtp_peer_options & PEER_OFFERED_TLS) argv[i++] = US"-MCT";
++  if (smtp_peer_options & OPTION_TLS) argv[i++] = US"-MCT";
+ #endif
+ 
+   if (queue_run_pid != (pid_t)0)
+--- exim-4.89/src/transports/smtp.c.calloutsize	2017-03-04 16:21:35.000000000 -0500
++++ exim-4.89/src/transports/smtp.c	2017-08-16 16:08:51.572126172 -0400
+@@ -1291,44 +1291,44 @@
+ size_t bsize = Ustrlen(buf);
+ 
+ #ifdef SUPPORT_TLS
+-if (  checks & PEER_OFFERED_TLS
++if (  checks & OPTION_TLS
+    && pcre_exec(regex_STARTTLS, NULL, CS buf, bsize, 0, PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_TLS;
++  checks &= ~OPTION_TLS;
+ #endif
+ 
+-if (  checks & PEER_OFFERED_IGNQ
++if (  checks & OPTION_IGNQ
+    && pcre_exec(regex_IGNOREQUOTA, NULL, CS buf, bsize, 0,
+ 		PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_IGNQ;
++  checks &= ~OPTION_IGNQ;
+ 
+-if (  checks & PEER_OFFERED_CHUNKING
++if (  checks & OPTION_CHUNKING
+    && pcre_exec(regex_CHUNKING, NULL, CS buf, bsize, 0, PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_CHUNKING;
++  checks &= ~OPTION_CHUNKING;
+ 
+ #ifndef DISABLE_PRDR
+-if (  checks & PEER_OFFERED_PRDR
++if (  checks & OPTION_PRDR
+    && pcre_exec(regex_PRDR, NULL, CS buf, bsize, 0, PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_PRDR;
++  checks &= ~OPTION_PRDR;
+ #endif
+ 
+ #ifdef SUPPORT_I18N
+-if (  checks & PEER_OFFERED_UTF8
++if (  checks & OPTION_UTF8
+    && pcre_exec(regex_UTF8, NULL, CS buf, bsize, 0, PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_UTF8;
++  checks &= ~OPTION_UTF8;
+ #endif
+ 
+-if (  checks & PEER_OFFERED_DSN
++if (  checks & OPTION_DSN
+    && pcre_exec(regex_DSN, NULL, CS buf, bsize, 0, PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_DSN;
++  checks &= ~OPTION_DSN;
+ 
+-if (  checks & PEER_OFFERED_PIPE
++if (  checks & OPTION_PIPE
+    && pcre_exec(regex_PIPELINING, NULL, CS buf, bsize, 0,
+ 		PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_PIPE;
++  checks &= ~OPTION_PIPE;
+ 
+-if (  checks & PEER_OFFERED_SIZE
++if (  checks & OPTION_SIZE
+    && pcre_exec(regex_SIZE, NULL, CS buf, bsize, 0, PCRE_EOPT, NULL, 0) < 0)
+-  checks &= ~PEER_OFFERED_SIZE;
++  checks &= ~OPTION_SIZE;
+ 
+ return checks;
+ }
+@@ -1479,6 +1479,7 @@
+ 
+ if ((sx->max_rcpt = sx->tblock->max_addresses) == 0) sx->max_rcpt = 999999;
+ sx->peer_offered = 0;
++sx->avoid_option = 0;
+ sx->igquotstr = US"";
+ if (!sx->helo_data) sx->helo_data = sx->ob->helo_data;
+ #ifdef EXPERIMENTAL_DSN_INFO
+@@ -1715,7 +1716,7 @@
+ #ifdef SUPPORT_TLS
+   if (sx->smtps)
+     {
+-    smtp_peer_options |= PEER_OFFERED_TLS;
++    smtp_peer_options |= OPTION_TLS;
+     suppress_tls = FALSE;
+     sx->ob->tls_tempfail_tryclear = FALSE;
+     smtp_command = US"SSL-on-connect";
+@@ -1780,18 +1781,18 @@
+       }
+     }
+ 
+-  sx->peer_offered = smtp_peer_options = 0;
++  sx->avoid_option = sx->peer_offered = smtp_peer_options = 0;
+ 
+   if (sx->esmtp || sx->lmtp)
+     {
+     sx->peer_offered = ehlo_response(sx->buffer,
+-      PEER_OFFERED_TLS	/* others checked later */
++      OPTION_TLS	/* others checked later */
+       );
+ 
+   /* Set tls_offered if the response to EHLO specifies support for STARTTLS. */
+ 
+ #ifdef SUPPORT_TLS
+-    smtp_peer_options |= sx->peer_offered & PEER_OFFERED_TLS;
++    smtp_peer_options |= sx->peer_offered & OPTION_TLS;
+ #endif
+     }
+   }
+@@ -1825,7 +1826,7 @@
+ for error analysis. */
+ 
+ #ifdef SUPPORT_TLS
+-if (  smtp_peer_options & PEER_OFFERED_TLS
++if (  smtp_peer_options & OPTION_TLS
+    && !suppress_tls
+    && verify_check_given_host(&sx->ob->hosts_avoid_tls, sx->host) != OK
+    && (  !sx->verify
+@@ -1970,7 +1971,7 @@
+   {
+   errno = ERRNO_TLSREQUIRED;
+   message = string_sprintf("a TLS session is required, but %s",
+-    smtp_peer_options & PEER_OFFERED_TLS
++    smtp_peer_options & OPTION_TLS
+     ? "an attempt to start TLS failed" : "the server did not offer TLS support");
+   goto TLS_FAILED;
+   }
+@@ -1991,60 +1992,60 @@
+     {
+     sx->peer_offered = ehlo_response(sx->buffer,
+ 	0 /* no TLS */
+-	| (sx->lmtp && sx->ob->lmtp_ignore_quota ? PEER_OFFERED_IGNQ : 0)
+-	| PEER_OFFERED_CHUNKING
+-	| PEER_OFFERED_PRDR
++	| (sx->lmtp && sx->ob->lmtp_ignore_quota ? OPTION_IGNQ : 0)
++	| OPTION_CHUNKING
++	| OPTION_PRDR
+ #ifdef SUPPORT_I18N
+-	| (sx->addrlist->prop.utf8_msg ? PEER_OFFERED_UTF8 : 0)
++	| (sx->addrlist->prop.utf8_msg ? OPTION_UTF8 : 0)
+ 	  /*XXX if we hand peercaps on to continued-conn processes,
+ 		must not depend on this addr */
+ #endif
+-	| PEER_OFFERED_DSN
+-	| PEER_OFFERED_PIPE
+-	| (sx->ob->size_addition >= 0 ? PEER_OFFERED_SIZE : 0)
++	| OPTION_DSN
++	| OPTION_PIPE
++	| (sx->ob->size_addition >= 0 ? OPTION_SIZE : 0)
+       );
+ 
+     /* Set for IGNOREQUOTA if the response to LHLO specifies support and the
+     lmtp_ignore_quota option was set. */
+ 
+-    sx->igquotstr = sx->peer_offered & PEER_OFFERED_IGNQ ? US" IGNOREQUOTA" : US"";
++    sx->igquotstr = sx->peer_offered & OPTION_IGNQ ? US" IGNOREQUOTA" : US"";
+ 
+     /* If the response to EHLO specified support for the SIZE parameter, note
+     this, provided size_addition is non-negative. */
+ 
+-    smtp_peer_options |= sx->peer_offered & PEER_OFFERED_SIZE;
++    smtp_peer_options |= sx->peer_offered & OPTION_SIZE;
+ 
+     /* Note whether the server supports PIPELINING. If hosts_avoid_esmtp matched
+     the current host, esmtp will be false, so PIPELINING can never be used. If
+     the current host matches hosts_avoid_pipelining, don't do it. */
+ 
+-    if (  sx->peer_offered & PEER_OFFERED_PIPE
++    if (  sx->peer_offered & OPTION_PIPE
+        && verify_check_given_host(&sx->ob->hosts_avoid_pipelining, sx->host) != OK)
+-      smtp_peer_options |= PEER_OFFERED_PIPE;
++      smtp_peer_options |= OPTION_PIPE;
+ 
+     DEBUG(D_transport) debug_printf("%susing PIPELINING\n",
+-      smtp_peer_options & PEER_OFFERED_PIPE ? "" : "not ");
++      smtp_peer_options & OPTION_PIPE ? "" : "not ");
+ 
+-    if (  sx->peer_offered & PEER_OFFERED_CHUNKING
++    if (  sx->peer_offered & OPTION_CHUNKING
+        && verify_check_given_host(&sx->ob->hosts_try_chunking, sx->host) != OK)
+-      sx->peer_offered &= ~PEER_OFFERED_CHUNKING;
++      sx->peer_offered &= ~OPTION_CHUNKING;
+ 
+-    if (sx->peer_offered & PEER_OFFERED_CHUNKING)
++    if (sx->peer_offered & OPTION_CHUNKING)
+       {DEBUG(D_transport) debug_printf("CHUNKING usable\n");}
+ 
+ #ifndef DISABLE_PRDR
+-    if (  sx->peer_offered & PEER_OFFERED_PRDR
++    if (  sx->peer_offered & OPTION_PRDR
+        && verify_check_given_host(&sx->ob->hosts_try_prdr, sx->host) != OK)
+-      sx->peer_offered &= ~PEER_OFFERED_PRDR;
++      sx->peer_offered &= ~OPTION_PRDR;
+ 
+-    if (sx->peer_offered & PEER_OFFERED_PRDR)
++    if (sx->peer_offered & OPTION_PRDR)
+       {DEBUG(D_transport) debug_printf("PRDR usable\n");}
+ #endif
+ 
+     /* Note if the server supports DSN */
+-    smtp_peer_options |= sx->peer_offered & PEER_OFFERED_DSN;
++    smtp_peer_options |= sx->peer_offered & OPTION_DSN;
+     DEBUG(D_transport) debug_printf("%susing DSN\n",
+-			sx->peer_offered & PEER_OFFERED_DSN ? "" : "not ");
++			sx->peer_offered & OPTION_DSN ? "" : "not ");
+ 
+     /* Note if the response to EHLO specifies support for the AUTH extension.
+     If it has, check that this host is one we want to authenticate to, and do
+@@ -2061,7 +2062,7 @@
+       }
+     }
+   }
+-pipelining_active = !!(smtp_peer_options & PEER_OFFERED_PIPE);
++pipelining_active = !!(smtp_peer_options & OPTION_PIPE);
+ 
+ /* The setting up of the SMTP call is now complete. Any subsequent errors are
+ message-specific. */
+@@ -2079,7 +2080,7 @@
+   }
+ 
+ /* If this is an international message we need the host to speak SMTPUTF8 */
+-if (sx->utf8_needed && !(sx->peer_offered & PEER_OFFERED_UTF8))
++if (sx->utf8_needed && !(sx->peer_offered & OPTION_UTF8))
+   {
+   errno = ERRNO_UTF8_FWD;
+   goto RESPONSE_FAILED;
+@@ -2202,14 +2203,15 @@
+ 
+ *p = 0;
+ 
+-/* If we know the receiving MTA supports the SIZE qualification,
++/* If we know the receiving MTA supports the SIZE qualification, and we know it,
+ send it, adding something to the message size to allow for imprecision
+ and things that get added en route. Exim keeps the number of lines
+ in a message, so we can give an accurate value for the original message, but we
+ need some additional to handle added headers. (Double "." characters don't get
+ included in the count.) */
+ 
+-if (sx->peer_offered & PEER_OFFERED_SIZE)
++if (  message_size > 0
++   && sx->peer_offered & OPTION_SIZE && !(sx->avoid_option & OPTION_SIZE))
+   {
+   sprintf(CS p, " SIZE=%d", message_size+message_linecount+sx->ob->size_addition);
+   while (*p) p++;
+@@ -2220,7 +2222,7 @@
+ request that */
+ 
+ sx->prdr_active = FALSE;
+-if (sx->peer_offered & PEER_OFFERED_PRDR)
++if (sx->peer_offered & OPTION_PRDR)
+   for (addr = addrlist; addr; addr = addr->next)
+     if (addr->transport_return == PENDING_DEFER)
+       {
+@@ -2239,7 +2241,7 @@
+ /* If it supports internationalised messages, and this meesage need that,
+ request it */
+ 
+-if (  sx->peer_offered & PEER_OFFERED_UTF8
++if (  sx->peer_offered & OPTION_UTF8
+    && addrlist->prop.utf8_msg
+    && !addrlist->prop.utf8_downcvt
+    )
+@@ -2261,7 +2263,7 @@
+ 
+ /* Add any DSN flags to the mail command */
+ 
+-if (sx->peer_offered & PEER_OFFERED_DSN && !sx->dsn_all_lasthop)
++if (sx->peer_offered & OPTION_DSN && !sx->dsn_all_lasthop)
+   {
+   if (dsn_ret == dsn_ret_hdrs)
+     { Ustrcpy(p, " RET=HDRS"); p += 9; }
+@@ -2297,7 +2299,7 @@
+ 
+ /* Add any DSN flags to the rcpt command */
+ 
+-if (sx->peer_offered & PEER_OFFERED_DSN && !(addr->dsn_flags & rf_dsnlasthop))
++if (sx->peer_offered & OPTION_DSN && !(addr->dsn_flags & rf_dsnlasthop))
+   {
+   if (addr->dsn_flags & rf_dsnflags)
+     {
+@@ -2367,7 +2369,7 @@
+   the delivery log line. */
+ 
+   if (  sx->addrlist->prop.utf8_msg
+-     && (sx->addrlist->prop.utf8_downcvt || !(sx->peer_offered & PEER_OFFERED_UTF8))
++     && (sx->addrlist->prop.utf8_downcvt || !(sx->peer_offered & OPTION_UTF8))
+      )
+     {
+     if (s = string_address_utf8_to_alabel(s, &errstr), errstr)
+@@ -2431,7 +2433,7 @@
+   BOOL no_flush;
+   uschar * rcpt_addr;
+ 
+-  addr->dsn_aware = sx->peer_offered & PEER_OFFERED_DSN
++  addr->dsn_aware = sx->peer_offered & OPTION_DSN
+     ? dsn_support_yes : dsn_support_no;
+ 
+   address_count++;
+@@ -2594,10 +2596,10 @@
+   if (  transport_filter_argv
+      && *transport_filter_argv
+      && **transport_filter_argv
+-     && sx.peer_offered & PEER_OFFERED_CHUNKING
++     && sx.peer_offered & OPTION_CHUNKING
+      )
+     {
+-    sx.peer_offered &= ~PEER_OFFERED_CHUNKING;
++    sx.peer_offered &= ~OPTION_CHUNKING;
+     DEBUG(D_transport) debug_printf("CHUNKING not usable due to transport filter\n");
+     }
+   }
+@@ -2656,7 +2658,7 @@
+ If using CHUNKING, do not send a BDAT until we know how big a chunk we want
+ to send is. */
+ 
+-if (  !(sx.peer_offered & PEER_OFFERED_CHUNKING)
++if (  !(sx.peer_offered & OPTION_CHUNKING)
+    && (sx.ok || (pipelining_active && !mua_wrapper)))
+   {
+   int count = smtp_write_command(&sx.outblock, FALSE, "DATA\r\n");
+@@ -2686,7 +2688,7 @@
+ well as body. Set the appropriate timeout value to be used for each chunk.
+ (Haven't been able to make it work using select() for writing yet.) */
+ 
+-if (!(sx.peer_offered & PEER_OFFERED_CHUNKING) && !sx.ok)
++if (!(sx.peer_offered & OPTION_CHUNKING) && !sx.ok)
+   {
+   /* Save the first address of the next batch. */
+   sx.first_addr = sx.next_addr;
+@@ -2712,7 +2714,7 @@
+   of responses.  The callback needs a whole bunch of state so set up
+   a transport-context structure to be passed around. */
+ 
+-  if (sx.peer_offered & PEER_OFFERED_CHUNKING)
++  if (sx.peer_offered & OPTION_CHUNKING)
+     {
+     tctx.check_string = tctx.escape_string = NULL;
+     tctx.options |= topt_use_bdat;
+@@ -2737,7 +2739,7 @@
+   transport_write_timeout = sx.ob->data_timeout;
+   smtp_command = US"sending data block";   /* For error messages */
+   DEBUG(D_transport|D_v)
+-    if (sx.peer_offered & PEER_OFFERED_CHUNKING)
++    if (sx.peer_offered & OPTION_CHUNKING)
+       debug_printf("         will write message using CHUNKING\n");
+     else
+       debug_printf("  SMTP>> writing message and terminating \".\"\n");
+@@ -2771,7 +2773,7 @@
+ 
+   smtp_command = US"end of data";
+ 
+-  if (sx.peer_offered & PEER_OFFERED_CHUNKING && sx.cmd_count > 1)
++  if (sx.peer_offered & OPTION_CHUNKING && sx.cmd_count > 1)
+     {
+     /* Reap any outstanding MAIL & RCPT commands, but not a DATA-go-ahead */
+     switch(sync_responses(&sx, sx.cmd_count-1, 0))
+@@ -2926,7 +2928,7 @@
+ #ifndef DISABLE_PRDR
+       if (sx.prdr_active) addr->flags |= af_prdr_used;
+ #endif
+-      if (sx.peer_offered & PEER_OFFERED_CHUNKING) addr->flags |= af_chunking_used;
++      if (sx.peer_offered & OPTION_CHUNKING) addr->flags |= af_chunking_used;
+       flag = '-';
+ 
+ #ifndef DISABLE_PRDR
+--- exim-4.89/src/transports/smtp.h.calloutsize	2017-03-04 16:21:35.000000000 -0500
++++ exim-4.89/src/transports/smtp.h	2017-08-16 15:38:52.877969104 -0400
+@@ -127,6 +127,7 @@
+   int		cmd_count;
+ 
+   uschar	peer_offered;
++  uschar	avoid_option;
+   uschar *	igquotstr;
+   uschar *	helo_data;
+ #ifdef EXPERIMENTAL_DSN_INFO
+--- exim-4.89/src/verify.c.calloutsize	2017-03-04 16:21:35.000000000 -0500
++++ exim-4.89/src/verify.c	2017-08-16 15:51:37.913261370 -0400
+@@ -779,8 +779,12 @@
+       postmaster-verify.
+       The sync_responses() would need to be taught about it and we'd
+       need another return code filtering out to here.
++
++      Avoid using a SIZE option on the MAIL for all randon-rcpt checks.
+       */
+ 
++      sx.avoid_option = OPTION_SIZE;
++
+       /* Remember when we last did a random test */
+       new_domain_record.random_stamp = time(NULL);
+ 
+@@ -790,8 +794,9 @@
+ 	  case PENDING_OK:
+ 	    new_domain_record.random_result = ccache_accept;
+ 	    break;
+-	  case FAIL:
++	  case FAIL:            /* the preferred result */
+ 	    new_domain_record.random_result = ccache_reject;
++	    sx.avoid_option = 0;
+ 
+ 	    /* Between each check, issue RSET, because some servers accept only
+ 	    one recipient after MAIL FROM:<>.
+@@ -836,12 +841,14 @@
+     else
+       done = TRUE;
+ 
+-    /* Main verify. If the host is accepting all local parts, as determined
+-    by the "random" check, we don't need to waste time doing any further
+-    checking. */
++    /* Main verify.  For rcpt-verify use SIZE if we know it and we're not cacheing;
++    for sndr-verify never use it. */
+ 
+     if (done)
+       {
++      if (!(options & vopt_is_recipient  &&  options & vopt_callout_no_cache))
++	sx.avoid_option = OPTION_SIZE;
++
+       done = FALSE;
+       switch(smtp_write_mail_and_rcpt_cmds(&sx, &yield))
+ 	{
+@@ -850,12 +857,12 @@
+ 		    case PENDING_OK:  done = TRUE;
+ 				      new_address_record.result = ccache_accept;
+ 				      break;
+-		    case FAIL:	      done = TRUE;
++		    case FAIL:	    done = TRUE;
+ 				      yield = FAIL;
+ 				      *failure_ptr = US"recipient";
+ 				      new_address_record.result = ccache_reject;
+ 				      break;
+-		    default:	      break;
++		    default:	    break;
+ 		    }
+ 		  break;
+ 
+@@ -908,6 +915,7 @@
+ 	sx.ok = FALSE;
+ 	sx.send_rset = TRUE;
+ 	sx.completed_addr = FALSE;
++	sx.avoid_option = OPTION_SIZE;
+ 
+ 	if(  smtp_write_mail_and_rcpt_cmds(&sx, &yield) == 0
+ 	  && addr->transport_return == PENDING_OK

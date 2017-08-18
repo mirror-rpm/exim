@@ -1,0 +1,10 @@
+--- a/src/lookups/mysql.c	2017-06-30 18:14:16.681819941 +0200
++++ b/src/lookups/mysql.c	2017-06-30 18:14:29.776921269 +0200
+@@ -13,6 +13,7 @@ 
+ #include "lf_functions.h"
+ 
+ #include <mysql.h>       /* The system header */
++#include <mysql_version.h>
+ 
+ 
+ /* Structure and anchor for caching connections. */
