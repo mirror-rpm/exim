@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -62,21 +62,20 @@ Patch25: exim-4.87-dynlookup-config.patch
 # Upstream ticket: http://bugs.exim.org/show_bug.cgi?id=1584
 Patch26: exim-4.85-pic.patch
 Patch27: exim-4.89-environment.patch
-# https://github.com/Exim/exim/pull/56
-Patch28: exim-4.89-mariadb-10.2-compile-fix.patch
 # Backported from upstream:
 # https://github.com/Exim/exim/commit/65e061b76867a9ea7aeeb535341b790b90ae6c21
-Patch29: exim-4.89-CVE-2017-1000369.patch
+Patch28: exim-4.89-CVE-2017-1000369.patch
 # Backported from upstream:
 # https://git.exim.org/exim.git/commitdiff/14de8063d82edc5bf003ed50abdea55ac542679b
-Patch30: exim-4.89-calloutsize.patch
+Patch29: exim-4.89-calloutsize.patch
+Patch30: exim-4.89-mariadb-macro-fix.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires: libdb-devel openssl-devel openldap-devel pam-devel
 BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
-BuildRequires: openldap-devel openssl-devel mysql-devel postgresql-devel
+BuildRequires: openldap-devel openssl-devel mariadb-connector-c-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: perl-devel
 BuildRequires: perl-generators
@@ -216,9 +215,9 @@ greylisting unconditional.
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .fpic
 %patch27 -p1 -b .environment
-%patch28 -p1 -b .mariadb-10.2-compile-fix
-%patch29 -p1 -b .CVE-2017-1000369
-%patch30 -p1 -b .calloutsize
+%patch28 -p1 -b .CVE-2017-1000369
+%patch29 -p1 -b .calloutsize
+%patch30 -p1 -b .mariadb-macro-fix
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -599,6 +598,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Nov 10 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-6
+- Used mariadb-connector-c-devel instead of mysql-devel
+  Resolves: rhbz#1494094
+
 * Fri Aug 18 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-5
 - Fixed compilation with the mariadb-10.2
   Resolves: rhbz#1467312

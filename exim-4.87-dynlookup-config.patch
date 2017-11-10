@@ -11,7 +11,7 @@ index df3dcc8..de01565 100644
 -LOOKUP_MYSQL=yes
 +LOOKUP_LIBS=-lldap -llber -lsqlite3
 +LOOKUP_MYSQL_INCLUDE=-I/usr/include/mysql
-+LOOKUP_MYSQL_LIBS=-L/usr/${_lib}/mysql -lmysqlclient
++LOOKUP_MYSQL_LIBS=-lmysqlclient
 +LOOKUP_PGSQL_LIBS=-lpq
 +LOOKUP_MYSQL=2
  LOOKUP_NIS=yes
