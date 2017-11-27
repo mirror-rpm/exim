@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -69,6 +69,7 @@ Patch28: exim-4.89-CVE-2017-1000369.patch
 # https://git.exim.org/exim.git/commitdiff/14de8063d82edc5bf003ed50abdea55ac542679b
 Patch29: exim-4.89-calloutsize.patch
 Patch30: exim-4.89-mariadb-macro-fix.patch
+Patch31: exim-4.89-CVE-2017-16943.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -218,6 +219,7 @@ greylisting unconditional.
 %patch28 -p1 -b .CVE-2017-1000369
 %patch29 -p1 -b .calloutsize
 %patch30 -p1 -b .mariadb-macro-fix
+%patch31 -p1 -b .CVE-2017-16943
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -598,6 +600,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Nov 27 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-7
+- Fixed use-after-free
+  Resolves: CVE-2017-16943
+
 * Fri Nov 10 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-6
 - Used mariadb-connector-c-devel instead of mysql-devel
   Resolves: rhbz#1494094
