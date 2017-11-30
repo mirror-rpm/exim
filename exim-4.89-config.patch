@@ -12,7 +12,7 @@ index 3e486a6..6c4afec 100755
    echo "" >>$mft
    cat $mftt >> $mft
 diff --git a/src/EDITME b/src/EDITME
-index df74aac..0caf02d 100644
+index df74aac..7065c0c 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -98,7 +98,7 @@
@@ -236,16 +236,14 @@ index df74aac..0caf02d 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1034,9 +1033,9 @@ ZCAT_COMMAND=/usr/bin/zcat
- # You may well also have to specify a local "include" file and an additional
+@@ -1035,8 +1034,8 @@ ZCAT_COMMAND=/usr/bin/zcat
  # library for TCP wrappers, so you probably need something like this:
  #
--# USE_TCP_WRAPPERS=yes
+ # USE_TCP_WRAPPERS=yes
 -# CFLAGS=-O -I/usr/local/include
 -# EXTRALIBS_EXIM=-L/usr/local/lib -lwrap
-+USE_TCP_WRAPPERS=yes
 +CFLAGS+=$(RPM_OPT_FLAGS) $(PIE)
-+EXTRALIBS_EXIM=-lwrap -lpam -ldl -export-dynamic -rdynamic
++EXTRALIBS_EXIM=-lpam -ldl -export-dynamic -rdynamic
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM
  # as well.

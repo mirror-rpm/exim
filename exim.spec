@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -75,7 +75,7 @@ Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires: libdb-devel openssl-devel openldap-devel pam-devel
-BuildRequires: pcre-devel sqlite-devel tcp_wrappers-devel cyrus-sasl-devel
+BuildRequires: pcre-devel sqlite-devel cyrus-sasl-devel
 BuildRequires: openldap-devel openssl-devel mariadb-connector-c-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: perl-devel
@@ -600,6 +600,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Nov 30 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-8
+- Dropped tcp_wrappers support
+  Resolves: rhbz#1518763
+
 * Mon Nov 27 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-7
 - Fixed use-after-free
   Resolves: CVE-2017-16943
