@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -69,7 +69,10 @@ Patch28: exim-4.89-CVE-2017-1000369.patch
 # https://git.exim.org/exim.git/commitdiff/14de8063d82edc5bf003ed50abdea55ac542679b
 Patch29: exim-4.89-calloutsize.patch
 Patch30: exim-4.89-mariadb-macro-fix.patch
+# Upstream ticket: https://bugs.exim.org/show_bug.cgi?id=2199
 Patch31: exim-4.89-CVE-2017-16943.patch
+# Upstream ticket: https://bugs.exim.org/show_bug.cgi?id=2201
+Patch32: exim-4.89-CVE-2017-16944.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -220,6 +223,7 @@ greylisting unconditional.
 %patch29 -p1 -b .calloutsize
 %patch30 -p1 -b .mariadb-macro-fix
 %patch31 -p1 -b .CVE-2017-16943
+%patch32 -p1 -b .CVE-2017-16944
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -600,6 +604,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Dec  1 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-9
+- Fixed denial of service
+  Resolves: CVE-2017-16944
+
 * Thu Nov 30 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-8
 - Dropped tcp_wrappers support
   Resolves: rhbz#1518763
