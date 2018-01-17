@@ -1,0 +1,14 @@
+diff --git a/src/EDITME b/src/EDITME
+index 893c50c..b9caf0c 100644
+--- a/src/EDITME
++++ b/src/EDITME
+@@ -313,6 +313,9 @@ LOOKUP_PGSQL_LIBS=-lpq
+ LOOKUP_MYSQL=2
+ LOOKUP_NIS=yes
+ LOOKUP_NISPLUS=yes
++CFLAGS+=-I/usr/include/nsl -I/usr/include/tirpc
++LIBS+=-L/usr/$(_lib)/nsl
++
+ # LOOKUP_ORACLE=yes
+ LOOKUP_PASSWD=yes
+ LOOKUP_PGSQL=2

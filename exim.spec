@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -73,6 +73,8 @@ Patch30: exim-4.89-mariadb-macro-fix.patch
 Patch31: exim-4.89-CVE-2017-16943.patch
 # Upstream ticket: https://bugs.exim.org/show_bug.cgi?id=2201
 Patch32: exim-4.89-CVE-2017-16944.patch
+# Workaround for NIS removal from glibc, bug 1534920
+Patch33: exim-4.89-nsl-fix.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -85,6 +87,8 @@ BuildRequires: perl-devel
 BuildRequires: perl-generators
 BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
 BuildRequires: systemd-units libgsasl-devel
+# Workaround for NIS removal from glibc, bug 1534920
+BuildRequires: libnsl2-devel libtirpc-devel
 
 %description
 Exim is a message transfer agent (MTA) developed at the University of
@@ -224,6 +228,7 @@ greylisting unconditional.
 %patch30 -p1 -b .mariadb-macro-fix
 %patch31 -p1 -b .CVE-2017-16943
 %patch32 -p1 -b .CVE-2017-16944
+%patch33 -p1 -b .nsl-fix
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -604,6 +609,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jan 17 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-10
+- Fixed FTBFS due to NIS removal from glibc
+  Resolves: rhbz#1534920
+
 * Fri Dec  1 2017 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-9
 - Fixed denial of service
   Resolves: CVE-2017-16944
