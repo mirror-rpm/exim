@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.89
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -609,6 +609,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat Jan 20 2018 Björn Esser <besser82@fedoraproject.org> - 4.89-11
+- Rebuilt for switch to libxcrypt
+
 * Wed Jan 17 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.89-10
 - Fixed FTBFS due to NIS removal from glibc
   Resolves: rhbz#1534920
