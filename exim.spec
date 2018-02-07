@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Provides: MTA smtpd smtpdaemon server(smtp)
@@ -60,6 +60,7 @@ Patch26: exim-4.85-pic.patch
 Patch27: exim-4.92-environment.patch
 # Workaround for NIS removal from glibc, bug 1534920
 Patch33: exim-4.90.1-nsl-fix.patch
+Patch40: exim-4.89-support-proxies.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -202,6 +203,7 @@ greylisting unconditional.
 %patch26 -p1 -b .fpic
 %patch27 -p1 -b .environment
 %patch33 -p1 -b .nsl-fix
+%patch40 -p1 -b .proxy
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -571,6 +573,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Feb 20 2019 Marcel Härry <mh+fedora@scrit.ch> - 4.92-2
+- Enable proxy and socks support
+  Resolves: rhbz#1542870
+
 * Mon Feb 11 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-1
 - New version
   Resolves: rhbz#1674282
