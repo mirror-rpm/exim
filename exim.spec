@@ -381,9 +381,6 @@ install -m755 %{SOURCE22} $RPM_BUILD_ROOT/%_sysconfdir/cron.daily/greylist-tidy.
 install -m644 %{SOURCE23} $RPM_BUILD_ROOT/%_sysconfdir/exim/trusted-configs
 touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %pre
 %{_sbindir}/groupadd -g 93 exim 2>/dev/null
 %{_sbindir}/useradd -d %{_var}/spool/exim -s /sbin/nologin -G mail -M -r -u 93 -g exim exim 2>/dev/null
