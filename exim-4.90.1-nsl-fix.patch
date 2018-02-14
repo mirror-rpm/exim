@@ -1,9 +1,9 @@
 diff --git a/src/EDITME b/src/EDITME
-index 893c50c..b9caf0c 100644
+index ad06440..513a212 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -313,6 +313,9 @@ LOOKUP_PGSQL_LIBS=-lpq
- LOOKUP_MYSQL=2
+@@ -319,6 +319,9 @@ LOOKUP_MYSQL=2
+ LOOKUP_MYSQL_PC=mariadb
  LOOKUP_NIS=yes
  LOOKUP_NISPLUS=yes
 +CFLAGS+=-I/usr/include/nsl -I/usr/include/tirpc

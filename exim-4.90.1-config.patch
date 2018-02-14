@@ -1,8 +1,8 @@
 diff --git a/scripts/Configure-Makefile b/scripts/Configure-Makefile
-index 3e486a6..6c4afec 100755
+index 2af1927..e461505 100755
 --- a/scripts/Configure-Makefile
 +++ b/scripts/Configure-Makefile
-@@ -269,7 +269,7 @@ if [ "${EXIM_PERL}" != "" ] ; then
+@@ -296,7 +296,7 @@ if [ "${EXIM_PERL}" != "" ] ; then
  
    mv $mft $mftt
    echo "PERL_CC=`$PERL_COMMAND -MConfig -e 'print $Config{cc}'`" >>$mft
@@ -12,7 +12,7 @@ index 3e486a6..6c4afec 100755
    echo "" >>$mft
    cat $mftt >> $mft
 diff --git a/src/EDITME b/src/EDITME
-index df74aac..7065c0c 100644
+index 72e26ce..0bd97f1 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -98,7 +98,7 @@
@@ -51,7 +51,7 @@ index df74aac..7065c0c 100644
  
  # Many sites define a user called "exim", with an appropriate default group,
  # and use
-@@ -232,7 +232,7 @@ TRANSPORT_SMTP=yes
+@@ -237,7 +237,7 @@ TRANSPORT_SMTP=yes
  # This one is special-purpose, and commonly not required, so it is not
  # included by default.
  
@@ -60,7 +60,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -241,9 +241,9 @@ TRANSPORT_SMTP=yes
+@@ -246,9 +246,9 @@ TRANSPORT_SMTP=yes
  # MBX, is included only when requested. If you do not know what this is about,
  # leave these settings commented out.
  
@@ -73,7 +73,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -301,19 +301,21 @@ LOOKUP_DBM=yes
+@@ -306,20 +306,22 @@ LOOKUP_DBM=yes
  LOOKUP_LSEARCH=yes
  LOOKUP_DNSDB=yes
  
@@ -84,6 +84,7 @@ index df74aac..7065c0c 100644
  # LOOKUP_IBASE=yes
 -# LOOKUP_LDAP=yes
 -# LOOKUP_MYSQL=yes
+-# LOOKUP_MYSQL_PC=mariadb
 -# LOOKUP_NIS=yes
 -# LOOKUP_NISPLUS=yes
 +LOOKUP_LDAP=yes
@@ -91,6 +92,7 @@ index df74aac..7065c0c 100644
 +LOOKUP_INCLUDE=-I/usr/include/mysql
 +LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/$(_lib)/mysql -lmysqlclient -lpq
 +LOOKUP_MYSQL=yes
++LOOKUP_MYSQL_PC=mariadb
 +LOOKUP_NIS=yes
 +LOOKUP_NISPLUS=yes
  # LOOKUP_ORACLE=yes
@@ -105,7 +107,7 @@ index df74aac..7065c0c 100644
  # LOOKUP_WHOSON=yes
  
  # These two settings are obsolete; all three lookups are compiled when
-@@ -390,7 +392,7 @@ EXIM_MONITOR=eximon.bin
+@@ -396,7 +398,7 @@ EXIM_MONITOR=eximon.bin
  # and the MIME ACL. Please read the documentation to learn more about these
  # features.
  
@@ -114,7 +116,7 @@ index df74aac..7065c0c 100644
  
  #------------------------------------------------------------------------------
  # If you're using ClamAV and are backporting fixes to an old version, instead
-@@ -577,7 +579,7 @@ FIXED_NEVER_USERS=root
+@@ -584,7 +586,7 @@ FIXED_NEVER_USERS=root
  # CONFIGURE_OWNER setting, to specify a configuration file which is listed in
  # the TRUSTED_CONFIG_LIST file, then root privileges are not dropped by Exim.
  
@@ -123,7 +125,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -622,17 +624,14 @@ FIXED_NEVER_USERS=root
+@@ -629,17 +631,14 @@ FIXED_NEVER_USERS=root
  # included in the Exim binary. You will then need to set up the run time
  # configuration to make use of the mechanism(s) selected.
  
@@ -149,7 +151,7 @@ index df74aac..7065c0c 100644
  
  # Heimdal through 1.5 required pkg-config 'heimdal-gssapi'; Heimdal 7.1
  # requires multiple pkg-config files to work with Exim, so the second example
-@@ -656,7 +655,7 @@ FIXED_NEVER_USERS=root
+@@ -663,7 +662,7 @@ FIXED_NEVER_USERS=root
  # one that is set in the headers_charset option. The default setting is
  # defined by this setting:
  
@@ -158,7 +160,7 @@ index df74aac..7065c0c 100644
  
  # If you are going to make use of $header_xxx expansions in your configuration
  # file, or if your users are going to use them in filter files, and the normal
-@@ -676,7 +675,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -683,7 +682,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # the Sieve filter support. For those OS where iconv() is known to be installed
  # as standard, the file in OS/Makefile-xxxx contains
  #
@@ -167,7 +169,7 @@ index df74aac..7065c0c 100644
  #
  # If you are not using one of those systems, but have installed iconv(), you
  # need to uncomment that line above. In some cases, you may find that iconv()
-@@ -745,11 +744,11 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -752,11 +751,11 @@ HEADERS_CHARSET="ISO-8859-1"
  # leave these settings commented out.
  
  # This setting is required for any TLS support (either OpenSSL or GnuTLS)
@@ -182,7 +184,7 @@ index df74aac..7065c0c 100644
  
  # Uncomment the first and either the second or the third of these if you
  # are using GnuTLS.  If you have pkg-config, then the second, else the third.
-@@ -818,7 +817,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -825,7 +824,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # Once you have done this, "make install" will build the info files and
  # install them in the directory you have defined.
  
@@ -191,7 +193,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -831,7 +830,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -838,7 +837,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # %s. This will be replaced by one of the strings "main", "panic", or "reject"
  # to form the final file names. Some installations may want something like this:
  
@@ -200,7 +202,7 @@ index df74aac..7065c0c 100644
  
  # which results in files with names /var/log/exim_mainlog, etc. The directory
  # in which the log files are placed must exist; Exim does not try to create
-@@ -903,7 +902,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -910,7 +909,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # (version 5.004 or later) installed, set EXIM_PERL to perl.o. Using embedded
  # Perl costs quite a lot of resources. Only do this if you really need it.
  
@@ -209,7 +211,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -913,7 +912,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -920,7 +919,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # that the local_scan API is made available by the linker. You may also need
  # to add -ldl to EXTRALIBS so that dlopen() is available to Exim.
  
@@ -218,7 +220,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -923,7 +922,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -930,7 +929,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # support, which is intended for use in conjunction with the SMTP AUTH
  # facilities, is included only when requested by the following setting:
  
@@ -227,7 +229,7 @@ index df74aac..7065c0c 100644
  
  # You probably need to add -lpam to EXTRALIBS, and in some releases of
  # GNU/Linux -ldl is also needed.
-@@ -1021,7 +1020,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1028,7 +1027,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
  
@@ -236,7 +238,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1035,8 +1034,8 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1042,8 +1041,8 @@ ZCAT_COMMAND=/usr/bin/zcat
  # library for TCP wrappers, so you probably need something like this:
  #
  # USE_TCP_WRAPPERS=yes
@@ -247,7 +249,7 @@ index df74aac..7065c0c 100644
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM
  # as well.
-@@ -1088,7 +1087,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1095,7 +1094,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # is "yes", as well as supporting line editing, a history of input lines in the
  # current run is maintained.
  
@@ -256,7 +258,7 @@ index df74aac..7065c0c 100644
  
  # You may need to add -ldl to EXTRALIBS when you set USE_READLINE=yes.
  # Note that this option adds to the size of the Exim binary, because the
-@@ -1098,7 +1097,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1112,7 +1111,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  #------------------------------------------------------------------------------
  # Uncomment this setting to include IPv6 support.
  
@@ -265,7 +267,7 @@ index df74aac..7065c0c 100644
  
  ###############################################################################
  #              THINGS YOU ALMOST NEVER NEED TO MENTION                        #
-@@ -1119,13 +1118,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1133,13 +1132,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # haven't got Perl, Exim will still build and run; you just won't be able to
  # use those utilities.
  
@@ -286,7 +288,7 @@ index df74aac..7065c0c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1327,7 +1326,7 @@ EXIM_TMPDIR="/tmp"
+@@ -1341,7 +1340,7 @@ EXIM_TMPDIR="/tmp"
  # (process id) to a file so that it can easily be identified. The path of the
  # file can be specified here. Some installations may want something like this:
  

@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.89
-Release: 12%{?dist}
+Version: 4.90.1
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -46,35 +46,23 @@ Source24: exim.service
 Source25: exim-gen-cert
 Source26: clamd.exim.service
 
-Patch4: exim-4.88-rhl.patch
-Patch6: exim-4.89-config.patch
+Patch4: exim-4.90.1-rhl.patch
+Patch6: exim-4.90.1-config.patch
 Patch8: exim-4.82-libdir.patch
-Patch12: exim-4.88-cyrus.patch
-Patch13: exim-4.88-pamconfig.patch
-Patch14: exim-4.87-spamdconf.patch
-Patch18: exim-4.89-dlopen-localscan.patch
-Patch19: exim-4.88-procmail.patch
-Patch20: exim-4.88-allow-filter.patch
+Patch12: exim-4.90.1-cyrus.patch
+Patch13: exim-4.90.1-pamconfig.patch
+Patch14: exim-4.90.1-spamdconf.patch
+Patch18: exim-4.90.1-dlopen-localscan.patch
+Patch19: exim-4.90.1-procmail.patch
+Patch20: exim-4.90.1-allow-filter.patch
 Patch21: exim-4.87-localhost-is-local.patch
-Patch22: exim-4.88-greylist-conf.patch
-Patch23: exim-4.88-smarthost-config.patch
-Patch25: exim-4.87-dynlookup-config.patch
-# Upstream ticket: http://bugs.exim.org/show_bug.cgi?id=1584
+Patch22: exim-4.90.1-greylist-conf.patch
+Patch23: exim-4.90.1-smarthost-config.patch
+Patch25: exim-4.90.1-dynlookup-config.patch
 Patch26: exim-4.85-pic.patch
-Patch27: exim-4.89-environment.patch
-# Backported from upstream:
-# https://github.com/Exim/exim/commit/65e061b76867a9ea7aeeb535341b790b90ae6c21
-Patch28: exim-4.89-CVE-2017-1000369.patch
-# Backported from upstream:
-# https://git.exim.org/exim.git/commitdiff/14de8063d82edc5bf003ed50abdea55ac542679b
-Patch29: exim-4.89-calloutsize.patch
-Patch30: exim-4.89-mariadb-macro-fix.patch
-# Upstream ticket: https://bugs.exim.org/show_bug.cgi?id=2199
-Patch31: exim-4.89-CVE-2017-16943.patch
-# Upstream ticket: https://bugs.exim.org/show_bug.cgi?id=2201
-Patch32: exim-4.89-CVE-2017-16944.patch
+Patch27: exim-4.90.1-environment.patch
 # Workaround for NIS removal from glibc, bug 1534920
-Patch33: exim-4.89-nsl-fix.patch
+Patch33: exim-4.90.1-nsl-fix.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -223,11 +211,6 @@ greylisting unconditional.
 %patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .fpic
 %patch27 -p1 -b .environment
-%patch28 -p1 -b .CVE-2017-1000369
-%patch29 -p1 -b .calloutsize
-%patch30 -p1 -b .mariadb-macro-fix
-%patch31 -p1 -b .CVE-2017-16943
-%patch32 -p1 -b .CVE-2017-16944
 %patch33 -p1 -b .nsl-fix
 
 cp src/EDITME Local/Makefile
@@ -606,6 +589,16 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Feb 13 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.90.1-1
+- New version
+  Resolves: rhbz#1527710
+- Fixed buffer overflow in utility function
+  Resolves: CVE-2018-6789
+- Updated and defuzzified patches
+- Dropped mariadb-macro-fix patch (not needed)
+- Dropped CVE-2017-1000369, calloutsize, CVE-2017-16943,
+  CVE-2017-16944 patches (all upstreamed)
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.89-12
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 

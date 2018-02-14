@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index df3dcc8..de01565 100644
+index ce2b047..ad06440 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -306,14 +306,16 @@ LOOKUP_DSEARCH=yes
+@@ -311,15 +311,17 @@ LOOKUP_DSEARCH=yes
  # LOOKUP_IBASE=yes
  LOOKUP_LDAP=yes
  LDAP_LIB_TYPE=OPENLDAP2
@@ -10,10 +10,11 @@ index df3dcc8..de01565 100644
 -LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/$(_lib)/mysql -lmysqlclient -lpq
 -LOOKUP_MYSQL=yes
 +LOOKUP_LIBS=-lldap -llber -lsqlite3
-+LOOKUP_MYSQL_INCLUDE=-I/usr/include/mysql
++LOOKUP_INCLUDE=-I/usr/include/mysql
 +LOOKUP_MYSQL_LIBS=-lmysqlclient
 +LOOKUP_PGSQL_LIBS=-lpq
 +LOOKUP_MYSQL=2
+ LOOKUP_MYSQL_PC=mariadb
  LOOKUP_NIS=yes
  LOOKUP_NISPLUS=yes
  # LOOKUP_ORACLE=yes
