@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.90.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -58,7 +58,6 @@ Patch20: exim-4.90.1-allow-filter.patch
 Patch21: exim-4.87-localhost-is-local.patch
 Patch22: exim-4.90.1-greylist-conf.patch
 Patch23: exim-4.90.1-smarthost-config.patch
-Patch25: exim-4.90.1-dynlookup-config.patch
 Patch26: exim-4.85-pic.patch
 Patch27: exim-4.90.1-environment.patch
 # Workaround for NIS removal from glibc, bug 1534920
@@ -209,7 +208,6 @@ greylisting unconditional.
 %patch21 -p1 -b .localhost
 %patch22 -p1 -b .grey
 %patch23 -p1 -b .smarthost
-%patch25 -p1 -b .dynconfig
 %patch26 -p1 -b .fpic
 %patch27 -p1 -b .environment
 %patch33 -p1 -b .nsl-fix
@@ -590,6 +588,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Feb 16 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.90.1-3
+- Dropped dynlookup-config patch (merged into config patch)
+
 * Fri Feb 16 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.90.1-2
 - Fixed mysql module
 
