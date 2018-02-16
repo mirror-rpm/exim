@@ -1,5 +1,5 @@
 diff --git a/src/EDITME b/src/EDITME
-index ce2b047..ad06440 100644
+index ce2b047..8b773ea 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -311,15 +311,17 @@ LOOKUP_DSEARCH=yes
@@ -10,8 +10,8 @@ index ce2b047..ad06440 100644
 -LOOKUP_LIBS=-lldap -llber -lsqlite3 -L/usr/$(_lib)/mysql -lmysqlclient -lpq
 -LOOKUP_MYSQL=yes
 +LOOKUP_LIBS=-lldap -llber -lsqlite3
-+LOOKUP_INCLUDE=-I/usr/include/mysql
-+LOOKUP_MYSQL_LIBS=-lmysqlclient
++# LOOKUP_INCLUDE=-I/usr/include/mysql
++# LOOKUP_MYSQL_LIBS=-lmysqlclient
 +LOOKUP_PGSQL_LIBS=-lpq
 +LOOKUP_MYSQL=2
  LOOKUP_MYSQL_PC=mariadb

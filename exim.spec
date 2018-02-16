@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.90.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -74,7 +74,8 @@ BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: perl-devel
 BuildRequires: perl-generators
 BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
-BuildRequires: systemd-units libgsasl-devel
+# mariadb-devel for mariadb pkgconfig
+BuildRequires: systemd-units libgsasl-devel mariadb-devel
 # Workaround for NIS removal from glibc, bug 1534920
 BuildRequires: libnsl2-devel libtirpc-devel
 
@@ -589,6 +590,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Feb 16 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.90.1-2
+- Fixed mysql module
+
 * Tue Feb 13 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.90.1-1
 - New version
   Resolves: rhbz#1527710
