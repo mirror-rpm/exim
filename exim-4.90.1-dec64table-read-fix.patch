@@ -1,0 +1,16 @@
+diff --git a/src/base64.c b/src/src/base64.c
+index dbbd6a4..e63522e 100644
+--- a/src/base64.c
++++ b/src/base64.c
+@@ -173,7 +173,7 @@ while ((x = *code++) != 0)
+ 
+   while (isspace(y = *code++)) ;
+   /* debug_printf("b64d: '%c'\n", y); */
+-  if (y == 0 || (y = dec64table[y]) == 255)
++  if (y > 127 || (y = dec64table[y]) == 255)
+     return -1;
+ 
+   *result++ = (x << 2) | (y >> 4);
+-- 
+1.9.1
+

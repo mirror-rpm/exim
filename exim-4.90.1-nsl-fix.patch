@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index ad06440..513a212 100644
+index be31066..e48dd93 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -319,6 +319,9 @@ LOOKUP_MYSQL=2
+@@ -316,6 +316,9 @@ LOOKUP_MYSQL=2
  LOOKUP_MYSQL_PC=mariadb
  LOOKUP_NIS=yes
  LOOKUP_NISPLUS=yes
