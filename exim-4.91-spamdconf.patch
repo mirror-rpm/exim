@@ -1,5 +1,5 @@
 diff --git a/src/configure.default b/src/configure.default
-index 0675b40..8b4575c 100644
+index 6966ad3..dd5bfeb 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -109,6 +109,7 @@ hostlist   relay_from_hosts = localhost
@@ -29,9 +29,9 @@ index 0675b40..8b4575c 100644
  
    require verify        = sender
  
-@@ -538,27 +540,63 @@ acl_check_data:
-                        got $max_received_linelength
-           condition  = ${if > {$max_received_linelength}{998}}
+@@ -544,27 +546,63 @@ acl_check_data:
+ 	  message =	header syntax
+ 	  log_message = header syntax ($acl_verify_message)
  
 +  # Put simple tests first. A good one is to check for the presence of a
 +  # Message-Id: header, which RFC2822 says SHOULD be present. Some broken

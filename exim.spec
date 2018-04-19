@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.90.1
-Release: 4%{?dist}
+Version: 4.91
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -46,24 +46,22 @@ Source24: exim.service
 Source25: exim-gen-cert
 Source26: clamd.exim.service
 
-Patch4: exim-4.90.1-rhl.patch
-Patch6: exim-4.90.1-config.patch
+Patch4: exim-4.91-rhl.patch
+Patch6: exim-4.91-config.patch
 Patch8: exim-4.82-libdir.patch
-Patch12: exim-4.90.1-cyrus.patch
-Patch13: exim-4.90.1-pamconfig.patch
-Patch14: exim-4.90.1-spamdconf.patch
-Patch18: exim-4.90.1-dlopen-localscan.patch
-Patch19: exim-4.90.1-procmail.patch
-Patch20: exim-4.90.1-allow-filter.patch
+Patch12: exim-4.91-cyrus.patch
+Patch13: exim-4.91-pamconfig.patch
+Patch14: exim-4.91-spamdconf.patch
+Patch18: exim-4.91-dlopen-localscan.patch
+Patch19: exim-4.91-procmail.patch
+Patch20: exim-4.91-allow-filter.patch
 Patch21: exim-4.87-localhost-is-local.patch
-Patch22: exim-4.90.1-greylist-conf.patch
-Patch23: exim-4.90.1-smarthost-config.patch
+Patch22: exim-4.91-greylist-conf.patch
+Patch23: exim-4.91-smarthost-config.patch
 Patch26: exim-4.85-pic.patch
 Patch27: exim-4.90.1-environment.patch
 # Workaround for NIS removal from glibc, bug 1534920
 Patch33: exim-4.90.1-nsl-fix.patch
-# Backported from upstream
-Patch34: exim-4.90.1-dec64table-read-fix.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -213,7 +211,6 @@ greylisting unconditional.
 %patch26 -p1 -b .fpic
 %patch27 -p1 -b .environment
 %patch33 -p1 -b .nsl-fix
-%patch34 -p1 -b .dec64table-read-fix
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -591,6 +588,12 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Apr 19 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.91-1
+- New version
+  Resolves: rhbz#1567670
+- Dropped dec64table-read-fix patch (already upstream)
+- De-fuzzified patches
+
 * Wed Mar 14 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.90.1-4
 - Fixed dec64table OOB read in b64decode
 - De-fuzzified nsl-fix patch

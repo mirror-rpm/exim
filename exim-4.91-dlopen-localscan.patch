@@ -1,11 +1,12 @@
 diff --git a/src/EDITME b/src/EDITME
-index 0bd97f1..ce2b047 100644
+index 4cd3b4d..1b79e71 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -809,6 +809,20 @@ TLS_LIBS=-lssl -lcrypto
+@@ -817,6 +817,20 @@ TLS_LIBS=-lssl -lcrypto
+ # specified in INCLUDE.
  
  
- #------------------------------------------------------------------------------
++#------------------------------------------------------------------------------
 +# On systems which support dynamic loading of shared libraries, Exim can
 +# load a local_scan function specified in its config file instead of having
 +# to be recompiled with the desired local_scan function. For a full
@@ -19,15 +20,14 @@ index 0bd97f1..ce2b047 100644
 +
 +LFLAGS=-rdynamic -ldl -pie
 +
-+#------------------------------------------------------------------------------
+ #------------------------------------------------------------------------------
  # The default distribution of Exim contains only the plain text form of the
  # documentation. Other forms are available separately. If you want to install
- # the documentation in "info" format, first fetch the Texinfo documentation
 diff --git a/src/config.h.defaults b/src/config.h.defaults
-index 4750523..e3943a8 100644
+index ce478d5..6ce0d45 100644
 --- a/src/config.h.defaults
 +++ b/src/config.h.defaults
-@@ -31,6 +31,8 @@ Do not put spaces between # and the 'define'.
+@@ -32,6 +32,8 @@ Do not put spaces between # and the 'define'.
  
  #define AUTH_VARS                     3
  
@@ -37,7 +37,7 @@ index 4750523..e3943a8 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index 5df84bd..74724fd 100644
+index 7d18b38..438c993 100644
 --- a/src/globals.c
 +++ b/src/globals.c
 @@ -167,6 +167,10 @@ uschar *tls_verify_hosts       = NULL;
@@ -52,7 +52,7 @@ index 5df84bd..74724fd 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index 37d4cad..2b313e0 100644
+index da1230b..b9f0155 100644
 --- a/src/globals.h
 +++ b/src/globals.h
 @@ -126,6 +126,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
@@ -251,7 +251,7 @@ index 3500047..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index 8d5f38c..73095be 100644
+index cbbef6e..da3421a 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
 @@ -195,6 +195,9 @@ static optionlist optionlist_config[] = {

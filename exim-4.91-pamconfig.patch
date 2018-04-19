@@ -1,5 +1,5 @@
 diff --git a/src/configure.default b/src/configure.default
-index 1138335..0675b40 100644
+index ae50b15..6966ad3 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -142,7 +142,7 @@ acl_smtp_data = acl_check_data
@@ -58,7 +58,7 @@ index 1138335..0675b40 100644
  
  # The settings below cause Exim to make RFC 1413 (ident) callbacks
  # for all incoming SMTP calls. You can limit the hosts to which these
-@@ -847,7 +865,7 @@ begin authenticators
+@@ -853,7 +871,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -67,7 +67,7 @@ index 1138335..0675b40 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -859,7 +877,7 @@ begin authenticators
+@@ -865,7 +883,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:
