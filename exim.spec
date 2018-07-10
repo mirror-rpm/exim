@@ -435,7 +435,6 @@ if [ ! -r %{_var}/spool/exim/db/greylist.db ]; then
 fi
 
 %files
-%defattr(-,root,root)
 %attr(4755,root,root) %{_sbindir}/exim
 %{_sbindir}/exim_dumpdb
 %{_sbindir}/exim_fixdb
@@ -501,20 +500,16 @@ fi
 
 %if 0%{?fedora} < 23
 %files sysvinit
-%defattr(-,root,root,-)
 %{_initrddir}/exim
 %endif
 
 %files mysql
-%defattr(-,root,root,-)
 %{_libdir}/exim/%{version}-%{release}/lookups/mysql.so
 
 %files pgsql
-%defattr(-,root,root,-)
 %{_libdir}/exim/%{version}-%{release}/lookups/pgsql.so
 
 %files mon
-%defattr(-,root,root)
 %{_sbindir}/eximon
 %{_sbindir}/eximon.bin
 
@@ -563,7 +558,6 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %endif
 
 %files clamav
-%defattr(-,root,root,-)
 %{_sbindir}/clamd.exim
 %{_unitdir}/clamd.exim.service
 %config(noreplace) %verify(not mtime) %{_sysconfdir}/clamd.d/exim.conf
@@ -575,13 +569,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 
 %if 0%{?fedora} < 23
 %files clamav-sysvinit
-%defattr(-,root,root,-)
 %attr(0755,root,root) %config %{_initrddir}/clamd.exim
 %endif
 %endif
 
 %files greylist
-%defattr(-,root,root,-)
 %config %{_sysconfdir}/exim/exim-greylist.conf.inc
 %ghost %{_var}/spool/exim/db/greylist.db
 %{_sysconfdir}/exim/mk-greylist-db.sql
