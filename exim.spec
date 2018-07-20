@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.91
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -66,7 +66,7 @@ Patch33: exim-4.90.1-nsl-fix.patch
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
-BuildRequires: libdb-devel openssl-devel openldap-devel pam-devel
+BuildRequires: gcc libdb-devel openssl-devel openldap-devel pam-devel
 BuildRequires: pcre-devel sqlite-devel cyrus-sasl-devel
 BuildRequires: openldap-devel openssl-devel mariadb-connector-c-devel postgresql-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
@@ -580,6 +580,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Jul 20 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.91-4
+- Fixed FTBFS by adding gcc requirement
+
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 4.91-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
