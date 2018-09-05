@@ -68,7 +68,7 @@ Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 BuildRequires: gcc libdb-devel openssl-devel openldap-devel pam-devel
 BuildRequires: pcre-devel sqlite-devel cyrus-sasl-devel
-BuildRequires: openldap-devel openssl-devel mariadb-connector-c-devel postgresql-devel
+BuildRequires: openldap-devel openssl-devel mariadb-connector-c-devel libpq-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: perl-devel
 BuildRequires: perl-generators
