@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.91
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Group: System Environment/Daemons
@@ -580,6 +580,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Jan 14 2019 Björn Esser <besser82@fedoraproject.org> - 4.91-5
+- Rebuilt for libcrypt.so.2 (#1666033)
+
 * Fri Jul 20 2018 Jaroslav Škarvada <jskarvad@redhat.com> - 4.91-4
 - Fixed FTBFS by adding gcc requirement
 
