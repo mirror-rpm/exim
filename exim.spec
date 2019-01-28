@@ -17,7 +17,6 @@ Version: 4.91
 Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
-Group: System Environment/Daemons
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon server(smtp)
 Requires(post): /sbin/chkconfig /sbin/service /sbin/restorecon %{_sbindir}/alternatives systemd systemd-sysv
@@ -91,7 +90,6 @@ configuration of exim is quite different to that of sendmail.
 %if 0%{?fedora} < 23
 %package sysvinit
 Summary: SysV initscript for Exim
-Group: System Environment/Daemons
 BuildArch: noarch
 Requires: %{name} = %{version}-%{release}
 Requires(preun): chkconfig
@@ -103,7 +101,6 @@ This package contains the SysV initscript for Exim.
 
 %package mysql
 Summary: MySQL lookup support for Exim
-Group: System Environment/Daemons
 Requires: exim = %{version}-%{release}
 
 %description mysql
@@ -111,7 +108,6 @@ This package contains the MySQL lookup module for Exim
 
 %package pgsql
 Summary: PostgreSQL lookup support for Exim
-Group: System Environment/Daemons
 Requires: exim = %{version}-%{release}
 
 %description pgsql
@@ -119,7 +115,6 @@ This package contains the PostgreSQL lookup module for Exim
 
 %package mon
 Summary: X11 monitor application for Exim
-Group: Applications/System
 
 %description mon
 The Exim Monitor is an optional supplement to the Exim package. It
@@ -130,7 +125,6 @@ interface.
 %if %{with clamav}
 %package clamav
 Summary: Clam Antivirus scanner dæmon configuration for use with Exim
-Group: System Environment/Daemons
 Requires: clamav-server exim
 Obsoletes: clamav-exim <= 0.86.2
 Requires(post): /sbin/chkconfig /sbin/service
@@ -156,7 +150,6 @@ http://www.exim.org/exim-html-%{version}/doc/html/spec_html/ch41.html
 %if 0%{?fedora} < 23
 %package clamav-sysvinit
 Summary: SysV initscript for Clam Antivirus scanner for Exim
-Group: System Environment/Daemons
 BuildArch: noarch
 Requires: exim-clamav = %{version}-%{release}
 Requires(preun): chkconfig
@@ -169,7 +162,6 @@ This package contains the SysV initscript.
 
 %package greylist
 Summary: Example configuration for greylisting using Exim
-Group: System Environment/Daemons
 Requires: sqlite exim
 Requires: crontabs
 
