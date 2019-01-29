@@ -17,7 +17,6 @@ Version: 4.91
 Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
-Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Provides: MTA smtpd smtpdaemon server(smtp)
 Requires(post): /sbin/chkconfig /sbin/service /sbin/restorecon %{_sbindir}/alternatives systemd systemd-sysv
 Requires(preun): %{_sbindir}/alternatives systemd
