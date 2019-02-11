@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index 4cd3b4d..1b79e71 100644
+index a42cd6f..0acd673 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -817,6 +817,20 @@ TLS_LIBS=-lssl -lcrypto
+@@ -822,6 +822,20 @@ TLS_LIBS=-lssl -lcrypto
  # specified in INCLUDE.
  
  
@@ -24,7 +24,7 @@ index 4cd3b4d..1b79e71 100644
  # The default distribution of Exim contains only the plain text form of the
  # documentation. Other forms are available separately. If you want to install
 diff --git a/src/config.h.defaults b/src/config.h.defaults
-index ce478d5..6ce0d45 100644
+index 7c2e534..3fafe61 100644
 --- a/src/config.h.defaults
 +++ b/src/config.h.defaults
 @@ -32,6 +32,8 @@ Do not put spaces between # and the 'define'.
@@ -37,10 +37,10 @@ index ce478d5..6ce0d45 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index 7d18b38..438c993 100644
+index b3362a3..0884fe5 100644
 --- a/src/globals.c
 +++ b/src/globals.c
-@@ -167,6 +167,10 @@ uschar *tls_verify_hosts       = NULL;
+@@ -173,6 +173,10 @@ uschar *tls_verify_hosts       = NULL;
  uschar *tls_advertise_hosts    = NULL;
  #endif
  
@@ -52,10 +52,10 @@ index 7d18b38..438c993 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index da1230b..b9f0155 100644
+index f71f104..3faf176 100644
 --- a/src/globals.h
 +++ b/src/globals.h
-@@ -126,6 +126,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
+@@ -131,6 +131,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
  extern uschar *tls_verify_certificates;/* Path for certificates to check */
  extern uschar *tls_verify_hosts;       /* Mandatory client verification */
  #endif
@@ -68,10 +68,10 @@ index da1230b..b9f0155 100644
  
  extern uschar  *dsn_envid;             /* DSN envid string */
 diff --git a/src/local_scan.c b/src/local_scan.c
-index 3500047..8599172 100644
+index 4dd0b2b..8599172 100644
 --- a/src/local_scan.c
 +++ b/src/local_scan.c
-@@ -5,60 +5,131 @@
+@@ -5,61 +5,131 @@
  /* Copyright (c) University of Cambridge 1995 - 2009 */
  /* See the file NOTICE for conditions of use and distribution. */
  
@@ -83,6 +83,7 @@ index 3500047..8599172 100644
 -Local/local_scan.c, and edit the copy. To use your version instead of the
 -default, you must set
 -
+-HAVE_LOCAL_SCAN=yes
 -LOCAL_SCAN_SOURCE=Local/local_scan.c
 -
 -in your Local/Makefile. This makes it easy to copy your version for use with
@@ -251,16 +252,16 @@ index 3500047..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index cbbef6e..da3421a 100644
+index 5742d10..3f1d9c1 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
-@@ -195,6 +195,9 @@ static optionlist optionlist_config[] = {
+@@ -199,6 +199,9 @@ static optionlist optionlist_config[] = {
    { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
    { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
    { "local_interfaces",         opt_stringptr,   &local_interfaces },
 +#ifdef DLOPEN_LOCAL_SCAN
 +  { "local_scan_path",          opt_stringptr,   &local_scan_path },
 +#endif
+ #ifdef HAVE_LOCAL_SCAN
    { "local_scan_timeout",       opt_time,        &local_scan_timeout },
-   { "local_sender_retain",      opt_bool,        &local_sender_retain },
-   { "localhost_number",         opt_stringptr,   &host_number_string },
+ #endif

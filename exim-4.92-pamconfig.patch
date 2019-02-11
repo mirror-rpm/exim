@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index ae50b15..6966ad3 100644
+index 6db4947..f1198b1 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -142,7 +142,7 @@ acl_smtp_data = acl_check_data
+@@ -157,7 +157,7 @@ acl_smtp_data =         acl_check_data
  
  # Allow any client to use TLS.
  
@@ -11,7 +11,7 @@ index ae50b15..6966ad3 100644
  
  # Specify the location of the Exim server's TLS certificate and private key.
  # The private key must not be encrypted (password protected). You can put
-@@ -150,8 +150,8 @@ acl_smtp_data = acl_check_data
+@@ -165,8 +165,8 @@ acl_smtp_data =         acl_check_data
  # need the first setting, or in separate files, in which case you need both
  # options.
  
@@ -22,7 +22,7 @@ index ae50b15..6966ad3 100644
  
  # For OpenSSL, prefer EC- over RSA-authenticated ciphers
  # tls_require_ciphers = ECDSA:RSA:!COMPLEMENTOFDEFAULT
-@@ -165,8 +165,8 @@ acl_smtp_data = acl_check_data
+@@ -180,8 +180,8 @@ acl_smtp_data =         acl_check_data
  # them you should also allow TLS-on-connect on the traditional but
  # non-standard port 465.
  
@@ -33,7 +33,7 @@ index ae50b15..6966ad3 100644
  
  
  # Specify the domain you want to be added to all unqualified addresses
-@@ -224,6 +224,24 @@ never_users = root
+@@ -239,6 +239,24 @@ never_users = root
  
  host_lookup = *
  
@@ -56,9 +56,9 @@ index ae50b15..6966ad3 100644
 +#
 +auth_advertise_hosts =
  
- # The settings below cause Exim to make RFC 1413 (ident) callbacks
- # for all incoming SMTP calls. You can limit the hosts to which these
-@@ -853,7 +871,7 @@ begin authenticators
+ # The setting below causes Exim to try to initialize the system resolver
+ # library with DNSSEC support.  It has no effect if your library lacks
+@@ -980,7 +998,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -67,7 +67,7 @@ index ae50b15..6966ad3 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -865,7 +883,7 @@ begin authenticators
+@@ -992,7 +1010,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:

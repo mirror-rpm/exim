@@ -1,8 +1,8 @@
 diff --git a/src/configure.default b/src/configure.default
-index dd5bfeb..7d26076 100644
+index 8f88a3b..cef3779 100644
 --- a/src/configure.default
 +++ b/src/configure.default
-@@ -741,6 +741,12 @@ userforward:
+@@ -818,6 +818,12 @@ userforward:
    pipe_transport = address_pipe
    reply_transport = address_reply
  
@@ -15,9 +15,9 @@ index dd5bfeb..7d26076 100644
  
  # This router matches local user mailboxes. If the router fails, the error
  # message is "Unknown user".
-@@ -782,6 +788,16 @@ remote_smtp:
-   driver = smtp
-   message_size_limit = ${if > {$max_received_linelength}{998} {1}{0}}
+@@ -866,6 +872,16 @@ remote_smtp:
+   hosts_try_prdr = *
+ .endif
  
 +# This transport invokes procmail to deliver mail
 +procmail:
@@ -30,5 +30,5 @@ index dd5bfeb..7d26076 100644
 +  initgroups
 +  return_output
  
- # This transport is used for local delivery to user mailboxes in traditional
- # BSD mailbox format. By default it will be run under the uid and gid of the
+ # This transport is used for delivering messages to a smarthost, if the
+ # smarthost router is enabled.  This starts from the same basis as

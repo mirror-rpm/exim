@@ -13,8 +13,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.91
-Release: 6%{?dist}
+Version: 4.92
+Release: 1%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Provides: MTA smtpd smtpdaemon server(smtp)
@@ -44,20 +44,20 @@ Source24: exim.service
 Source25: exim-gen-cert
 Source26: clamd.exim.service
 
-Patch4: exim-4.91-rhl.patch
-Patch6: exim-4.91-config.patch
+Patch4: exim-4.92-rhl.patch
+Patch6: exim-4.92-config.patch
 Patch8: exim-4.82-libdir.patch
-Patch12: exim-4.91-cyrus.patch
-Patch13: exim-4.91-pamconfig.patch
-Patch14: exim-4.91-spamdconf.patch
-Patch18: exim-4.91-dlopen-localscan.patch
-Patch19: exim-4.91-procmail.patch
-Patch20: exim-4.91-allow-filter.patch
-Patch21: exim-4.87-localhost-is-local.patch
-Patch22: exim-4.91-greylist-conf.patch
-Patch23: exim-4.91-smarthost-config.patch
+Patch12: exim-4.92-cyrus.patch
+Patch13: exim-4.92-pamconfig.patch
+Patch14: exim-4.92-spamdconf.patch
+Patch18: exim-4.92-dlopen-localscan.patch
+Patch19: exim-4.92-procmail.patch
+Patch20: exim-4.92-allow-filter.patch
+Patch21: exim-4.92-localhost-is-local.patch
+Patch22: exim-4.92-greylist-conf.patch
+Patch23: exim-4.92-smarthost-config.patch
 Patch26: exim-4.85-pic.patch
-Patch27: exim-4.90.1-environment.patch
+Patch27: exim-4.92-environment.patch
 # Workaround for NIS removal from glibc, bug 1534920
 Patch33: exim-4.90.1-nsl-fix.patch
 
@@ -571,6 +571,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Feb 11 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-1
+- New version
+  Resolves: rhbz#1674282
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 4.91-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
