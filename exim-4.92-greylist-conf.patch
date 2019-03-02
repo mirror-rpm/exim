@@ -6,7 +6,7 @@ index 9242bac..439287a 100644
  # manual for details. The lists above are used in the access control lists for
  # checking incoming messages. The names of these ACLs are defined here:
  
-++acl_smtp_mail =        acl_check_mail
++acl_smtp_mail =         acl_check_mail
  acl_smtp_rcpt =         acl_check_rcpt
  .ifdef _HAVE_PRDR
  acl_smtp_data_prdr =    acl_check_prdr

@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Provides: MTA smtpd smtpdaemon server(smtp)
@@ -312,10 +312,11 @@ chmod 600 $RPM_BUILD_ROOT/etc/pki/tls/{certs,private}/exim.pem
 # generate alternatives ghosts
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man1
 for i in %{_sbindir}/sendmail %{_bindir}/{mailq,runq,rsmtp,rmail,newaliases} \
-	/usr/lib/sendmail %{_sysconfdir}/pam.d/smtp %{_mandir}/man1/mailq.1.gz
+	/usr/lib/sendmail %{_sysconfdir}/pam.d/smtp
 do
 	touch $RPM_BUILD_ROOT$i
 done
+gzip < /dev/null > $RPM_BUILD_ROOT%{_mandir}/man1/mailq.1.gz
 
 %if %{with clamav}
 # Munge the clamav init and config files from clamav-devel. This really ought
@@ -353,6 +354,9 @@ mkdir -p $RPM_BUILD_ROOT/%_sysconfdir/cron.daily
 install -m755 %{SOURCE22} $RPM_BUILD_ROOT/%_sysconfdir/cron.daily/greylist-tidy.sh
 install -m644 %{SOURCE23} $RPM_BUILD_ROOT/%_sysconfdir/exim/trusted-configs
 touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
+
+%check
+build-`scripts/os-type`-`scripts/arch-type`/exim -C src/configure.default -bV
 
 %pre
 %{_sbindir}/groupadd -g 93 exim 2>/dev/null
@@ -571,6 +575,11 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Sat Mar  2 2019 Tim Landscheidt <tim@tim-landscheidt.de> - 4.92-2
+- Fix syntax error in exim.conf (#1679274)
+- Use properly compressed empty mailq.1.gz as ghost file
+- Add basic check that configuration file is valid
+
 * Mon Feb 11 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-1
 - New version
   Resolves: rhbz#1674282
