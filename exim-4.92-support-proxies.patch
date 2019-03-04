@@ -1,6 +1,8 @@
---- a/src/EDITME	2018-02-07 09:39:41.449345768 +0100
-+++ b/src/EDITME	2018-02-07 09:40:08.993393374 +0100
-@@ -942,12 +942,12 @@
+diff --git a/src/EDITME b/src/EDITME
+index 4e3a9a3..e3b98e9 100644
+--- a/src/EDITME
++++ b/src/EDITME
+@@ -972,12 +972,12 @@ SUPPORT_PAM=yes
  # If you may want to use outbound (client-side) proxying, using Socks5,
  # uncomment the line below.
  
@@ -15,4 +17,3 @@
  
  
  #------------------------------------------------------------------------------
-

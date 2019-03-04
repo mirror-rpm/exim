@@ -1,5 +1,5 @@
 diff --git a/src/configure.default b/src/configure.default
-index 9242bac..439287a 100644
+index 9242bac..eabf102 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -119,6 +119,7 @@ hostlist   relay_from_hosts = localhost
@@ -85,9 +85,9 @@ index 9242bac..439287a 100644
  
    # Deny if the message contains a virus. Before enabling this check, you
    # must install a virus scanner and set the av_scanner option above.
-@@ -669,8 +708,30 @@ acl_check_mime:
-                         {\N(\.exe|\.pif|\.bat|\.scr|\.lnk|\.com)$\N} \
-                      {1}{0}}
+@@ -658,8 +697,31 @@ acl_check_data:
+   #         message   = Your message scored $spam_score SpamAssassin point. Report follows:\n\
+   #  	    	        $spam_report
  
 +  # Trigger greylisting (if enabled) if the SpamAssassin score is greater than 0.5
 +  #
@@ -113,6 +113,7 @@ index 9242bac..439287a 100644
  
 +# To enable the greylisting, also uncomment this line:
 +# .include /etc/exim/exim-greylist.conf.inc
++
+ acl_check_mime:
  
- ######################################################################
- #                      ROUTERS CONFIGURATION                         #
+   # File extension filtering.

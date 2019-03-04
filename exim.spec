@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Provides: MTA smtpd smtpdaemon server(smtp)
@@ -60,7 +60,7 @@ Patch26: exim-4.85-pic.patch
 Patch27: exim-4.92-environment.patch
 # Workaround for NIS removal from glibc, bug 1534920
 Patch33: exim-4.90.1-nsl-fix.patch
-Patch40: exim-4.89-support-proxies.patch
+Patch40: exim-4.92-support-proxies.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -577,6 +577,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Mar  4 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-4
+- Fixed greylist-conf patch
+  Related: rhbz#1679274
+
 * Sat Mar  2 2019 Tim Landscheidt <tim@tim-landscheidt.de> - 4.92-3
 - Fix syntax error in exim.conf (#1679274)
 - Use properly compressed empty mailq.1.gz as ghost file
