@@ -14,7 +14,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 Provides: MTA smtpd smtpdaemon server(smtp)
@@ -577,6 +577,10 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Mar 19 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-5
+- Processed greylist.db by cron job only if it has non zero size
+  Resolves: rhbz#1689211
+
 * Mon Mar  4 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-4
 - Fixed greylist-conf patch
   Related: rhbz#1679274
