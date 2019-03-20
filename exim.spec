@@ -6,26 +6,22 @@
 %bcond_without clamav
 %endif
 
-%global sysv2systemdnvr 4.76-6
-
 # hardened build if not overridden
 %{!?_hardened_build:%global _hardened_build 1}
 
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
+
 Provides: MTA smtpd smtpdaemon server(smtp)
-Requires(post): /sbin/chkconfig /sbin/service /sbin/restorecon %{_sbindir}/alternatives systemd systemd-sysv
+Requires(post): /sbin/restorecon %{_sbindir}/alternatives systemd
 Requires(preun): %{_sbindir}/alternatives systemd
 Requires(postun): %{_sbindir}/alternatives systemd
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if %{with clamav}
-%if 0%{?fedora} < 23
-Requires: initscripts
-%endif
 BuildRequires: clamav-devel
 %endif
 Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.xz
@@ -87,18 +83,6 @@ routed, and there are extensive facilities for checking incoming
 mail. Exim can be installed in place of sendmail, although the
 configuration of exim is quite different to that of sendmail.
 
-%if 0%{?fedora} < 23
-%package sysvinit
-Summary: SysV initscript for Exim
-BuildArch: noarch
-Requires: %{name} = %{version}-%{release}
-Requires(preun): chkconfig
-Requires(post): chkconfig
-
-%description sysvinit
-This package contains the SysV initscript for Exim.
-%endif
-
 %package mysql
 Summary: MySQL lookup support for Exim
 Requires: exim = %{version}-%{release}
@@ -127,8 +111,6 @@ interface.
 Summary: Clam Antivirus scanner dæmon configuration for use with Exim
 Requires: clamav-server exim
 Obsoletes: clamav-exim <= 0.86.2
-Requires(post): /sbin/chkconfig /sbin/service
-Requires(preun): /sbin/chkconfig /sbin/service
 
 %description clamav
 This package contains configuration files which invoke a copy of the
@@ -147,17 +129,6 @@ For further details of Exim content scanning, see chapter 41 of the Exim
 specification:
 http://www.exim.org/exim-html-%{version}/doc/html/spec_html/ch41.html
 
-%if 0%{?fedora} < 23
-%package clamav-sysvinit
-Summary: SysV initscript for Clam Antivirus scanner for Exim
-BuildArch: noarch
-Requires: exim-clamav = %{version}-%{release}
-Requires(preun): chkconfig
-Requires(post): chkconfig
-
-%description clamav-sysvinit
-This package contains the SysV initscript.
-%endif
 %endif
 
 %package greylist
@@ -222,8 +193,6 @@ cp exim_monitor/EDITME Local/eximon.conf
 make _lib=%{_lib} FULLECHO= LDFLAGS="%{?__global_ldflags} %{?_hardened_build:-pie -Wl,-z,relro,-z,now}"
 
 %install
-rm -rf $RPM_BUILD_ROOT
-
 mkdir -p $RPM_BUILD_ROOT%{_sbindir}
 mkdir -p $RPM_BUILD_ROOT%{_bindir}
 mkdir -p $RPM_BUILD_ROOT%{_libdir}
@@ -331,9 +300,6 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/clamd.d
 clamsubst clamd.conf %{_sysconfdir}/clamd.d/exim.conf exim exim \
        's!^##*\(\(LogFile\|LocalSocket\|PidFile\|User\)\s\|\(StreamSaveToDisk\|ScanMail\|LogTime\|ScanArchive\)$\)!\1!;s!^Example!#Example!;'
 
-%if 0%{?fedora} < 23
-clamsubst clamd.init %{_initrddir}/clamd.exim exim exim ''
-%endif
 clamsubst clamd.logrotate %{_sysconfdir}/logrotate.d/clamd.exim exim exim ''
 cat <<EOF > $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/clamd.exim
 CLAMD_CONFIG='%_sysconfdir/clamd.d/exim.conf'
@@ -400,29 +366,6 @@ if [ $1 -ge 1 ]; then
 		/usr/sbin/alternatives --set mta %{_sbindir}/sendmail.exim
 	fi
 fi
-
-%triggerun -- exim < %{sysv2systemdnvr}
-%{_bindir}/systemd-sysv-convert --save exim >/dev/null 2>&1 ||:
-/bin/systemctl enable exim.service >/dev/null 2>&1
-/sbin/chkconfig --del exim >/dev/null 2>&1 || :
-/bin/systemctl try-restart exim.service >/dev/null 2>&1 || :
-
-%if 0%{?fedora} < 23
-%triggerpostun -n exim-sysvinit -- exim < %{sysv2systemdnvr}
-/sbin/chkconfig --add exim >/dev/null 2>&1 || :
-
-%post sysvinit
-/sbin/chkconfig --add exim >/dev/null 2>&1 ||:
-
-%preun sysvinit
-if [ "$1" = 0 ]; then
-	%{_initrddir}/exim stop >/dev/null 2>&1 ||:
-	/sbin/chkconfig --del exim >/dev/null 2>&1 ||:
-fi
-
-%postun sysvinit
-[ "$1" -ge "1" ] && %{_initrddir}/exim condrestart >/dev/null 2>&1 ||:
-%endif
 
 %post greylist
 if [ ! -r %{_var}/spool/exim/db/greylist.db ]; then
@@ -495,11 +438,6 @@ fi
 %ghost %{_sysconfdir}/pam.d/smtp
 %ghost %{_mandir}/man1/mailq.1.gz
 
-%if 0%{?fedora} < 23
-%files sysvinit
-%{_initrddir}/exim
-%endif
-
 %files mysql
 %{_libdir}/exim/%{version}-%{release}/lookups/mysql.so
 
@@ -533,27 +471,6 @@ if [ $1 -ge 1 ] ; then
     /bin/systemctl try-restart clamd.exim.service >/dev/null 2>&1 || :
 fi
 
-%triggerun -- clamav < %{sysv2systemdnvr}
-%{_bindir}/systemd-sysv-convert --save clamd.exim >/dev/null 2>&1 ||:
-/bin/systemctl enable clamd.exim.service >/dev/null 2>&1
-/sbin/chkconfig --del clamd.exim >/dev/null 2>&1 || :
-/bin/systemctl try-restart clamd.exim.service >/dev/null 2>&1 || :
-
-%if 0%{?fedora} < 23
-%triggerpostun -n exim-clamav-sysvinit -- exim < %{sysv2systemdnvr}
-/sbin/chkconfig --add clamd.exim >/dev/null 2>&1 ||:
-
-%post clamav-sysvinit
-/sbin/chkconfig --add clamd.exim >/dev/null 2>&1 ||:
-
-%preun clamav-sysvinit
-test "$1" != 0 || %{_initrddir}/clamd.exim stop >/dev/null 2>&1 || :
-test "$1" != 0 || /sbin/chkconfig --del clamd.exim >/dev/null 2>&1 || :
-
-%postun clamav-sysvinit
-test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
-%endif
-
 %files clamav
 %{_sbindir}/clamd.exim
 %{_unitdir}/clamd.exim.service
@@ -563,11 +480,6 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_tmpfilesdir}/exim-clamav.conf
 %ghost %attr(0750,exim,exim) %dir %{_var}/run/clamd.exim
 %ghost %attr(0644,exim,exim) %{_var}/log/clamd.exim
-
-%if 0%{?fedora} < 23
-%files clamav-sysvinit
-%attr(0755,root,root) %config %{_initrddir}/clamd.exim
-%endif
 %endif
 
 %files greylist
@@ -577,6 +489,9 @@ test "$1"  = 0 || %{_initrddir}/clamd.exim condrestart >/dev/null 2>&1 || :
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Mar 20 2019 Peter Robinson <pbrobinson@fedoraproject.org> 4.92-6
+- Drop F-23 conditionals, and related obsolete bits
+
 * Tue Mar 19 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-5
 - Processed greylist.db by cron job only if it has non zero size
   Resolves: rhbz#1689211
