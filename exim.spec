@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 
@@ -57,6 +57,7 @@ Patch27: exim-4.92-environment.patch
 # Workaround for NIS removal from glibc, bug 1534920
 Patch33: exim-4.90.1-nsl-fix.patch
 Patch40: exim-4.92-support-proxies.patch
+Patch41: exim-4.92-dane-enable.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -175,6 +176,7 @@ greylisting unconditional.
 %patch27 -p1 -b .environment
 %patch33 -p1 -b .nsl-fix
 %patch40 -p1 -b .proxy
+%patch41 -p1 -b .dane-enable
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -489,6 +491,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Mar 27 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-7
+- Enabled DANE support
+  Resolves: rhbz#1693202
+
 * Wed Mar 20 2019 Peter Robinson <pbrobinson@fedoraproject.org> 4.92-6
 - Drop F-23 conditionals, and related obsolete bits
 

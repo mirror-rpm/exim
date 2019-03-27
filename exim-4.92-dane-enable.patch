@@ -1,0 +1,13 @@
+diff --git a/src/EDITME b/src/EDITME
+index e3b98e9..d621c46 100644
+--- a/src/EDITME
++++ b/src/EDITME
+@@ -372,7 +372,7 @@ PCRE_CONFIG=yes
+ # Uncomment the following line to add DANE support
+ # Note: Enabling this unconditionally overrides DISABLE_DNSSEC
+ # For DANE under GnuTLS we need an additional library.  See TLS_LIBS below.
+-# SUPPORT_DANE=yes
++SUPPORT_DANE=yes
+ 
+ #------------------------------------------------------------------------------
+ # Additional libraries and include directories may be required for some
