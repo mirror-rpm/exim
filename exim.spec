@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 
@@ -491,6 +491,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu May 30 2019 Jitka Plesnikova <jplesnik@redhat.com> - 4.92-8
+- Perl 5.30 rebuild
+
 * Wed Mar 27 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92-7
 - Enabled DANE support
   Resolves: rhbz#1693202
