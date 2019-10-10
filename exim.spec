@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 
@@ -485,6 +485,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Oct 10 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92.3-3
+- Enabled local_scan
+
 * Thu Oct 10 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92.3-2
 - Dropped sysvinit artifacts
 

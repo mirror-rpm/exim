@@ -2,7 +2,7 @@ diff --git a/src/EDITME b/src/EDITME
 index a42cd6f..0acd673 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -822,6 +822,20 @@ TLS_LIBS=-lssl -lcrypto
+@@ -822,6 +822,21 @@ TLS_LIBS=-lssl -lcrypto
  # specified in INCLUDE.
  
  
@@ -13,6 +13,7 @@ index a42cd6f..0acd673 100644
 +# description of the API to this function, see the Exim specification.
 +
 +DLOPEN_LOCAL_SCAN=yes
++HAVE_LOCAL_SCAN=yes
 +
 +# If you set DLOPEN_LOCAL_SCAN, then you need to include -rdynamic in the
 +# linker flags.  Without it, the loaded .so won't be able to access any

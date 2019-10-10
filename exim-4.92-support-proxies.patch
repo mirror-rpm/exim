@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index 4e3a9a3..e3b98e9 100644
+index 4c20169..fbfade3 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -972,12 +972,12 @@ SUPPORT_PAM=yes
+@@ -973,12 +973,12 @@ SUPPORT_PAM=yes
  # If you may want to use outbound (client-side) proxying, using Socks5,
  # uncomment the line below.
  
