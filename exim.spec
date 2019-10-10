@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: http://www.exim.org/
 
@@ -25,7 +25,6 @@ Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 BuildRequires: clamav-devel
 %endif
 Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.xz
-Source2: exim.init
 Source3: exim.sysconfig
 Source4: exim.logrotate
 Source5: exim-tidydb.sh
@@ -255,11 +254,6 @@ pod2man --center=EXIM --section=8 \
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
 install -m 644 %SOURCE3 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/exim
-
-%if 0%{?fedora} < 23
-mkdir -p $RPM_BUILD_ROOT%{_initrddir}
-install %SOURCE2 $RPM_BUILD_ROOT%{_initrddir}/exim
-%endif
 
 # Systemd
 mkdir -p %{buildroot}%{_unitdir}
@@ -491,6 +485,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Oct 10 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92.3-2
+- Dropped sysvinit artifacts
+
 * Mon Sep 30 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92.3-1
 - New version
   Resolves: rhbz#1756656
