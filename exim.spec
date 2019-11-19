@@ -12,9 +12,9 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
-Url: http://www.exim.org/
+Url: https://www.exim.org/
 
 Provides: MTA smtpd smtpdaemon server(smtp)
 Requires(post): /sbin/restorecon %{_sbindir}/alternatives systemd
@@ -24,7 +24,10 @@ Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if %{with clamav}
 BuildRequires: clamav-devel
 %endif
-Source: ftp://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.xz
+Source: https://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.xz
+Source1: https://ftp.exim.org/pub/exim/exim4/%{name}-%{version}.tar.xz.asc
+Source2: https://www.exim.org/static/keys/hs@schlittermann.de.asc
+
 Source3: exim.sysconfig
 Source4: exim.logrotate
 Source5: exim-tidydb.sh
@@ -72,6 +75,10 @@ BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
 BuildRequires: systemd-units libgsasl-devel mariadb-devel
 # Workaround for NIS removal from glibc, bug 1534920
 BuildRequires: libnsl2-devel libtirpc-devel
+BuildRequires:  gnupg2
+%if 0%{?rhel} == 8
+BuildRequires:  epel-rpm-macros >= 8-5
+%endif
 
 %description
 Exim is a message transfer agent (MTA) developed at the University of
@@ -157,6 +164,7 @@ greylisting for whatever 'offences' you can dream of, or even to make
 greylisting unconditional.
 
 %prep
+%{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
 %setup -q
 
 %patch4 -p1 -b .rhl
@@ -485,6 +493,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Nov 22 2019 Felix Schwarz <fschwarz@fedoraproject.org> - 4.92.3-4
+- enable GPG-based source file verification
+
 * Thu Oct 10 2019 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92.3-3
 - Enabled local_scan
 
