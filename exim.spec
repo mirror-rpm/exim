@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.92.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -22,7 +22,7 @@ Requires(preun): %{_sbindir}/alternatives systemd
 Requires(postun): %{_sbindir}/alternatives systemd
 Requires(pre): %{_sbindir}/groupadd, %{_sbindir}/useradd
 %if %{with clamav}
-BuildRequires: clamav-devel
+BuildRequires: clamd
 %endif
 Source: https://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.xz
 Source1: https://ftp.exim.org/pub/exim/exim4/%{name}-%{version}.tar.xz.asc
@@ -297,7 +297,7 @@ gzip < /dev/null > $RPM_BUILD_ROOT%{_mandir}/man1/mailq.1.gz
 # Munge the clamav init and config files from clamav-devel. This really ought
 # to be a subpackage of clamav, but this hack will have to do for now.
 function clamsubst() {
-	 sed -e "s!<SERVICE>!$3!g;s!<USER>!$4!g;""$5" %{_datadir}/clamav/template/"$1" >"$RPM_BUILD_ROOT$2"
+	 sed -e "s!<SERVICE>!$3!g;s!<USER>!$4!g;""$5" %{_docdir}/clamd/"$1" >"$RPM_BUILD_ROOT$2"
 }
 
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/clamd.d
@@ -493,6 +493,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Jan  2 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92.3-5
+- Fixed FTBFS due to changes in clamav package
+  Resolves: rhbz#1787285
+
 * Fri Nov 22 2019 Felix Schwarz <fschwarz@fedoraproject.org> - 4.92.3-4
 - enable GPG-based source file verification
 
