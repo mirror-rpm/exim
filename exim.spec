@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.92.3
-Release: 5%{?dist}
+Version: 4.93
+Release: 1%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -42,24 +42,10 @@ Source24: exim.service
 Source25: exim-gen-cert
 Source26: clamd.exim.service
 
-Patch4: exim-4.92-rhl.patch
-Patch6: exim-4.92-config.patch
-Patch8: exim-4.82-libdir.patch
-Patch12: exim-4.92-cyrus.patch
-Patch13: exim-4.92-pamconfig.patch
-Patch14: exim-4.92-spamdconf.patch
-Patch18: exim-4.92-dlopen-localscan.patch
-Patch19: exim-4.92-procmail.patch
-Patch20: exim-4.92-allow-filter.patch
-Patch21: exim-4.92-localhost-is-local.patch
-Patch22: exim-4.92-greylist-conf.patch
-Patch23: exim-4.92-smarthost-config.patch
-Patch26: exim-4.85-pic.patch
-Patch27: exim-4.92-environment.patch
-# Workaround for NIS removal from glibc, bug 1534920
-Patch33: exim-4.90.1-nsl-fix.patch
-Patch40: exim-4.92-support-proxies.patch
-Patch41: exim-4.92-dane-enable.patch
+Patch0: exim-4.93-config.patch
+Patch1: exim-4.93-libdir.patch
+Patch2: exim-4.93-dlopen-localscan.patch
+Patch3: exim-4.85-pic.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -167,23 +153,10 @@ greylisting unconditional.
 %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data='%{SOURCE0}'
 %setup -q
 
-%patch4 -p1 -b .rhl
-%patch6 -p1 -b .config
-%patch8 -p1 -b .libdir
-%patch12 -p1 -b .cyrus
-%patch13 -p1 -b .pam
-%patch14 -p1 -b .spamd
-%patch18 -p1 -b .dl
-%patch19 -p1 -b .procmail
-%patch20 -p1 -b .filter
-%patch21 -p1 -b .localhost
-%patch22 -p1 -b .grey
-%patch23 -p1 -b .smarthost
-%patch26 -p1 -b .fpic
-%patch27 -p1 -b .environment
-%patch33 -p1 -b .nsl-fix
-%patch40 -p1 -b .proxy
-%patch41 -p1 -b .dane-enable
+%patch0 -p1 -b .config
+%patch1 -p1 -b .libdir
+%patch2 -p1 -b .dl
+%patch3 -p1 -b .fpic
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -493,6 +466,12 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Jan 12 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-1
+- New version
+  Resolves: rhbz#1782320
+- Consolidated and simplified patches
+- Dropped dane-enable patch (not needed)
+
 * Thu Jan  2 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.92.3-5
 - Fixed FTBFS due to changes in clamav package
   Resolves: rhbz#1787285

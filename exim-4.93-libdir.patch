@@ -1,8 +1,8 @@
 diff --git a/OS/Makefile-Linux b/OS/Makefile-Linux
-index 990f884..d1ef114 100644
+index ae9f249..060658a 100644
 --- a/OS/Makefile-Linux
 +++ b/OS/Makefile-Linux
-@@ -24,8 +24,8 @@ LIBRESOLV = -lresolv
+@@ -26,8 +26,8 @@ LIBRESOLV = -lresolv
  
  X11=/usr/X11R6
  XINCLUDE=-I$(X11)/include
