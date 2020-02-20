@@ -150,6 +150,21 @@ index 83325ab..a861c7f 100644
  
  # If you have content scanning you may wish to only include some of the scanner
  # interfaces.  Uncomment any of these lines to remove that code.
+@@ -592,12 +598,12 @@
+ 
+ # Uncomment the following line to add DMARC checking capability, implemented
+ # using libopendmarc libraries. You must have SPF and DKIM support enabled also.
+-# SUPPORT_DMARC=yes
++SUPPORT_DMARC=yes
+ # CFLAGS += -I/usr/local/include
+ # LDFLAGS += -lopendmarc
+ # Uncomment the following if you need to change the default. You can
+ # override it at runtime (main config option dmarc_tld_file)
+-# DMARC_TLD_FILE=/etc/exim/opendmarc.tlds
++DMARC_TLD_FILE=/usr/share/publicsuffix/public_suffix_list.dat
+ 
+ # Uncomment the following line to add ARC (Authenticated Received Chain)
+ # support.  You must have SPF and DKIM support enabled also.
 @@ -707,7 +713,7 @@ FIXED_NEVER_USERS=root
  # CONFIGURE_OWNER setting, to specify a configuration file which is listed in
  # the TRUSTED_CONFIG_LIST file, then root privileges are not dropped by Exim.
@@ -264,6 +279,15 @@ index 83325ab..a861c7f 100644
  
  
  #------------------------------------------------------------------------------
+@@ -1029,7 +1050,7 @@
+ # installed on your system (www.libspf2.org). Depending on where it is installed
+ # you may have to edit the CFLAGS and LDFLAGS lines.
+ 
+-# SUPPORT_SPF=yes
++SUPPORT_SPF=yes
+ # CFLAGS  += -I/usr/local/include
+ # LDFLAGS += -lspf2
+ 
 @@ -1096,7 +1102,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
@@ -465,6 +489,14 @@ index cf38305..472b801 100644
  # This access control list is used for every RCPT command in an incoming
  # SMTP message. The tests are run in order until the address is either
  # accepted or denied.
+@@ -392,6 +435,7 @@
+ 
+   accept  hosts = :
+           control = dkim_disable_verify
++          control = dmarc_disable_verify
+ 
+   #############################################################################
+   # The following section of the ACL is concerned with local parts that contain
 @@ -445,7 +488,8 @@ acl_check_rcpt:
    accept  local_parts   = postmaster
            domains       = +local_domains
@@ -474,6 +506,22 @@ index cf38305..472b801 100644
 +  # address, read the documentation on callouts and add the /callout modifier.
  
    require verify        = sender
+ 
+@@ -471,6 +516,7 @@
+   accept  hosts         = +relay_from_hosts
+           control       = submission
+           control       = dkim_disable_verify
++          control       = dmarc_disable_verify
+ 
+   # Accept if the message arrived over an authenticated connection, from
+   # any host. Again, these messages are usually from MUAs, so recipient
+@@ -480,6 +526,7 @@
+   accept  authenticated = *
+           control       = submission
+           control       = dkim_disable_verify
++          control       = dmarc_disable_verify
+ 
+   # Insist that a HELO/EHLO was accepted.
  
 @@ -505,7 +549,8 @@ acl_check_rcpt:
    # There are no default checks on DNS black lists because the domains that

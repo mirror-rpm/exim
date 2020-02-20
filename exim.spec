@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.93
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -50,8 +50,10 @@ Patch3: exim-4.85-pic.patch
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+Recommends: publicsuffix-list
 BuildRequires: gcc libdb-devel openssl-devel openldap-devel pam-devel
 BuildRequires: pcre-devel sqlite-devel cyrus-sasl-devel
+BuildRequires: libspf2-devel libopendmarc-devel
 BuildRequires: openldap-devel openssl-devel mariadb-connector-c-devel libpq-devel
 BuildRequires: libXaw-devel libXmu-devel libXext-devel libX11-devel libSM-devel
 BuildRequires: perl-devel
@@ -172,7 +174,7 @@ cp exim_monitor/EDITME Local/eximon.conf
 	export PIE=-fPIE
 	export PIC=-fPIC
 %endif
-make _lib=%{_lib} FULLECHO= LDFLAGS="%{?__global_ldflags} %{?_hardened_build:-pie -Wl,-z,relro,-z,now}"
+make _lib=%{_lib} FULLECHO= LDFLAGS="%{?__global_ldflags} %{?_hardened_build:-pie -Wl,-z,relro,-z,now} -lopendmarc -lspf2"
 
 %install
 mkdir -p $RPM_BUILD_ROOT%{_sbindir}
@@ -466,6 +468,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Feb 20 2020 Tom Hughes <tom@compton.nu> - 4.93-3
+- Enable SPF and DMARC support
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4.93-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
