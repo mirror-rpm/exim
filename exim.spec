@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.93
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -305,6 +305,15 @@ touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
 %check
 build-`scripts/os-type`-`scripts/arch-type`/exim -C src/configure.default -bV
 
+%pretrans
+# Workaround for rhbz#1791878
+if [ -d %{_docdir}/exim/doc/cve-2019-13917 ]; then
+  rm -f %{_docdir}/exim/doc/cve-2019-13917/*
+  rmdir %{_docdir}/exim/doc/cve-2019-13917
+fi
+
+exit 0
+
 %pre
 %{_sbindir}/groupadd -g 93 exim 2>/dev/null
 %{_sbindir}/useradd -d %{_var}/spool/exim -s /sbin/nologin -G mail -M -r -u 93 -g exim exim 2>/dev/null
@@ -468,6 +477,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri Mar 20 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-4
+- Workaround for upgrade conflict
+  Resolves: rhbz#1791878
+
 * Thu Feb 20 2020 Tom Hughes <tom@compton.nu> - 4.93-3
 - Enable SPF and DMARC support
 
