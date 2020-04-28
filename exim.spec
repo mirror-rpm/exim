@@ -104,7 +104,7 @@ interface.
 %if %{with clamav}
 %package clamav
 Summary: Clam Antivirus scanner dæmon configuration for use with Exim
-Requires: clamav-server exim
+Requires: clamd exim
 Obsoletes: clamav-exim <= 0.86.2
 
 %description clamav
