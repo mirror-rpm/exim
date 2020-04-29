@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.93
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -477,6 +477,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Apr 29 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-6
+- Updated config to explictly link with spf2 and opendmarc
+- Fixed bogus date in changelog
+
 * Wed Apr 29 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-5
 - Bump for rebuild with the fixed clamd requirement
   Resolves: rhbz#1801329
@@ -491,7 +495,7 @@ fi
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 4.93-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
-* Wed Jan 12 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-1
+* Sun Jan 12 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-1
 - New version
   Resolves: rhbz#1782320
 - Consolidated and simplified patches

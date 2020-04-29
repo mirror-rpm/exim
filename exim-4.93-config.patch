@@ -12,7 +12,7 @@ index ecd2083..cf1eeb2 100755
    echo "" >>$mft
    cat $mftt >> $mft
 diff --git a/src/EDITME b/src/EDITME
-index 83325ab..a861c7f 100644
+index 83325ab..4cc0c80 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -100,7 +100,7 @@
@@ -150,14 +150,15 @@ index 83325ab..a861c7f 100644
  
  # If you have content scanning you may wish to only include some of the scanner
  # interfaces.  Uncomment any of these lines to remove that code.
-@@ -592,12 +598,12 @@
+@@ -592,12 +598,12 @@ DISABLE_MAL_MKS=yes
  
  # Uncomment the following line to add DMARC checking capability, implemented
  # using libopendmarc libraries. You must have SPF and DKIM support enabled also.
 -# SUPPORT_DMARC=yes
 +SUPPORT_DMARC=yes
  # CFLAGS += -I/usr/local/include
- # LDFLAGS += -lopendmarc
+-# LDFLAGS += -lopendmarc
++LDFLAGS += -lopendmarc
  # Uncomment the following if you need to change the default. You can
  # override it at runtime (main config option dmarc_tld_file)
 -# DMARC_TLD_FILE=/etc/exim/opendmarc.tlds
@@ -279,15 +280,18 @@ index 83325ab..a861c7f 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1029,7 +1050,7 @@
+@@ -1029,9 +1035,9 @@ ZCAT_COMMAND=/usr/bin/zcat
  # installed on your system (www.libspf2.org). Depending on where it is installed
  # you may have to edit the CFLAGS and LDFLAGS lines.
  
 -# SUPPORT_SPF=yes
 +SUPPORT_SPF=yes
  # CFLAGS  += -I/usr/local/include
- # LDFLAGS += -lspf2
+-# LDFLAGS += -lspf2
++LDFLAGS += -lspf2
  
+ 
+ #------------------------------------------------------------------------------
 @@ -1096,7 +1102,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
@@ -357,7 +361,7 @@ index 83325ab..a861c7f 100644
  # If PID_FILE_PATH is not defined, Exim writes a file in its spool directory
  # using the name "exim-daemon.pid".
 diff --git a/src/configure.default b/src/configure.default
-index cf38305..472b801 100644
+index cf38305..8ddabfe 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -67,7 +67,7 @@
@@ -489,7 +493,7 @@ index cf38305..472b801 100644
  # This access control list is used for every RCPT command in an incoming
  # SMTP message. The tests are run in order until the address is either
  # accepted or denied.
-@@ -392,6 +435,7 @@
+@@ -392,6 +435,7 @@ acl_check_rcpt:
  
    accept  hosts = :
            control = dkim_disable_verify
@@ -497,7 +501,7 @@ index cf38305..472b801 100644
  
    #############################################################################
    # The following section of the ACL is concerned with local parts that contain
-@@ -445,7 +488,8 @@ acl_check_rcpt:
+@@ -445,7 +489,8 @@ acl_check_rcpt:
    accept  local_parts   = postmaster
            domains       = +local_domains
  
@@ -507,7 +511,7 @@ index cf38305..472b801 100644
  
    require verify        = sender
  
-@@ -471,6 +516,7 @@
+@@ -471,6 +516,7 @@ acl_check_rcpt:
    accept  hosts         = +relay_from_hosts
            control       = submission
            control       = dkim_disable_verify
@@ -515,7 +519,7 @@ index cf38305..472b801 100644
  
    # Accept if the message arrived over an authenticated connection, from
    # any host. Again, these messages are usually from MUAs, so recipient
-@@ -480,6 +526,7 @@
+@@ -480,6 +526,7 @@ acl_check_rcpt:
    accept  authenticated = *
            control       = submission
            control       = dkim_disable_verify
@@ -523,7 +527,7 @@ index cf38305..472b801 100644
  
    # Insist that a HELO/EHLO was accepted.
  
-@@ -505,7 +549,8 @@ acl_check_rcpt:
+@@ -505,7 +552,8 @@ acl_check_rcpt:
    # There are no default checks on DNS black lists because the domains that
    # contain these lists are changing all the time. However, here are two
    # examples of how you can get Exim to perform a DNS black list lookup at this
@@ -533,7 +537,7 @@ index cf38305..472b801 100644
    #
    # deny    message       = rejected because $sender_host_address is in a black list at $dnslist_domain\n$dnslist_text
    #         dnslists      = black.list.example
-@@ -513,6 +558,10 @@ acl_check_rcpt:
+@@ -513,6 +561,10 @@ acl_check_rcpt:
    # warn    dnslists      = black.list.example
    #         add_header    = X-Warning: $sender_host_address is in a black list at $dnslist_domain
    #         log_message   = found in $dnslist_domain
@@ -544,7 +548,7 @@ index cf38305..472b801 100644
    #############################################################################
  
    #############################################################################
-@@ -539,6 +588,10 @@ acl_check_rcpt:
+@@ -539,6 +591,10 @@ acl_check_rcpt:
    #        set acl_m_content_filter = ${lookup PER_RCPT_CONTENT_FILTER}
    #############################################################################
  
@@ -555,7 +559,7 @@ index cf38305..472b801 100644
    # At this point, the address has passed all the checks that have been
    # configured, so we accept it unconditionally.
  
-@@ -588,21 +641,32 @@ acl_check_data:
+@@ -588,21 +644,32 @@ acl_check_data:
            message =     header syntax
            log_message = header syntax ($acl_verify_message)
  
@@ -596,7 +600,7 @@ index cf38305..472b801 100644
  
    #############################################################################
    # No more tests if PRDR was actively used.
-@@ -616,11 +680,63 @@ acl_check_data:
+@@ -616,11 +683,63 @@ acl_check_data:
    #           condition    = ...
    #############################################################################
  
@@ -661,7 +665,7 @@ index cf38305..472b801 100644
  
  
  ######################################################################
-@@ -722,7 +838,7 @@ system_aliases:
+@@ -722,7 +841,7 @@ system_aliases:
    driver = redirect
    allow_fail
    allow_defer
@@ -670,7 +674,7 @@ index cf38305..472b801 100644
  # user = exim
    file_transport = address_file
    pipe_transport = address_pipe
-@@ -760,7 +876,7 @@ userforward:
+@@ -760,7 +879,7 @@ userforward:
  # local_part_suffix = +* : -*
  # local_part_suffix_optional
    file = $home/.forward
@@ -679,7 +683,7 @@ index cf38305..472b801 100644
    no_verify
    no_expn
    check_ancestor
-@@ -768,6 +884,12 @@ userforward:
+@@ -768,6 +887,12 @@ userforward:
    pipe_transport = address_pipe
    reply_transport = address_reply
  
@@ -692,7 +696,7 @@ index cf38305..472b801 100644
  
  # This router matches local user mailboxes. If the router fails, the error
  # message is "Unknown user".
-@@ -812,6 +934,25 @@ remote_smtp:
+@@ -812,6 +937,25 @@ remote_smtp:
    hosts_try_prdr = *
  .endif
  
@@ -718,7 +722,7 @@ index cf38305..472b801 100644
  
  # This transport is used for delivering messages to a smarthost, if the
  # smarthost router is enabled.  This starts from the same basis as
-@@ -867,8 +1008,8 @@ local_delivery:
+@@ -867,8 +1011,8 @@ local_delivery:
    delivery_date_add
    envelope_to_add
    return_path_add
@@ -729,7 +733,7 @@ index cf38305..472b801 100644
  
  
  # This transport is used for handling pipe deliveries generated by alias or
-@@ -901,6 +1042,16 @@ address_reply:
+@@ -901,6 +1045,16 @@ address_reply:
    driver = autoreply
  
  
@@ -746,7 +750,7 @@ index cf38305..472b801 100644
  
  ######################################################################
  #                      RETRY CONFIGURATION                           #
-@@ -941,6 +1092,21 @@ begin rewrite
+@@ -941,6 +1095,21 @@ begin rewrite
  #                   AUTHENTICATION CONFIGURATION                     #
  ######################################################################
  
@@ -768,7 +772,7 @@ index cf38305..472b801 100644
  # The following authenticators support plaintext username/password
  # authentication using the standard PLAIN mechanism and the traditional
  # but non-standard LOGIN mechanism, with Exim acting as the server.
-@@ -956,7 +1122,7 @@ begin rewrite
+@@ -956,7 +1125,7 @@ begin rewrite
  # The default RCPT ACL checks for successful authentication, and will accept
  # messages from authenticated users from anywhere on the Internet.
  
@@ -777,7 +781,7 @@ index cf38305..472b801 100644
  
  # PLAIN authentication has no server prompts. The client sends its
  # credentials in one lump, containing an authorization ID (which we do not
-@@ -970,7 +1136,7 @@ begin authenticators
+@@ -970,7 +1139,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -786,7 +790,7 @@ index cf38305..472b801 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -982,7 +1148,7 @@ begin authenticators
+@@ -982,7 +1151,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:
