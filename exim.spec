@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.93
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -477,6 +477,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Apr 29 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-5
+- Bump for rebuild with the fixed clamd requirement
+  Resolves: rhbz#1801329
+
 * Fri Mar 20 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-4
 - Workaround for upgrade conflict
   Resolves: rhbz#1791878
