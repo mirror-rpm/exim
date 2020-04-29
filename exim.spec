@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.93
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -174,7 +174,9 @@ cp exim_monitor/EDITME Local/eximon.conf
 	export PIE=-fPIE
 	export PIC=-fPIC
 %endif
-make _lib=%{_lib} FULLECHO= LDFLAGS="%{?__global_ldflags} %{?_hardened_build:-pie -Wl,-z,relro,-z,now} -lopendmarc -lspf2"
+
+export LDFLAGS="%{?__global_ldflags} %{?_hardened_build:-pie -Wl,-z,relro,-z,now}"
+make _lib=%{_lib} FULLECHO=
 
 %install
 mkdir -p $RPM_BUILD_ROOT%{_sbindir}
@@ -477,6 +479,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Wed Apr 29 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-7
+- Improved the spec file not to override LDFLAGS
+
 * Wed Apr 29 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-6
 - Updated config to explictly link with spf2 and opendmarc
 - Fixed bogus date in changelog
