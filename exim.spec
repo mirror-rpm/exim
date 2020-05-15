@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.93
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -46,6 +46,7 @@ Patch0: exim-4.93-config.patch
 Patch1: exim-4.93-libdir.patch
 Patch2: exim-4.93-dlopen-localscan.patch
 Patch3: exim-4.85-pic.patch
+Patch4: exim-4.93-CVE-2020-12783.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -159,6 +160,7 @@ greylisting unconditional.
 %patch1 -p1 -b .libdir
 %patch2 -p1 -b .dl
 %patch3 -p1 -b .fpic
+%patch4 -p1 -b .CVE-2020-12783
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -479,6 +481,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri May 15 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-8
+- Fixed out-of-bounds read in the SPA authenticator
+  Resolves: CVE-2020-12783
+
 * Wed Apr 29 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-7
 - Improved the spec file not to override LDFLAGS
 
