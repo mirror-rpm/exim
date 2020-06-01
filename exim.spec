@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.93
-Release: 8%{?dist}
+Version: 4.94
+Release: 1%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -26,7 +26,7 @@ BuildRequires: clamd
 %endif
 Source: https://ftp.exim.org/pub/exim/exim4/exim-%{version}.tar.xz
 Source1: https://ftp.exim.org/pub/exim/exim4/%{name}-%{version}.tar.xz.asc
-Source2: https://www.exim.org/static/keys/hs@schlittermann.de.asc
+Source2: https://downloads.exim.org/Exim-Maintainers-Keyring.asc
 
 Source3: exim.sysconfig
 Source4: exim.logrotate
@@ -42,11 +42,10 @@ Source24: exim.service
 Source25: exim-gen-cert
 Source26: clamd.exim.service
 
-Patch0: exim-4.93-config.patch
-Patch1: exim-4.93-libdir.patch
-Patch2: exim-4.93-dlopen-localscan.patch
+Patch0: exim-4.94-config.patch
+Patch1: exim-4.94-libdir.patch
+Patch2: exim-4.94-dlopen-localscan.patch
 Patch3: exim-4.85-pic.patch
-Patch4: exim-4.93-CVE-2020-12783.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -64,7 +63,7 @@ BuildRequires: libICE-devel libXpm-devel libXt-devel perl(ExtUtils::Embed)
 BuildRequires: systemd-units libgsasl-devel mariadb-devel
 # Workaround for NIS removal from glibc, bug 1534920
 BuildRequires: libnsl2-devel libtirpc-devel
-BuildRequires:  gnupg2
+BuildRequires: gnupg2 grep
 %if 0%{?rhel} == 8
 BuildRequires:  epel-rpm-macros >= 8-5
 %endif
@@ -160,13 +159,18 @@ greylisting unconditional.
 %patch1 -p1 -b .libdir
 %patch2 -p1 -b .dl
 %patch3 -p1 -b .fpic
-%patch4 -p1 -b .CVE-2020-12783
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
 sed -i 's@^# AUTH_LIBS=-lsasl2@AUTH_LIBS=-lsasl2@' Local/Makefile
 cp exim_monitor/EDITME Local/eximon.conf
 
+# Workaround for rhbz#1791878
+pushd doc
+for f in $(ls -dp cve-* | grep -v '/\|\(\.txt\)$'); do
+  mv "$f" "$f.txt"
+done
+popd
 
 %build
 %ifnarch s390 s390x sparc sparcv9 sparcv9v sparc64 sparc64v
@@ -308,15 +312,6 @@ touch $RPM_BUILD_ROOT/%_var/spool/exim/db/greylist.db
 
 %check
 build-`scripts/os-type`-`scripts/arch-type`/exim -C src/configure.default -bV
-
-%pretrans
-# Workaround for rhbz#1791878
-if [ -d %{_docdir}/exim/doc/cve-2019-13917 ]; then
-  rm -f %{_docdir}/exim/doc/cve-2019-13917/*
-  rmdir %{_docdir}/exim/doc/cve-2019-13917
-fi
-
-exit 0
 
 %pre
 %{_sbindir}/groupadd -g 93 exim 2>/dev/null
@@ -481,6 +476,14 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Jun  1 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.94-1
+- New version
+  Resolves: rhbz#1842590
+- Used Exim maintainers keyring for GPG verification
+- Dropped CVE-2020-12783 patch (upstreamed)
+- Used better workaround for rhbz#1791878
+  Resolves: rhbz#1842633
+
 * Fri May 15 2020 Jaroslav Škarvada <jskarvad@redhat.com> - 4.93-8
 - Fixed out-of-bounds read in the SPA authenticator
   Resolves: CVE-2020-12783

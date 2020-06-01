@@ -1,8 +1,8 @@
 diff --git a/src/EDITME b/src/EDITME
-index 5ba24d9..4451572 100644
+index 65082b5..757a1a3 100644
 --- a/src/EDITME
 +++ b/src/EDITME
-@@ -873,6 +873,21 @@ HAVE_ICONV=yes
+@@ -882,6 +882,21 @@ HAVE_ICONV=yes
  # *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING ***
  
  
@@ -25,7 +25,7 @@ index 5ba24d9..4451572 100644
  # The default distribution of Exim contains only the plain text form of the
  # documentation. Other forms are available separately. If you want to install
 diff --git a/src/config.h.defaults b/src/config.h.defaults
-index b94b368..89b39e8 100644
+index e17f015..008b97b 100644
 --- a/src/config.h.defaults
 +++ b/src/config.h.defaults
 @@ -33,6 +33,8 @@ Do not put spaces between # and the 'define'.
@@ -38,10 +38,10 @@ index b94b368..89b39e8 100644
  
  #define CONFIGURE_FILE
 diff --git a/src/globals.c b/src/globals.c
-index 358c380..590ac63 100644
+index fc3086f..aa11a9b 100644
 --- a/src/globals.c
 +++ b/src/globals.c
-@@ -145,6 +145,10 @@ uschar *tls_verify_hosts       = NULL;
+@@ -147,6 +147,10 @@ uschar *tls_verify_hosts       = NULL;
  uschar *tls_advertise_hosts    = NULL;
  #endif
  
@@ -53,10 +53,10 @@ index 358c380..590ac63 100644
  /* Per Recipient Data Response variables */
  BOOL    prdr_enable            = FALSE;
 diff --git a/src/globals.h b/src/globals.h
-index ca342ac..82a8661 100644
+index c80c853..333455c 100644
 --- a/src/globals.h
 +++ b/src/globals.h
-@@ -138,6 +138,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
+@@ -141,6 +141,11 @@ extern uschar *tls_try_verify_hosts;   /* Optional client verification */
  extern uschar *tls_verify_certificates;/* Path for certificates to check */
  extern uschar *tls_verify_hosts;       /* Mandatory client verification */
  #endif
@@ -69,7 +69,7 @@ index ca342ac..82a8661 100644
  
  extern uschar  *dsn_envid;             /* DSN envid string */
 diff --git a/src/local_scan.c b/src/local_scan.c
-index 4dd0b2b..8599172 100644
+index 4dd0b2b..72e0033 100644
 --- a/src/local_scan.c
 +++ b/src/local_scan.c
 @@ -5,61 +5,135 @@
@@ -77,17 +77,16 @@ index 4dd0b2b..8599172 100644
  /* See the file NOTICE for conditions of use and distribution. */
  
 +#include <local_scan.h>
-+
-+#ifdef DLOPEN_LOCAL_SCAN
-+extern uschar *local_scan_path;        /* Path to local_scan() library */
-+#endif
  
 -/******************************************************************************
 -This file contains a template local_scan() function that just returns ACCEPT.
 -If you want to implement your own version, you should copy this file to, say
 -Local/local_scan.c, and edit the copy. To use your version instead of the
 -default, you must set
--
++#ifdef DLOPEN_LOCAL_SCAN
++extern uschar *local_scan_path;        /* Path to local_scan() library */
++#endif
+ 
 -HAVE_LOCAL_SCAN=yes
 -LOCAL_SCAN_SOURCE=Local/local_scan.c
 -
@@ -257,16 +256,16 @@ index 4dd0b2b..8599172 100644
 +
  /* End of local_scan.c */
 diff --git a/src/readconf.c b/src/readconf.c
-index 0233019..186ba39 100644
+index 0d0769c..f1bb0ef 100644
 --- a/src/readconf.c
 +++ b/src/readconf.c
-@@ -203,6 +203,9 @@ static optionlist optionlist_config[] = {
-   { "local_from_prefix",        opt_stringptr,   &local_from_prefix },
-   { "local_from_suffix",        opt_stringptr,   &local_from_suffix },
-   { "local_interfaces",         opt_stringptr,   &local_interfaces },
+@@ -205,6 +205,9 @@ static optionlist optionlist_config[] = {
+   { "local_from_prefix",        opt_stringptr,   {&local_from_prefix} },
+   { "local_from_suffix",        opt_stringptr,   {&local_from_suffix} },
+   { "local_interfaces",         opt_stringptr,   {&local_interfaces} },
 +#ifdef DLOPEN_LOCAL_SCAN
 +  { "local_scan_path",          opt_stringptr,   &local_scan_path },
 +#endif
  #ifdef HAVE_LOCAL_SCAN
-   { "local_scan_timeout",       opt_time,        &local_scan_timeout },
+   { "local_scan_timeout",       opt_time,        {&local_scan_timeout} },
  #endif
