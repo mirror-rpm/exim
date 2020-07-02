@@ -396,7 +396,20 @@ index 3423ee0..7d1e552 100644
  
  
  # For spam scanning, there is a similar option that defines the interface to
-@@ -157,7 +159,7 @@ acl_smtp_data =         acl_check_data
+@@ -147,6 +149,12 @@ acl_smtp_data =         acl_check_data
+ # spamd_address = 127.0.0.1 783
+ 
+ 
++# Set the default sqlite database file for greylisting. Uncomment this
++# if you use the greylisting ACLs defined below.
++
++# sqlite_dbfile = /var/spool/exim/db/greylist.db
++
++
+ # If Exim is compiled with support for TLS, you may want to enable the
+ # following options so that Exim allows clients to make encrypted
+ # connections. In the authenticators section below, there are template
+@@ -157,7 +165,7 @@ acl_smtp_data =         acl_check_data
  
  # Allow any client to use TLS.
  
@@ -405,7 +418,7 @@ index 3423ee0..7d1e552 100644
  
  # Specify the location of the Exim server's TLS certificate and private key.
  # The private key must not be encrypted (password protected). You can put
-@@ -165,8 +167,8 @@ acl_smtp_data =         acl_check_data
+@@ -165,8 +173,8 @@ acl_smtp_data =         acl_check_data
  # need the first setting, or in separate files, in which case you need both
  # options.
  
@@ -416,7 +429,7 @@ index 3423ee0..7d1e552 100644
  
  # For OpenSSL, prefer EC- over RSA-authenticated ciphers
  # tls_require_ciphers = ECDSA:RSA:!COMPLEMENTOFDEFAULT
-@@ -180,8 +182,8 @@ acl_smtp_data =         acl_check_data
+@@ -180,8 +188,8 @@ acl_smtp_data =         acl_check_data
  # them you should also allow TLS-on-connect on the traditional but
  # non-standard port 465.
  
@@ -427,7 +440,7 @@ index 3423ee0..7d1e552 100644
  
  
  # Specify the domain you want to be added to all unqualified addresses
-@@ -239,6 +241,24 @@ never_users = root
+@@ -239,6 +247,24 @@ never_users = root
  
  host_lookup = *
  
@@ -452,7 +465,7 @@ index 3423ee0..7d1e552 100644
  
  # The setting below causes Exim to try to initialize the system resolver
  # library with DNSSEC support.  It has no effect if your library lacks
-@@ -369,8 +389,8 @@ timeout_frozen_after = 7d
+@@ -369,8 +395,8 @@ timeout_frozen_after = 7d
  # Note that TZ is handled separately by the timezone runtime option
  # and TIMEZONE_DEFAULT buildtime option.
  
@@ -463,7 +476,7 @@ index 3423ee0..7d1e552 100644
  
  
  
-@@ -381,6 +401,29 @@ timeout_frozen_after = 7d
+@@ -381,6 +407,29 @@ timeout_frozen_after = 7d
  
  begin acl
  
@@ -493,7 +506,7 @@ index 3423ee0..7d1e552 100644
  # This access control list is used for every RCPT command in an incoming
  # SMTP message. The tests are run in order until the address is either
  # accepted or denied.
-@@ -392,6 +435,7 @@ acl_check_rcpt:
+@@ -392,6 +441,7 @@ acl_check_rcpt:
  
    accept  hosts = :
            control = dkim_disable_verify
@@ -501,7 +514,7 @@ index 3423ee0..7d1e552 100644
  
    #############################################################################
    # The following section of the ACL is concerned with local parts that contain
-@@ -445,7 +489,8 @@ acl_check_rcpt:
+@@ -445,7 +495,8 @@ acl_check_rcpt:
    accept  local_parts   = postmaster
            domains       = +local_domains
  
@@ -511,7 +524,7 @@ index 3423ee0..7d1e552 100644
  
    require verify        = sender
  
-@@ -471,6 +516,7 @@ acl_check_rcpt:
+@@ -471,6 +522,7 @@ acl_check_rcpt:
    accept  hosts         = +relay_from_hosts
            control       = submission
            control       = dkim_disable_verify
@@ -519,7 +532,7 @@ index 3423ee0..7d1e552 100644
  
    # Accept if the message arrived over an authenticated connection, from
    # any host. Again, these messages are usually from MUAs, so recipient
-@@ -480,6 +526,7 @@ acl_check_rcpt:
+@@ -480,6 +532,7 @@ acl_check_rcpt:
    accept  authenticated = *
            control       = submission
            control       = dkim_disable_verify
@@ -527,7 +540,7 @@ index 3423ee0..7d1e552 100644
  
    # Insist that a HELO/EHLO was accepted.
  
-@@ -505,7 +552,8 @@ acl_check_rcpt:
+@@ -505,7 +558,8 @@ acl_check_rcpt:
    # There are no default checks on DNS black lists because the domains that
    # contain these lists are changing all the time. However, here are two
    # examples of how you can get Exim to perform a DNS black list lookup at this
@@ -537,7 +550,7 @@ index 3423ee0..7d1e552 100644
    #
    # deny    dnslists      = black.list.example
    #         message       = rejected because $sender_host_address is in a black list at $dnslist_domain\n$dnslist_text
-@@ -513,6 +561,10 @@ acl_check_rcpt:
+@@ -513,6 +567,10 @@ acl_check_rcpt:
    # warn    dnslists      = black.list.example
    #         add_header    = X-Warning: $sender_host_address is in a black list at $dnslist_domain
    #         log_message   = found in $dnslist_domain
@@ -548,7 +561,7 @@ index 3423ee0..7d1e552 100644
    #############################################################################
  
    #############################################################################
-@@ -539,6 +591,10 @@ acl_check_rcpt:
+@@ -539,6 +597,10 @@ acl_check_rcpt:
    #        set acl_m_content_filter = ${lookup PER_RCPT_CONTENT_FILTER}
    #############################################################################
  
@@ -559,7 +572,7 @@ index 3423ee0..7d1e552 100644
    # At this point, the address has passed all the checks that have been
    # configured, so we accept it unconditionally.
  
-@@ -588,21 +644,32 @@ acl_check_data:
+@@ -588,21 +650,32 @@ acl_check_data:
            message =     header syntax
            log_message = header syntax ($acl_verify_message)
  
@@ -588,19 +601,20 @@ index 3423ee0..7d1e552 100644
 -  # Add headers to a message if it is judged to be spam. Before enabling this,
 -  # you must install SpamAssassin. You may also need to set the spamd_address
 -  # option above.
-+  # Bypass SpamAssassin checks if the message is too large.
-   #
+-  #
 -  # warn    spam       = nobody
 -  #         add_header = X-Spam_score: $spam_score\n\
 -  #                      X-Spam_score_int: $spam_score_int\n\
 -  #                      X-Spam_bar: $spam_bar\n\
 -  #                      X-Spam_report: $spam_report
++  # Bypass SpamAssassin checks if the message is too large.
++  #
 +  # accept  condition  = ${if >={$message_size}{100000} {1}}
 +  #         add_header = X-Spam-Note: SpamAssassin run bypassed due to message size
  
    #############################################################################
    # No more tests if PRDR was actively used.
-@@ -616,11 +683,63 @@ acl_check_data:
+@@ -616,11 +689,63 @@ acl_check_data:
    #           condition    = ...
    #############################################################################
  
@@ -665,7 +679,7 @@ index 3423ee0..7d1e552 100644
  
  
  ######################################################################
-@@ -722,7 +841,7 @@ system_aliases:
+@@ -722,7 +847,7 @@ system_aliases:
    driver = redirect
    allow_fail
    allow_defer
@@ -674,7 +688,7 @@ index 3423ee0..7d1e552 100644
  # user = exim
    file_transport = address_file
    pipe_transport = address_pipe
-@@ -760,7 +879,7 @@ userforward:
+@@ -760,7 +885,7 @@ userforward:
  # local_part_suffix = +* : -*
  # local_part_suffix_optional
    file = $home/.forward
@@ -683,7 +697,7 @@ index 3423ee0..7d1e552 100644
    no_verify
    no_expn
    check_ancestor
-@@ -768,6 +887,12 @@ userforward:
+@@ -768,6 +893,12 @@ userforward:
    pipe_transport = address_pipe
    reply_transport = address_reply
  
@@ -696,7 +710,7 @@ index 3423ee0..7d1e552 100644
  
  # This router matches local user mailboxes. If the router fails, the error
  # message is "Unknown user".
-@@ -809,6 +934,25 @@ remote_smtp:
+@@ -809,6 +940,25 @@ remote_smtp:
    driver = smtp
    message_size_limit = ${if > {$max_received_linelength}{998} {1}{0}}
  
@@ -722,7 +736,7 @@ index 3423ee0..7d1e552 100644
  
  # This transport is used for delivering messages to a smarthost, if the
  # smarthost router is enabled.  This starts from the same basis as
-@@ -861,8 +1005,8 @@ local_delivery:
+@@ -861,8 +1011,8 @@ local_delivery:
    delivery_date_add
    envelope_to_add
    return_path_add
@@ -733,7 +747,7 @@ index 3423ee0..7d1e552 100644
  
  
  # This transport is used for handling pipe deliveries generated by alias or
-@@ -895,6 +1039,16 @@ address_reply:
+@@ -895,6 +1045,16 @@ address_reply:
    driver = autoreply
  
  
@@ -750,7 +764,7 @@ index 3423ee0..7d1e552 100644
  
  ######################################################################
  #                      RETRY CONFIGURATION                           #
-@@ -935,6 +1089,21 @@ begin rewrite
+@@ -935,6 +1095,21 @@ begin rewrite
  #                   AUTHENTICATION CONFIGURATION                     #
  ######################################################################
  
@@ -772,7 +786,7 @@ index 3423ee0..7d1e552 100644
  # The following authenticators support plaintext username/password
  # authentication using the standard PLAIN mechanism and the traditional
  # but non-standard LOGIN mechanism, with Exim acting as the server.
-@@ -950,7 +1119,7 @@ begin rewrite
+@@ -950,7 +1125,7 @@ begin rewrite
  # The default RCPT ACL checks for successful authentication, and will accept
  # messages from authenticated users from anywhere on the Internet.
  
@@ -781,7 +795,7 @@ index 3423ee0..7d1e552 100644
  
  # PLAIN authentication has no server prompts. The client sends its
  # credentials in one lump, containing an authorization ID (which we do not
-@@ -964,7 +1133,7 @@ begin authenticators
+@@ -964,7 +1139,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -790,7 +804,7 @@ index 3423ee0..7d1e552 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -976,7 +1145,7 @@ begin authenticators
+@@ -976,7 +1151,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:

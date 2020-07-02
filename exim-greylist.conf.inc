@@ -1,11 +1,44 @@
-# $Id: acl-greylist-sqlite,v 1.3 2007/11/25 19:17:28 dwmw2 Exp $
+#
+# Exim ACL for greylisting. David Woodhouse <dwmw2@infradead.org>
+#
+# For full background on the logic behind greylisting and how this
+# ACL works, see https://github.com/Exim/exim/wiki/SimpleGreylisting
+#
 
-GREYDB=/var/spool/exim/db/greylist.db
+# UPDATING TO EXIM 4.94+
+# ======================
+#
+# Previous versions of this ACL specified the sqlite database filename 
+# in the sqlite lookup strings directly, but since Exim 4.94 is it no 
+# longer permitted to mix "tainted" text which comes from the message 
+# itself, with the filename. Thus, you now have to set
+#
+# sqlite_dbfile = /var/spool/exim/db/greylist.db
+#
+# ... in the main configuration because it can't be specified within
+# the ACL in this file any more.
 
-# ACL for greylisting. Place reason(s) for greylisting into a variable named
-# $acl_m_greylistreasons before invoking with 'require acl = greylist_mail'.
-# The reasons should be separate lines of text, and will be reported in
-# the SMTP rejection message as well as the log message.
+# USING THIS ACL
+# ==============
+#
+# First set sqlite_dbfile in the main configuration file to point to
+# the greylist sqlite database, as described above.
+#
+# In your main ACLs, gather reason(s) for greylisting into a variable 
+# named $acl_m_greylistreasons before invoking this ACL with
+# 'require acl = greylist_mail'. The reasons should be separate lines
+# of text, and will be reported in the SMTP rejection message as well
+# as the log message. Anything "suspicious" about the email can be
+# used as criteria here — being HTML, having even a few SpamAssassin
+# points, even lacking SPF authorisation (which is OK for greylisting
+# although you should never reject outright for an SPF "failure"
+# because of the flaws in SPF).
+#
+# Obviously you need to .include this file too in order to be able
+# to invoke this greylist_mail ACL.
+
+# HOW IT WORKS
+# ============
 #
 # When a suspicious mail is seen, we temporarily reject it and wait to see
 # if the sender tries again. Most spam robots won't bother. Real mail hosts
@@ -44,15 +77,13 @@ GREYDB=/var/spool/exim/db/greylist.db
 #
 
 greylist_mail:
-  # First, accept if it there's absolutely nothing suspicious about it...
-  accept condition = ${if eq{$acl_m_greylistreasons}{} {1}}
-  # ... or if it was generated locally or by authenticated clients.
+  # Firstly,  accept if it was generated locally or by authenticated clients.
   accept hosts = :
   accept authenticated = *
 
   # Secondly, there's _absolutely_ no point in greylisting mail from
   # hosts which are known to resend their mail. Just accept it.
-  accept condition = ${lookup sqlite {GREYDB SELECT host from resenders \
+  accept condition = ${lookup sqlite {SELECT host from resenders \
 			       WHERE helo='${quote_sqlite:$sender_helo_name}' \
 			       AND host='$sender_host_address';} {1}}
 
@@ -62,15 +93,28 @@ greylist_mail:
   # Attempt to look up this mail in the greylist database. If it's there,
   # remember the expiry time for it; we need to make sure they've waited
   # long enough.
-  warn set acl_m_greyexpiry = ${lookup sqlite {GREYDB SELECT expire FROM greylist \
+  warn set acl_m_greyexpiry = ${lookup sqlite {SELECT expire FROM greylist \
 				WHERE id='${quote_sqlite:$acl_m_greyident}';}{$value}}
+
+
+  # If there's absolutely nothing suspicious about the email, accept it. BUT...
+  accept condition = ${if eq {$acl_m_greylistreasons}{} {1}}
+         condition = ${if eq {$acl_m_greyexpiry}{} {1}}
+
+  # ..if this same mail was greylisted before (perhaps because it came from a
+  # host which *was* suspicious), then we still want to mark that original host
+  # as a "known resender". If we don't, then hosts which attempt to deliver from
+  # a dodgy Legacy IP address but then fall back to using IPv6 after greylisting
+  # will *never* see their Legacy IP address added to the 'known resenders' list.
+  accept condition = ${if eq {$acl_m_greylistreasons}{} {1}}
+         acl = write_known_resenders
 
   # If the mail isn't already the database -- i.e. if the $acl_m_greyexpiry
   # variable we just looked up is empty -- then try to add it now. This is 
   # where the 5 minute timeout is set ($tod_epoch + 300), should you wish
   # to change it.
   warn  condition = ${if eq {$acl_m_greyexpiry}{} {1}}
-	set acl_m_dontcare = ${lookup sqlite {GREYDB INSERT INTO greylist \
+	set acl_m_dontcare = ${lookup sqlite {INSERT INTO greylist \
 					VALUES ( '$acl_m_greyident', \
 						 '${eval10:$tod_epoch+300}', \
 						 '$sender_host_address', \
@@ -79,7 +123,7 @@ greylist_mail:
   # Be paranoid, and check if the insertion succeeded (by doing another lookup).
   # Otherwise, if there's a database error we might end up deferring for ever.
   defer condition = ${if eq {$acl_m_greyexpiry}{} {1}}
-        condition = ${lookup sqlite {GREYDB SELECT expire FROM greylist \
+        condition = ${lookup sqlite {SELECT expire FROM greylist \
 				WHERE id='${quote_sqlite:$acl_m_greyident}';} {1}}
         message = Your mail was considered suspicious for the following reason(s):\n$acl_m_greylistreasons \
 		  The mail has been greylisted for 5 minutes, after which it should be accepted. \
@@ -105,13 +149,16 @@ greylist_mail:
 		  You should wait another ${eval10:$acl_m_greyexpiry-$tod_epoch} seconds.\n\
 		  Reason(s) for greylisting: \n$acl_m_greylistreasons
 
+  accept acl = write_known_resenders
+
+write_known_resenders:
   # The message was listed but it's been more than five minutes. Accept it now and whitelist
   # the _original_ sending host by its { IP, HELO } so that we don't delay its mail again.
-  warn set acl_m_orighost = ${lookup sqlite {GREYDB SELECT host FROM greylist \
+  warn set acl_m_orighost = ${lookup sqlite {SELECT host FROM greylist \
 				WHERE id='${quote_sqlite:$acl_m_greyident}';}{$value}}
-       set acl_m_orighelo = ${lookup sqlite {GREYDB SELECT helo FROM greylist \
+       set acl_m_orighelo = ${lookup sqlite {SELECT helo FROM greylist \
 				WHERE id='${quote_sqlite:$acl_m_greyident}';}{$value}}
-       set acl_m_dontcare = ${lookup sqlite {GREYDB INSERT INTO resenders \
+       set acl_m_dontcare = ${lookup sqlite {INSERT INTO resenders \
 				VALUES ( '$acl_m_orighost', \
 					 '${quote_sqlite:$acl_m_orighelo}', \
 					 '$tod_epoch' ); }}
