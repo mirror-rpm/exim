@@ -67,6 +67,7 @@ BuildRequires: gnupg2 grep
 %if 0%{?rhel} == 8
 BuildRequires:  epel-rpm-macros >= 8-5
 %endif
+BuildRequires: make
 
 %description
 Exim is a message transfer agent (MTA) developed at the University of
