@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.94
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -477,6 +477,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Feb 08 2021 Pavel Raiskup <praiskup@redhat.com> - 4.94-5
+- rebuild for libpq ABI fix rhbz#1908268
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 4.94-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
