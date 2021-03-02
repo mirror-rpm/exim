@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.94
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -477,6 +477,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 4.94-6
+- Rebuilt for updated systemd-rpm-macros
+  See https://pagure.io/fesco/issue/2583.
+
 * Mon Feb 08 2021 Pavel Raiskup <praiskup@redhat.com> - 4.94-5
 - rebuild for libpq ABI fix rhbz#1908268
 
