@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.94
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -46,6 +46,8 @@ Patch0: exim-4.94-config.patch
 Patch1: exim-4.94-libdir.patch
 Patch2: exim-4.94-dlopen-localscan.patch
 Patch3: exim-4.85-pic.patch
+# https://bugs.exim.org/show_bug.cgi?id=2594
+Patch4: exim-4.94-tls-cname-handling-fix.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -160,6 +162,7 @@ greylisting unconditional.
 %patch1 -p1 -b .libdir
 %patch2 -p1 -b .dl
 %patch3 -p1 -b .fpic
+%patch4 -p1 -b .tls-cname-handling-fix
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -477,6 +480,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Mar 25 2021 Jaroslav Škarvada <jskarvad@redhat.com> - 4.94-7
+- Fixed cname handling in TLS certificate verification
+  Resolves: rhbz#1942582
+
 * Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 4.94-6
 - Rebuilt for updated systemd-rpm-macros
   See https://pagure.io/fesco/issue/2583.

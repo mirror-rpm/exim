@@ -1,0 +1,154 @@
+diff --git a/src/host.c b/src/host.c
+index 0e0e013..99bbba7 100644
+--- a/src/host.c
++++ b/src/host.c
+@@ -1950,6 +1950,13 @@ BOOL temp_error = FALSE;
+ int af;
+ #endif
+ 
++#ifndef DISABLE_TLS
++/* Copy the host name at this point to the value which is used for
++TLS certificate name checking, before anything modifies it.  */
++
++host->certname = host->name;
++#endif
++
+ /* Make sure DNS options are set as required. This appears to be necessary in
+ some circumstances when the get..byname() function actually calls the DNS. */
+ 
+@@ -2117,6 +2124,9 @@ for (int i = 1; i <= times;
+       {
+       host_item *next = store_get(sizeof(host_item), FALSE);
+       next->name = host->name;
++#ifndef DISABLE_TLS
++      next->certname = host->certname;
++#endif
+       next->mx = host->mx;
+       next->address = text_address;
+       next->port = PORT_NONE;
+@@ -2135,12 +2145,12 @@ for (int i = 1; i <= times;
+ NULL. If temp_error is set, at least one of the lookups gave a temporary error,
+ so we pass that back. */
+ 
+-if (host->address == NULL)
++if (!host->address)
+   {
+   uschar *msg =
+     #ifndef STAND_ALONE
+-    (message_id[0] == 0 && smtp_in != NULL)?
+-      string_sprintf("no IP address found for host %s (during %s)", host->name,
++    message_id[0] == 0 && smtp_in
++      ? string_sprintf("no IP address found for host %s (during %s)", host->name,
+           smtp_get_connection_info()) :
+     #endif
+     string_sprintf("no IP address found for host %s", host->name);
+@@ -2260,6 +2270,13 @@ BOOL v6_find_again = FALSE;
+ BOOL dnssec_fail = FALSE;
+ int i;
+ 
++#ifndef DISABLE_TLS
++/* Copy the host name at this point to the value which is used for
++TLS certificate name checking, before any CNAME-following modifies it.  */
++
++host->certname = host->name;
++#endif
++
+ /* If allow_ip is set, a name which is an IP address returns that value
+ as its address. This is used for MX records when allow_mx_to_ip is set, for
+ those sites that feel they have to flaunt the RFC rules. */
+diff --git a/src/structs.h b/src/structs.h
+index c6700d5..206237f 100644
+--- a/src/structs.h
++++ b/src/structs.h
+@@ -80,14 +80,17 @@ typedef enum {DS_UNK=-1, DS_NO, DS_YES} dnssec_status_t;
+ 
+ typedef struct host_item {
+   struct host_item *next;
+-  const uschar *name;             /* Host name */
+-  const uschar *address;          /* IP address in text form */
+-  int     port;                   /* port value in host order (if SRV lookup) */
+-  int     mx;                     /* MX value if found via MX records */
+-  int     sort_key;               /* MX*1000 plus random "fraction" */
+-  int     status;                 /* Usable, unusable, or unknown */
+-  int     why;                    /* Why host is unusable */
+-  int     last_try;               /* Time of last try if known */
++  const uschar *name;		/* Host name */
++#ifndef DISABLE_TLS
++  const uschar *certname;	/* Name used for certificate checks */
++#endif
++  const uschar *address;	/* IP address in text form */
++  int     port;			/* port value in host order (if SRV lookup) */
++  int     mx;			/* MX value if found via MX records */
++  int     sort_key;		/* MX*1000 plus random "fraction" */
++  int     status;		/* Usable, unusable, or unknown */
++  int     why;			/* Why host is unusable */
++  int     last_try;		/* Time of last try if known */
+   dnssec_status_t dnssec;
+ } host_item;
+ 
+diff --git a/src/tls-gnu.c b/src/tls-gnu.c
+index 24114f0..875c82e 100644
+--- a/src/tls-gnu.c
++++ b/src/tls-gnu.c
+@@ -2601,9 +2601,9 @@ if (verify_check_given_host(CUSS &ob->tls_verify_cert_hostnames, host) == OK)
+   {
+   state->exp_tls_verify_cert_hostnames =
+ #ifdef SUPPORT_I18N
+-    string_domain_utf8_to_alabel(host->name, NULL);
++    string_domain_utf8_to_alabel(host->certname, NULL);
+ #else
+-    host->name;
++    host->certname;
+ #endif
+   DEBUG(D_tls)
+     debug_printf("TLS: server cert verification includes hostname: \"%s\".\n",
+diff --git a/src/tls-openssl.c b/src/tls-openssl.c
+index 8c9d8aa..a623229 100644
+--- a/src/tls-openssl.c
++++ b/src/tls-openssl.c
+@@ -372,10 +372,10 @@ typedef struct ocsp_resp {
+ } ocsp_resplist;
+ 
+ typedef struct tls_ext_ctx_cb {
+-  tls_support * tlsp;
+-  uschar *certificate;
+-  uschar *privatekey;
+-  BOOL is_server;
++  tls_support *	tlsp;
++  uschar *	certificate;
++  uschar *	privatekey;
++  BOOL		is_server;
+ #ifndef DISABLE_OCSP
+   STACK_OF(X509) *verify_stack;		/* chain for verifying the proof */
+   union {
+@@ -390,14 +390,14 @@ typedef struct tls_ext_ctx_cb {
+     } client;
+   } u_ocsp;
+ #endif
+-  uschar *dhparam;
++  uschar *	dhparam;
+   /* these are cached from first expand */
+-  uschar *server_cipher_list;
++  uschar *	server_cipher_list;
+   /* only passed down to tls_error: */
+-  host_item *host;
++  host_item *	host;
+   const uschar * verify_cert_hostnames;
+ #ifndef DISABLE_EVENT
+-  uschar * event_action;
++  uschar *	event_action;
+ #endif
+ } tls_ext_ctx_cb;
+ 
+@@ -2915,9 +2915,9 @@ if (verify_check_given_host(CUSS &ob->tls_verify_cert_hostnames, host) == OK)
+   {
+   cbinfo->verify_cert_hostnames =
+ #ifdef SUPPORT_I18N
+-    string_domain_utf8_to_alabel(host->name, NULL);
++    string_domain_utf8_to_alabel(host->certname, NULL);
+ #else
+-    host->name;
++    host->certname;
+ #endif
+   DEBUG(D_tls) debug_printf("Cert hostname to check: \"%s\"\n",
+ 		    cbinfo->verify_cert_hostnames);
