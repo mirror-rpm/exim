@@ -12,7 +12,7 @@ index 61368ec..e8fe9ef 100755
    echo "" >>$mft
    cat $mftt >> $mft
 diff --git a/src/EDITME b/src/EDITME
-index e568bdb..65082b5 100644
+index 8da36a3..9b7682c 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -99,7 +99,7 @@
@@ -361,7 +361,7 @@ index e568bdb..65082b5 100644
  # If PID_FILE_PATH is not defined, Exim writes a file in its spool directory
  # using the name "exim-daemon.pid".
 diff --git a/src/configure.default b/src/configure.default
-index 3423ee0..7d1e552 100644
+index d94c148..1f6afd4 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -67,7 +67,7 @@
@@ -524,7 +524,7 @@ index 3423ee0..7d1e552 100644
  
    require verify        = sender
  
-@@ -471,6 +522,7 @@ acl_check_rcpt:
+@@ -485,6 +536,7 @@ acl_check_rcpt:
    accept  hosts         = +relay_from_hosts
            control       = submission
            control       = dkim_disable_verify
@@ -532,7 +532,7 @@ index 3423ee0..7d1e552 100644
  
    # Accept if the message arrived over an authenticated connection, from
    # any host. Again, these messages are usually from MUAs, so recipient
-@@ -480,6 +532,7 @@ acl_check_rcpt:
+@@ -494,6 +546,7 @@ acl_check_rcpt:
    accept  authenticated = *
            control       = submission
            control       = dkim_disable_verify
@@ -540,7 +540,7 @@ index 3423ee0..7d1e552 100644
  
    # Insist that a HELO/EHLO was accepted.
  
-@@ -505,7 +558,8 @@ acl_check_rcpt:
+@@ -519,7 +572,8 @@ acl_check_rcpt:
    # There are no default checks on DNS black lists because the domains that
    # contain these lists are changing all the time. However, here are two
    # examples of how you can get Exim to perform a DNS black list lookup at this
@@ -550,7 +550,7 @@ index 3423ee0..7d1e552 100644
    #
    # deny    dnslists      = black.list.example
    #         message       = rejected because $sender_host_address is in a black list at $dnslist_domain\n$dnslist_text
-@@ -513,6 +567,10 @@ acl_check_rcpt:
+@@ -527,6 +581,10 @@ acl_check_rcpt:
    # warn    dnslists      = black.list.example
    #         add_header    = X-Warning: $sender_host_address is in a black list at $dnslist_domain
    #         log_message   = found in $dnslist_domain
@@ -561,7 +561,7 @@ index 3423ee0..7d1e552 100644
    #############################################################################
  
    #############################################################################
-@@ -539,6 +597,10 @@ acl_check_rcpt:
+@@ -553,6 +611,10 @@ acl_check_rcpt:
    #        set acl_m_content_filter = ${lookup PER_RCPT_CONTENT_FILTER}
    #############################################################################
  
@@ -572,7 +572,7 @@ index 3423ee0..7d1e552 100644
    # At this point, the address has passed all the checks that have been
    # configured, so we accept it unconditionally.
  
-@@ -588,21 +650,32 @@ acl_check_data:
+@@ -602,21 +664,32 @@ acl_check_data:
            message =     header syntax
            log_message = header syntax ($acl_verify_message)
  
@@ -601,20 +601,19 @@ index 3423ee0..7d1e552 100644
 -  # Add headers to a message if it is judged to be spam. Before enabling this,
 -  # you must install SpamAssassin. You may also need to set the spamd_address
 -  # option above.
--  #
++  # Bypass SpamAssassin checks if the message is too large.
+   #
 -  # warn    spam       = nobody
 -  #         add_header = X-Spam_score: $spam_score\n\
 -  #                      X-Spam_score_int: $spam_score_int\n\
 -  #                      X-Spam_bar: $spam_bar\n\
 -  #                      X-Spam_report: $spam_report
-+  # Bypass SpamAssassin checks if the message is too large.
-+  #
 +  # accept  condition  = ${if >={$message_size}{100000} {1}}
 +  #         add_header = X-Spam-Note: SpamAssassin run bypassed due to message size
  
    #############################################################################
    # No more tests if PRDR was actively used.
-@@ -616,11 +689,63 @@ acl_check_data:
+@@ -630,11 +703,63 @@ acl_check_data:
    #           condition    = ...
    #############################################################################
  
@@ -633,8 +632,7 @@ index 3423ee0..7d1e552 100644
 +  #
 +  # warn    add_header = X-Spam-Score: $spam_score ($spam_bar)\n\
 +  #                      X-Spam-Report: $spam_report
- 
--  # Accept the message.
++
 +  # And reject if the SpamAssassin score is greater than ten
 +  #
 +  # deny    condition = ${if >{$spam_score_int}{100} {1}}
@@ -646,7 +644,8 @@ index 3423ee0..7d1e552 100644
 +  # warn    condition = ${if >{$spam_score_int}{5} {1}}
 +  #         set acl_m_greylistreasons = Message has $spam_score SpamAssassin points\n$acl_m_greylistreasons
 +
-+
+ 
+-  # Accept the message.
 +  # If you want to greylist _all_ mail rather than only mail which looks like there
 +  # might be something wrong with it, then you can do this...
 +  #
@@ -679,7 +678,7 @@ index 3423ee0..7d1e552 100644
  
  
  ######################################################################
-@@ -722,7 +847,7 @@ system_aliases:
+@@ -736,7 +861,7 @@ system_aliases:
    driver = redirect
    allow_fail
    allow_defer
@@ -688,7 +687,7 @@ index 3423ee0..7d1e552 100644
  # user = exim
    file_transport = address_file
    pipe_transport = address_pipe
-@@ -760,7 +885,7 @@ userforward:
+@@ -774,7 +899,7 @@ userforward:
  # local_part_suffix = +* : -*
  # local_part_suffix_optional
    file = $home/.forward
@@ -697,7 +696,7 @@ index 3423ee0..7d1e552 100644
    no_verify
    no_expn
    check_ancestor
-@@ -768,6 +893,12 @@ userforward:
+@@ -782,6 +907,12 @@ userforward:
    pipe_transport = address_pipe
    reply_transport = address_reply
  
@@ -710,7 +709,7 @@ index 3423ee0..7d1e552 100644
  
  # This router matches local user mailboxes. If the router fails, the error
  # message is "Unknown user".
-@@ -809,6 +940,25 @@ remote_smtp:
+@@ -823,6 +954,25 @@ remote_smtp:
    driver = smtp
    message_size_limit = ${if > {$max_received_linelength}{998} {1}{0}}
  
@@ -736,7 +735,7 @@ index 3423ee0..7d1e552 100644
  
  # This transport is used for delivering messages to a smarthost, if the
  # smarthost router is enabled.  This starts from the same basis as
-@@ -861,8 +1011,8 @@ local_delivery:
+@@ -875,8 +1025,8 @@ local_delivery:
    delivery_date_add
    envelope_to_add
    return_path_add
@@ -747,7 +746,7 @@ index 3423ee0..7d1e552 100644
  
  
  # This transport is used for handling pipe deliveries generated by alias or
-@@ -895,6 +1045,16 @@ address_reply:
+@@ -909,6 +1059,16 @@ address_reply:
    driver = autoreply
  
  
@@ -764,7 +763,7 @@ index 3423ee0..7d1e552 100644
  
  ######################################################################
  #                      RETRY CONFIGURATION                           #
-@@ -935,6 +1095,21 @@ begin rewrite
+@@ -949,6 +1109,21 @@ begin rewrite
  #                   AUTHENTICATION CONFIGURATION                     #
  ######################################################################
  
@@ -786,7 +785,7 @@ index 3423ee0..7d1e552 100644
  # The following authenticators support plaintext username/password
  # authentication using the standard PLAIN mechanism and the traditional
  # but non-standard LOGIN mechanism, with Exim acting as the server.
-@@ -950,7 +1125,7 @@ begin rewrite
+@@ -964,7 +1139,7 @@ begin rewrite
  # The default RCPT ACL checks for successful authentication, and will accept
  # messages from authenticated users from anywhere on the Internet.
  
@@ -795,7 +794,7 @@ index 3423ee0..7d1e552 100644
  
  # PLAIN authentication has no server prompts. The client sends its
  # credentials in one lump, containing an authorization ID (which we do not
-@@ -964,7 +1139,7 @@ begin authenticators
+@@ -978,7 +1153,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -804,7 +803,7 @@ index 3423ee0..7d1e552 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -976,7 +1151,7 @@ begin authenticators
+@@ -990,7 +1165,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:

@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.94
-Release: 7%{?dist}
+Version: 4.94.2
+Release: 1%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -42,12 +42,12 @@ Source24: exim.service
 Source25: exim-gen-cert
 Source26: clamd.exim.service
 
-Patch0: exim-4.94-config.patch
+Patch0: exim-4.94.2-config.patch
 Patch1: exim-4.94-libdir.patch
 Patch2: exim-4.94-dlopen-localscan.patch
 Patch3: exim-4.85-pic.patch
-# https://bugs.exim.org/show_bug.cgi?id=2594
-Patch4: exim-4.94-tls-cname-handling-fix.patch
+# https://bugs.exim.org/show_bug.cgi?id=2728
+Patch4: exim-4.94.2-opendmarc-1.4-build-fix.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -162,7 +162,7 @@ greylisting unconditional.
 %patch1 -p1 -b .libdir
 %patch2 -p1 -b .dl
 %patch3 -p1 -b .fpic
-%patch4 -p1 -b .tls-cname-handling-fix
+%patch4 -p1 -b .opendmarc-1.4-build-fix
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -480,6 +480,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Tue May  4 2021 Jaroslav Škarvada <jskarvad@redhat.com> - 4.94.2-1
+- New version
+  Resolves: rhbz#1956859
+
 * Thu Mar 25 2021 Jaroslav Škarvada <jskarvad@redhat.com> - 4.94-7
 - Fixed cname handling in TLS certificate verification
   Resolves: rhbz#1942582
