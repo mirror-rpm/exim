@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.94.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -480,6 +480,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Fri May 21 2021 Jitka Plesnikova <jplesnik@redhat.com> - 4.94.2-2
+- Perl 5.34 rebuild
+
 * Tue May  4 2021 Jaroslav Škarvada <jskarvad@redhat.com> - 4.94.2-1
 - New version
   Resolves: rhbz#1956859
