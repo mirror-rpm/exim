@@ -1,5 +1,5 @@
 diff --git a/src/lookups/Makefile b/src/lookups/Makefile
-index 6ba0cb1..21a7ad7 100644
+index 1fd1394..a24ea2a 100644
 --- a/src/lookups/Makefile
 +++ b/src/lookups/Makefile
 @@ -22,7 +22,7 @@ lookups.a:       $(OBJ)
@@ -9,5 +9,5 @@ index 6ba0cb1..21a7ad7 100644
 -		 $(FE)$(CC) $(LOOKUP_$*_INCLUDE) $(LOOKUP_$*_LIBS) -DDYNLOOKUP $(CFLAGS_DYNAMIC) $(CFLAGS) $(INCLUDE) $(DLFLAGS) $*.c -o $@
 +		 $(FE)$(CC) $(LOOKUP_$*_INCLUDE) $(LOOKUP_$*_LIBS) -DDYNLOOKUP $(CFLAGS_DYNAMIC) $(CFLAGS) $(INCLUDE) $(DLFLAGS) $(PIC) $*.c -o $@
  
- lf_check_file.o: $(PHDRS) lf_check_file.c  lf_functions.h
- lf_quote.o:      $(PHDRS) lf_quote.c       lf_functions.h
+ lf_check_file.o: $(HDRS) lf_check_file.c  lf_functions.h
+ lf_quote.o:      $(HDRS) lf_quote.c       lf_functions.h

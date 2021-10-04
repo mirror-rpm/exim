@@ -11,8 +11,8 @@
 
 Summary: The exim mail transfer agent
 Name: exim
-Version: 4.94.2
-Release: 4%{?dist}
+Version: 4.95
+Release: 1%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -42,12 +42,14 @@ Source24: exim.service
 Source25: exim-gen-cert
 Source26: clamd.exim.service
 
-Patch0: exim-4.94.2-config.patch
+Patch0: exim-4.95-config.patch
 Patch1: exim-4.94-libdir.patch
-Patch2: exim-4.94-dlopen-localscan.patch
-Patch3: exim-4.85-pic.patch
+Patch2: exim-4.95-dlopen-localscan.patch
+Patch3: exim-4.95-pic.patch
 # https://bugs.exim.org/show_bug.cgi?id=2728
 Patch4: exim-4.94.2-opendmarc-1.4-build-fix.patch
+# https://bugs.exim.org/show_bug.cgi?id=2810
+Patch5: exim-4.95-openssl30-build-fix.patch
 
 Requires: /etc/pki/tls/certs /etc/pki/tls/private
 Requires: /etc/aliases
@@ -163,6 +165,7 @@ greylisting unconditional.
 %patch2 -p1 -b .dl
 %patch3 -p1 -b .fpic
 %patch4 -p1 -b .opendmarc-1.4-build-fix
+%patch5 -p1 -b .openssl30-build-fix
 
 cp src/EDITME Local/Makefile
 sed -i 's@^# LOOKUP_MODULE_DIR=.*@LOOKUP_MODULE_DIR=%{_libdir}/exim/%{version}-%{release}/lookups@' Local/Makefile
@@ -480,6 +483,10 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Mon Oct  4 2021 Jaroslav Škarvada <jskarvad@redhat.com> - 4.95-1
+- New version
+  Resolves: rhbz#2008452
+
 * Tue Sep 14 2021 Sahana Prasad <sahana@redhat.com> - 4.94.2-4
 - Rebuilt with OpenSSL 3.0.0
 

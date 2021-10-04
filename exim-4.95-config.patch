@@ -12,7 +12,7 @@ index 61368ec..e8fe9ef 100755
    echo "" >>$mft
    cat $mftt >> $mft
 diff --git a/src/EDITME b/src/EDITME
-index 8da36a3..9b7682c 100644
+index f4329fa..b0643e0 100644
 --- a/src/EDITME
 +++ b/src/EDITME
 @@ -99,7 +99,7 @@
@@ -52,7 +52,7 @@ index 8da36a3..9b7682c 100644
  # Many sites define a user called "exim", with an appropriate default group,
  # and use
 @@ -210,10 +210,10 @@ SPOOL_DIRECTORY=/var/spool/exim
- # If you are buliding with TLS, the library configuration must be done:
+ # If you are building with TLS, the library configuration must be done:
  
  # Uncomment this if you are using OpenSSL
 -# USE_OPENSSL=yes
@@ -64,7 +64,7 @@ index 8da36a3..9b7682c 100644
  # TLS_LIBS=-lssl -lcrypto
  # TLS_LIBS=-L/usr/local/openssl/lib -lssl -lcrypto
  
-@@ -337,7 +337,7 @@ TRANSPORT_SMTP=yes
+@@ -340,7 +340,7 @@ TRANSPORT_SMTP=yes
  # This one is special-purpose, and commonly not required, so it is not
  # included by default.
  
@@ -73,7 +73,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -346,9 +346,9 @@ TRANSPORT_SMTP=yes
+@@ -349,9 +349,9 @@ TRANSPORT_SMTP=yes
  # MBX, is included only when requested. If you do not know what this is about,
  # leave these settings commented out.
  
@@ -86,7 +86,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -406,20 +406,26 @@ LOOKUP_DBM=yes
+@@ -409,22 +409,28 @@ LOOKUP_DBM=yes
  LOOKUP_LSEARCH=yes
  LOOKUP_DNSDB=yes
  
@@ -97,13 +97,15 @@ index 8da36a3..9b7682c 100644
  # LOOKUP_IBASE=yes
  # LOOKUP_JSON=yes
 -# LOOKUP_LDAP=yes
++LOOKUP_LDAP=yes
++LDAP_LIB_TYPE=OPENLDAP2
++LOOKUP_LIBS=-lldap -llber -lsqlite3
+ # LOOKUP_LMDB=yes
+ 
 -# LOOKUP_MYSQL=yes
 -# LOOKUP_MYSQL_PC=mariadb
 -# LOOKUP_NIS=yes
 -# LOOKUP_NISPLUS=yes
-+LOOKUP_LDAP=yes
-+LDAP_LIB_TYPE=OPENLDAP2
-+LOOKUP_LIBS=-lldap -llber -lsqlite3
 +LOOKUP_MYSQL=2
 +LOOKUP_MYSQL_PC=mariadb
 +LOOKUP_NIS=yes
@@ -123,7 +125,7 @@ index 8da36a3..9b7682c 100644
  # LOOKUP_SQLITE_PC=sqlite3
  # LOOKUP_WHOSON=yes
  
-@@ -432,7 +438,7 @@ LOOKUP_DNSDB=yes
+@@ -437,7 +443,7 @@ LOOKUP_DNSDB=yes
  
  
  # Some platforms may need this for LOOKUP_NIS:
@@ -132,7 +134,7 @@ index 8da36a3..9b7682c 100644
  
  #------------------------------------------------------------------------------
  # If you have set LOOKUP_LDAP=yes, you should set LDAP_LIB_TYPE to indicate
-@@ -498,7 +504,7 @@ SUPPORT_DANE=yes
+@@ -504,7 +510,7 @@ SUPPORT_DANE=yes
  # files are defaulted in the OS/Makefile-Default file, but can be overridden in
  # local OS-specific make files.
  
@@ -141,7 +143,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -508,7 +514,7 @@ SUPPORT_DANE=yes
+@@ -514,7 +520,7 @@ SUPPORT_DANE=yes
  # and the MIME ACL. Please read the documentation to learn more about these
  # features.
  
@@ -150,10 +152,10 @@ index 8da36a3..9b7682c 100644
  
  # If you have content scanning you may wish to only include some of the scanner
  # interfaces.  Uncomment any of these lines to remove that code.
-@@ -595,12 +601,12 @@ DISABLE_MAL_MKS=yes
- 
- # Uncomment the following line to add DMARC checking capability, implemented
+@@ -607,12 +613,12 @@ DISABLE_MAL_MKS=yes
  # using libopendmarc libraries. You must have SPF and DKIM support enabled also.
+ # Library version libopendmarc-1.4.1-1.fc33.x86_64  (on Fedora 33) is known broken;
+ # 1.3.2-3 works.  I seems that the OpenDMARC project broke their API.
 -# SUPPORT_DMARC=yes
 +SUPPORT_DMARC=yes
  # CFLAGS += -I/usr/local/include
@@ -166,7 +168,7 @@ index 8da36a3..9b7682c 100644
  
  # Uncomment the following line to add ARC (Authenticated Received Chain)
  # support.  You must have SPF and DKIM support enabled also.
-@@ -713,7 +719,7 @@ FIXED_NEVER_USERS=root
+@@ -712,7 +718,7 @@ FIXED_NEVER_USERS=root
  # CONFIGURE_OWNER setting, to specify a configuration file which is listed in
  # the TRUSTED_CONFIG_LIST file, then root privileges are not dropped by Exim.
  
@@ -175,7 +177,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -758,18 +764,18 @@ FIXED_NEVER_USERS=root
+@@ -764,18 +770,18 @@ ALLOW_INSECURE_TAINTED_DATA=yes
  # included in the Exim binary. You will then need to set up the run time
  # configuration to make use of the mechanism(s) selected.
  
@@ -202,7 +204,7 @@ index 8da36a3..9b7682c 100644
  
  # Heimdal through 1.5 required pkg-config 'heimdal-gssapi'; Heimdal 7.1
  # requires multiple pkg-config files to work with Exim, so the second example
-@@ -796,7 +802,7 @@ FIXED_NEVER_USERS=root
+@@ -802,7 +808,7 @@ ALLOW_INSECURE_TAINTED_DATA=yes
  # one that is set in the headers_charset option. The default setting is
  # defined by this setting:
  
@@ -211,7 +213,7 @@ index 8da36a3..9b7682c 100644
  
  # If you are going to make use of $header_xxx expansions in your configuration
  # file, or if your users are going to use them in filter files, and the normal
-@@ -816,7 +822,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -822,7 +828,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # the Sieve filter support. For those OS where iconv() is known to be installed
  # as standard, the file in OS/Makefile-xxxx contains
  #
@@ -220,7 +222,7 @@ index 8da36a3..9b7682c 100644
  #
  # If you are not using one of those systems, but have installed iconv(), you
  # need to uncomment that line above. In some cases, you may find that iconv()
-@@ -892,7 +898,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -898,7 +904,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # Once you have done this, "make install" will build the info files and
  # install them in the directory you have defined.
  
@@ -229,7 +231,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -905,7 +911,7 @@ HEADERS_CHARSET="ISO-8859-1"
+@@ -911,7 +917,7 @@ HEADERS_CHARSET="ISO-8859-1"
  # %s. This will be replaced by one of the strings "main", "panic", or "reject"
  # to form the final file names. Some installations may want something like this:
  
@@ -238,7 +240,7 @@ index 8da36a3..9b7682c 100644
  
  # which results in files with names /var/log/exim_mainlog, etc. The directory
  # in which the log files are placed must exist; Exim does not try to create
-@@ -977,7 +983,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -983,7 +989,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # (version 5.004 or later) installed, set EXIM_PERL to perl.o. Using embedded
  # Perl costs quite a lot of resources. Only do this if you really need it.
  
@@ -247,7 +249,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -987,7 +993,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -993,7 +999,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # that the local_scan API is made available by the linker. You may also need
  # to add -ldl to EXTRALIBS so that dlopen() is available to Exim.
  
@@ -256,7 +258,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -997,7 +1003,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1003,7 +1009,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # support, which is intended for use in conjunction with the SMTP AUTH
  # facilities, is included only when requested by the following setting:
  
@@ -265,7 +267,7 @@ index 8da36a3..9b7682c 100644
  
  # You probably need to add -lpam to EXTRALIBS, and in some releases of
  # GNU/Linux -ldl is also needed.
-@@ -1009,12 +1015,12 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1015,12 +1021,12 @@ ZCAT_COMMAND=/usr/bin/zcat
  # If you may want to use outbound (client-side) proxying, using Socks5,
  # uncomment the line below.
  
@@ -280,7 +282,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1038,9 +1044,9 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1044,9 +1050,9 @@ ZCAT_COMMAND=/usr/bin/zcat
  # installed on your system (www.libspf2.org). Depending on where it is installed
  # you may have to edit the CFLAGS and LDFLAGS lines.
  
@@ -292,7 +294,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1105,7 +1111,7 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1111,7 +1117,7 @@ ZCAT_COMMAND=/usr/bin/zcat
  # group. Once you have installed saslauthd, you should arrange for it to be
  # started by root at boot time.
  
@@ -301,7 +303,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1119,8 +1125,8 @@ ZCAT_COMMAND=/usr/bin/zcat
+@@ -1125,8 +1131,8 @@ ZCAT_COMMAND=/usr/bin/zcat
  # library for TCP wrappers, so you probably need something like this:
  #
  # USE_TCP_WRAPPERS=yes
@@ -312,7 +314,7 @@ index 8da36a3..9b7682c 100644
  #
  # but of course there may need to be other things in CFLAGS and EXTRALIBS_EXIM
  # as well.
-@@ -1172,7 +1178,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1178,7 +1184,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # is "yes", as well as supporting line editing, a history of input lines in the
  # current run is maintained.
  
@@ -321,7 +323,7 @@ index 8da36a3..9b7682c 100644
  
  # You may need to add -ldl to EXTRALIBS when you set USE_READLINE=yes.
  # Note that this option adds to the size of the Exim binary, because the
-@@ -1189,7 +1195,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1195,7 +1201,7 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  #------------------------------------------------------------------------------
  # Uncomment this setting to include IPv6 support.
  
@@ -330,7 +332,7 @@ index 8da36a3..9b7682c 100644
  
  ###############################################################################
  #              THINGS YOU ALMOST NEVER NEED TO MENTION                        #
-@@ -1210,13 +1216,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
+@@ -1216,13 +1222,13 @@ SYSTEM_ALIASES_FILE=/etc/aliases
  # haven't got Perl, Exim will still build and run; you just won't be able to
  # use those utilities.
  
@@ -351,7 +353,7 @@ index 8da36a3..9b7682c 100644
  
  
  #------------------------------------------------------------------------------
-@@ -1418,7 +1424,7 @@ EXIM_TMPDIR="/tmp"
+@@ -1424,7 +1430,7 @@ EXIM_TMPDIR="/tmp"
  # (process id) to a file so that it can easily be identified. The path of the
  # file can be specified here. Some installations may want something like this:
  
@@ -361,7 +363,7 @@ index 8da36a3..9b7682c 100644
  # If PID_FILE_PATH is not defined, Exim writes a file in its spool directory
  # using the name "exim-daemon.pid".
 diff --git a/src/configure.default b/src/configure.default
-index d94c148..1f6afd4 100644
+index 3761daf..a5d3718 100644
 --- a/src/configure.default
 +++ b/src/configure.default
 @@ -67,7 +67,7 @@
@@ -406,12 +408,12 @@ index d94c148..1f6afd4 100644
 +# sqlite_dbfile = /var/spool/exim/db/greylist.db
 +
 +
- # If Exim is compiled with support for TLS, you may want to enable the
- # following options so that Exim allows clients to make encrypted
- # connections. In the authenticators section below, there are template
+ # If Exim is compiled with support for TLS, you may want to change the
+ # following option so that Exim disallows certain clients from makeing encrypted
+ # connections. The default is to allow all.
 @@ -157,7 +165,7 @@ acl_smtp_data =         acl_check_data
  
- # Allow any client to use TLS.
+ # This is equivalent to the default.
  
 -# tls_advertise_hosts = *
 +tls_advertise_hosts = *
@@ -428,8 +430,8 @@ index d94c148..1f6afd4 100644
 +tls_privatekey = /etc/pki/tls/private/exim.pem
  
  # For OpenSSL, prefer EC- over RSA-authenticated ciphers
- # tls_require_ciphers = ECDSA:RSA:!COMPLEMENTOFDEFAULT
-@@ -180,8 +188,8 @@ acl_smtp_data =         acl_check_data
+ .ifdef _HAVE_OPENSSL
+@@ -189,8 +197,8 @@ tls_resumption_hosts = ${if inlist {$received_port}{587:465} {:}{*}}
  # them you should also allow TLS-on-connect on the traditional but
  # non-standard port 465.
  
@@ -440,7 +442,7 @@ index d94c148..1f6afd4 100644
  
  
  # Specify the domain you want to be added to all unqualified addresses
-@@ -239,6 +247,24 @@ never_users = root
+@@ -248,6 +256,24 @@ never_users = root
  
  host_lookup = *
  
@@ -465,7 +467,7 @@ index d94c148..1f6afd4 100644
  
  # The setting below causes Exim to try to initialize the system resolver
  # library with DNSSEC support.  It has no effect if your library lacks
-@@ -369,8 +395,8 @@ timeout_frozen_after = 7d
+@@ -378,8 +404,8 @@ timeout_frozen_after = 7d
  # Note that TZ is handled separately by the timezone runtime option
  # and TIMEZONE_DEFAULT buildtime option.
  
@@ -476,7 +478,7 @@ index d94c148..1f6afd4 100644
  
  
  
-@@ -381,6 +407,29 @@ timeout_frozen_after = 7d
+@@ -390,6 +416,29 @@ timeout_frozen_after = 7d
  
  begin acl
  
@@ -506,7 +508,7 @@ index d94c148..1f6afd4 100644
  # This access control list is used for every RCPT command in an incoming
  # SMTP message. The tests are run in order until the address is either
  # accepted or denied.
-@@ -392,6 +441,7 @@ acl_check_rcpt:
+@@ -401,6 +450,7 @@ acl_check_rcpt:
  
    accept  hosts = :
            control = dkim_disable_verify
@@ -514,7 +516,7 @@ index d94c148..1f6afd4 100644
  
    #############################################################################
    # The following section of the ACL is concerned with local parts that contain
-@@ -445,7 +495,8 @@ acl_check_rcpt:
+@@ -454,7 +504,8 @@ acl_check_rcpt:
    accept  local_parts   = postmaster
            domains       = +local_domains
  
@@ -524,7 +526,7 @@ index d94c148..1f6afd4 100644
  
    require verify        = sender
  
-@@ -485,6 +536,7 @@ acl_check_rcpt:
+@@ -494,6 +545,7 @@ acl_check_rcpt:
    accept  hosts         = +relay_from_hosts
            control       = submission
            control       = dkim_disable_verify
@@ -532,15 +534,15 @@ index d94c148..1f6afd4 100644
  
    # Accept if the message arrived over an authenticated connection, from
    # any host. Again, these messages are usually from MUAs, so recipient
-@@ -494,6 +546,7 @@ acl_check_rcpt:
+@@ -503,6 +555,7 @@ acl_check_rcpt:
    accept  authenticated = *
            control       = submission
            control       = dkim_disable_verify
 +          control       = dmarc_disable_verify
  
-   # Insist that a HELO/EHLO was accepted.
- 
-@@ -519,7 +572,8 @@ acl_check_rcpt:
+   # Insist that any other recipient address that we accept is either in one of
+   # our local domains, or is in a domain for which we explicitly allow
+@@ -523,7 +576,8 @@ acl_check_rcpt:
    # There are no default checks on DNS black lists because the domains that
    # contain these lists are changing all the time. However, here are two
    # examples of how you can get Exim to perform a DNS black list lookup at this
@@ -550,7 +552,7 @@ index d94c148..1f6afd4 100644
    #
    # deny    dnslists      = black.list.example
    #         message       = rejected because $sender_host_address is in a black list at $dnslist_domain\n$dnslist_text
-@@ -527,6 +581,10 @@ acl_check_rcpt:
+@@ -531,6 +585,10 @@ acl_check_rcpt:
    # warn    dnslists      = black.list.example
    #         add_header    = X-Warning: $sender_host_address is in a black list at $dnslist_domain
    #         log_message   = found in $dnslist_domain
@@ -561,7 +563,7 @@ index d94c148..1f6afd4 100644
    #############################################################################
  
    #############################################################################
-@@ -553,6 +611,10 @@ acl_check_rcpt:
+@@ -557,6 +615,10 @@ acl_check_rcpt:
    #        set acl_m_content_filter = ${lookup PER_RCPT_CONTENT_FILTER}
    #############################################################################
  
@@ -572,7 +574,7 @@ index d94c148..1f6afd4 100644
    # At this point, the address has passed all the checks that have been
    # configured, so we accept it unconditionally.
  
-@@ -602,21 +664,32 @@ acl_check_data:
+@@ -606,21 +668,32 @@ acl_check_data:
            message =     header syntax
            log_message = header syntax ($acl_verify_message)
  
@@ -613,7 +615,7 @@ index d94c148..1f6afd4 100644
  
    #############################################################################
    # No more tests if PRDR was actively used.
-@@ -630,11 +703,63 @@ acl_check_data:
+@@ -634,11 +707,63 @@ acl_check_data:
    #           condition    = ...
    #############################################################################
  
@@ -678,7 +680,7 @@ index d94c148..1f6afd4 100644
  
  
  ######################################################################
-@@ -736,7 +861,7 @@ system_aliases:
+@@ -740,7 +865,7 @@ system_aliases:
    driver = redirect
    allow_fail
    allow_defer
@@ -687,7 +689,7 @@ index d94c148..1f6afd4 100644
  # user = exim
    file_transport = address_file
    pipe_transport = address_pipe
-@@ -774,7 +899,7 @@ userforward:
+@@ -778,7 +903,7 @@ userforward:
  # local_part_suffix = +* : -*
  # local_part_suffix_optional
    file = $home/.forward
@@ -696,7 +698,7 @@ index d94c148..1f6afd4 100644
    no_verify
    no_expn
    check_ancestor
-@@ -782,6 +907,12 @@ userforward:
+@@ -786,6 +911,12 @@ userforward:
    pipe_transport = address_pipe
    reply_transport = address_reply
  
@@ -709,9 +711,9 @@ index d94c148..1f6afd4 100644
  
  # This router matches local user mailboxes. If the router fails, the error
  # message is "Unknown user".
-@@ -823,6 +954,25 @@ remote_smtp:
-   driver = smtp
-   message_size_limit = ${if > {$max_received_linelength}{998} {1}{0}}
+@@ -826,6 +957,25 @@ remote_smtp:
+   tls_resumption_hosts = *
+ .endif
  
 +# This transport is used for delivering messages over SMTP using the
 +# "message submission" port (RFC4409).
@@ -735,7 +737,7 @@ index d94c148..1f6afd4 100644
  
  # This transport is used for delivering messages to a smarthost, if the
  # smarthost router is enabled.  This starts from the same basis as
-@@ -875,8 +1025,8 @@ local_delivery:
+@@ -880,8 +1030,8 @@ local_delivery:
    delivery_date_add
    envelope_to_add
    return_path_add
@@ -746,7 +748,7 @@ index d94c148..1f6afd4 100644
  
  
  # This transport is used for handling pipe deliveries generated by alias or
-@@ -909,6 +1059,16 @@ address_reply:
+@@ -914,6 +1064,16 @@ address_reply:
    driver = autoreply
  
  
@@ -763,7 +765,7 @@ index d94c148..1f6afd4 100644
  
  ######################################################################
  #                      RETRY CONFIGURATION                           #
-@@ -949,6 +1109,21 @@ begin rewrite
+@@ -954,6 +1114,21 @@ begin rewrite
  #                   AUTHENTICATION CONFIGURATION                     #
  ######################################################################
  
@@ -785,7 +787,7 @@ index d94c148..1f6afd4 100644
  # The following authenticators support plaintext username/password
  # authentication using the standard PLAIN mechanism and the traditional
  # but non-standard LOGIN mechanism, with Exim acting as the server.
-@@ -964,7 +1139,7 @@ begin rewrite
+@@ -969,7 +1144,7 @@ begin rewrite
  # The default RCPT ACL checks for successful authentication, and will accept
  # messages from authenticated users from anywhere on the Internet.
  
@@ -794,7 +796,7 @@ index d94c148..1f6afd4 100644
  
  # PLAIN authentication has no server prompts. The client sends its
  # credentials in one lump, containing an authorization ID (which we do not
-@@ -978,7 +1153,7 @@ begin authenticators
+@@ -983,7 +1158,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth2
  #  server_prompts             = :
@@ -803,7 +805,7 @@ index d94c148..1f6afd4 100644
  #  server_advertise_condition = ${if def:tls_in_cipher }
  
  # LOGIN authentication has traditional prompts and responses. There is no
-@@ -990,7 +1165,7 @@ begin authenticators
+@@ -995,7 +1170,7 @@ begin authenticators
  #  driver                     = plaintext
  #  server_set_id              = $auth1
  #  server_prompts             = <| Username: | Password:
