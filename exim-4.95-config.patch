@@ -105,11 +105,10 @@ index f4329fa..b0643e0 100644
 -# LOOKUP_MYSQL=yes
 -# LOOKUP_MYSQL_PC=mariadb
 -# LOOKUP_NIS=yes
--# LOOKUP_NISPLUS=yes
 +LOOKUP_MYSQL=2
 +LOOKUP_MYSQL_PC=mariadb
 +LOOKUP_NIS=yes
-+LOOKUP_NISPLUS=yes
+ # LOOKUP_NISPLUS=yes
 +CFLAGS+=-I/usr/include/nsl -I/usr/include/tirpc
 +LIBS+=-L/usr/$(_lib)/nsl
 +

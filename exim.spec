@@ -485,6 +485,7 @@ fi
 %changelog
 * Fri Nov 12 2021 Björn Esser <besser82@fedoraproject.org> - 4.95-2
 - Rebuild(libnsl2)
+- Drop support for NISPLUS, as libnsl2 >= 2.0.0 does not support it anymore
 
 * Mon Oct  4 2021 Jaroslav Škarvada <jskarvad@redhat.com> - 4.95-1
 - New version
