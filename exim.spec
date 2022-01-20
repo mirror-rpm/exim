@@ -12,7 +12,7 @@
 Summary: The exim mail transfer agent
 Name: exim
 Version: 4.95
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Url: https://www.exim.org/
 
@@ -483,6 +483,9 @@ fi
 %{_sysconfdir}/cron.daily/greylist-tidy.sh
 
 %changelog
+* Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 4.95-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
 * Fri Nov 12 2021 Björn Esser <besser82@fedoraproject.org> - 4.95-2
 - Rebuild(libnsl2)
 - Drop support for NISPLUS, as libnsl2 >= 2.0.0 does not support it anymore
